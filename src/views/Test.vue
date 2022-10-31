@@ -4,12 +4,15 @@
   <button @click="add">方法执行</button>
   <input type="text" v-model="val" ref="inputRef" />--{{val}}
   <div>{{fullName}}</div>
+  <!-- 获取vuex定义的变量 -->
+  <div>{{$store.state.collapse}}</div>
 </template>
   
 <script>
 // 所有使用的钩子都要引入
 // import { onBeforeMount, onMounted, onBeforeUpdate, onUpdated, onBeforeUnmount, onUnmounted, onRenderTracked, onRenderTriggered, watch, computed } from 'vue'
 import { ref, reactive, toRefs, onMounted, computed } from 'vue'
+import { useStore } from 'vuex'
 export default {
   name: 'test',
   components: {},
@@ -43,11 +46,18 @@ export default {
       data.age++
     }
 
+    const store = useStore()
+    //执行vuex mutations里定义的方法
+    const switchCollapse = () => {
+      store.commit('switchCollapse')
+    }
+
     return {
       name,
       ...toRefs(data),
       fullName,
       add,
+      switchCollapse,
     }
   },
 }

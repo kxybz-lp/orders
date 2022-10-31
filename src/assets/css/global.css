@@ -49,3 +49,6 @@ div:focus {
 .el-menu {
   border: none;
 }
+.el-dropdown-menu__item:hover {
+  color: var(--color);
+}
