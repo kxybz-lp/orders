@@ -4,6 +4,7 @@
       <expand v-if="collapse" />
       <fold v-else />
     </el-icon>
+    <BreadCrumbVue></BreadCrumbVue>
   </div>
   <div class="header-right">
     <el-icon @click="switchFull">
@@ -29,6 +30,7 @@
 
 <script setup>
 import { reactive, toRefs, computed, getCurrentInstance, ref } from 'vue'
+import BreadCrumbVue from './BreadCrumb.vue'
 
 const { useStore } = require('vuex')
 
@@ -58,6 +60,13 @@ const switchFull = () => {
   justify-content: space-between;
   align-items: center;
   padding: 0 15px;
+  &-left {
+    display: flex;
+    align-items: center;
+    .el-icon {
+      margin-right: 10px;
+    }
+  }
   .el-icon {
     font-size: 16px;
     color: var(--color);

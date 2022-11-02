@@ -1,0 +1,48 @@
+<template>
+  <el-breadcrumb separator="/">
+    <el-breadcrumb-item v-for="(item, index) in breadcrumbList" :key="index">
+      <span class="no-redirect"
+        v-if="index === breadcrumbList.length - 1">{{item.meta.title}}</span>
+      <span class="redirect" v-else @click="handleRedirect(item.path)">{{item.meta.title}}</span>
+    </el-breadcrumb-item>
+  </el-breadcrumb>
+</template>
+
+<script setup>
+import { ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+
+const route = useRoute()
+const router = useRouter()
+const store = useStore()
+//当前路由的完整路径
+//console.log(route.matched)
+const breadcrumbList = ref([])
+const initBreadcrumbList = () => {
+  const routes = route.matched
+  breadcrumbList.value = routes
+  console.log(routes) //能从跟节点获取到当前页面的所有层级路由
+  //设置tablist
+  let tab = routes[routes.length - 1]
+  let currentTab = { name: tab.name, path: tab.path, label: tab.meta.title }
+  store.commit('selectMenu', currentTab)
+}
+const handleRedirect = (path) => {
+  return false
+  if (path) {
+    router.push(path)
+    store.commit('switchCurrentRoute', path)
+  }
+}
+watch(
+  route,
+  () => {
+    initBreadcrumbList()
+  },
+  { deep: true, immediate: true }
+)
+</script>
+
+<style lang="scss" scoped>
+</style>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app-container">
     admin
   </div>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app-container">
     <p style="margin-bottom:100px">home</p>
     <p style="margin-bottom:100px">home</p>
     <p style="margin-bottom:100px">home</p>

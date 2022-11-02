@@ -5,35 +5,45 @@
         <img :src="logo" :width="$store.state.collapse ? '25' : '40'" alt="logo" />
         <p v-show="!$store.state.collapse">订单系统</p>
       </div>
-      <el-menu default-active="2" background-color="var(--color)" text-color="#fff"
-        active-text-color="#fff" :collapse="$store.state.collapse" :collapse-transition="false">
-        <el-menu-item index="1">
-          <el-icon>
-            <setting />
-          </el-icon>
-          <span>首页</span>
-        </el-menu-item>
-        <el-sub-menu index="2">
-          <template #title>
-            <el-icon>
-              <location />
-            </el-icon>
-            <span>用户管理</span>
-          </template>
-          <el-menu-item index="1-1">管理员列表</el-menu-item>
-          <el-menu-item index="1-2">角色列表</el-menu-item>
-          <el-menu-item index="1-3">菜单列表</el-menu-item>
-        </el-sub-menu>
+      <el-menu :default-active="currentRoute" background-color="var(--color)" text-color="#fff"
+        active-text-color="#fff" :collapse="$store.state.collapse" :collapse-transition="false"
+        :router="true" :unique-opened="true" @select="handSelect">
+        <NavItemVue :menu="data.menuList"></NavItemVue>
       </el-menu>
     </el-scrollbar>
   </el-aside>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { getCurrentInstance, reactive, ref, toRaw, watch, computed } from 'vue'
+import NavItemVue from './NavItem.vue'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
+const store = useStore()
 const logo = ref(require('@/assets/images/logo_s.png'))
-const { useStore } = require('vuex')
+let data = reactive({
+  menuList: [],
+  // currentRoute: '/home', //当前页面路由
+  tabsList: {},
+})
+const instance = getCurrentInstance()
+const $api = instance.proxy.$api
+$api.home.getMenu().then((res) => {
+  data.menuList = res.result
+  store.commit('setMenuList', res.result)
+})
+// menuList = await $api.home.getMenu() //会将组件变为异步组件
+const currentRoute = computed(() => store.state.currentRoute)
+// let router = useRouter()
+// watch(
+//   () => router,
+//   (newValue, oldValue) => {
+//     store.commit('switchCurrentRoute', newValue.currentRoute.value.fullPath)
+//   },
+//   { immediate: true }
+// )
+const handSelect = (index, indexPath, item, routeResult) => {}
 </script>
 
 <style lang="scss" scoped>
@@ -52,15 +62,6 @@ const { useStore } = require('vuex')
       font-weight: 600;
       font-size: 20px;
     }
-  }
-  .el-menu-item.is-active {
-    background-color: #02333b !important;
-    color: #fff !important;
-  }
-  .el-menu-item:hover,
-  :deep(.el-submenu__title:hover) {
-    background: #02333b !important;
-    color: #fff !important;
   }
 }
 </style>
