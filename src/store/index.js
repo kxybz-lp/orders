@@ -9,7 +9,7 @@ export default createStore({
     token: '',
     adminInfo: null,
     currentRoute: '/home', //当前页面路由
-    menuList: [],
+    menuList: null,
     tabsList: [
       //标签导航
       {
@@ -65,10 +65,9 @@ export default createStore({
         admin
           .getInfo()
           .then((res) => {
-            console.log(res)
             commit('setAdminInfo', res.result.adminInfo)
             commit('setMenuList', res.result.menu)
-            resolve(res)
+            resolve(res.result)
           })
           .catch((err) => reject(err))
       })
@@ -77,6 +76,7 @@ export default createStore({
     logout({ commit }) {
       removeToken()
       commit('setAdminInfo', null)
+      commit('setMenuList', null)
     },
   },
   modules: {},

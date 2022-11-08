@@ -9,8 +9,7 @@ const routes = [
     name: 'LayOut',
     component: Layout,
     meta: { title: '首页' },
-    redirect: '/home',
-    children: [],
+    // redirect: '/home',
   },
   {
     path: '/login',
@@ -26,7 +25,7 @@ const routes = [
   },
 ]
 
-// 权限路由
+// 权限路由,
 const authRoutes = [
   {
     path: '/home',
@@ -70,11 +69,19 @@ const authRoutes = [
   },
 ]
 
-const router = createRouter({
+export const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 })
-export default router
+
+// 临时路由，解决刷新浏览器出现路由不存在的警告
+if (!router.hasRoute()) {
+  router.addRoute({
+    path: window.location.pathname,
+    name: 'TempRoute',
+    component: () => import('@/layout/index.vue'),
+  })
+}
 
 // 动态添加路由的方法
 export function addRoutes(menus) {
@@ -84,7 +91,7 @@ export function addRoutes(menus) {
     arr.forEach((e) => {
       let item = authRoutes.find((o) => o.path == e.path)
       if (item && !router.hasRoute(item.path)) {
-        router.addRoute('layout', item)
+        router.addRoute('LayOut', item)
         hasNewRoutes = true
       }
       if (e.child && e.child.length > 0) {
@@ -95,5 +102,7 @@ export function addRoutes(menus) {
 
   findAndAddRoutesByMenus(menus)
 
+  //查看router里所有路由
+  console.log(router.getRoutes())
   return hasNewRoutes
 }
