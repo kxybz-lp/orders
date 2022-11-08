@@ -2,8 +2,6 @@ import { createApp, createVNode, render } from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import * as utils from '@/utils/utils'
-import api from '@/api'
 
 import '@/assets/css/global.css'
 import * as ElIcon from '@element-plus/icons-vue'
@@ -12,6 +10,23 @@ for (let iconName in ElIcon) {
   app.component(iconName, ElIcon[iconName])
 }
 
+// 全局方法
+app.config.globalProperties.$filters = {
+  dateFormart(val, type = 'date') {
+    const dt = new Date(parseInt(val) * 1000) //后台返回的时间戳是以秒单位，js是以毫秒为单位
+    const y = dt.getFullYear()
+    const m = (dt.getMonth() + 1 + '').padStart(2, '0')
+    const d = (dt.getDate() + '').padStart(2, '0')
+    const hh = (dt.getHours() + '').padStart(2, '0')
+    const mm = (dt.getMinutes() + '').padStart(2, '0')
+    const ss = (dt.getSeconds() + '').padStart(2, '0')
+    if (type == 'hour') {
+      return `${y}-${m}-${d} ${hh}:${mm}`
+    } else {
+      return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
+    }
+  },
+}
 // app.config.globalProperties.$utils = utils
 // app.config.globalProperties.$api = api
 

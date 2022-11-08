@@ -4,9 +4,9 @@
 import { get, post } from '@/utils/http'
 
 const admin = {
-  // 管理员分类
-  getList() {
-    return get('/order/admin/index')
+  // 管理员列表
+  getList(params) {
+    return get('/order/admin/index', params)
   },
   // 登录
   login(params) {

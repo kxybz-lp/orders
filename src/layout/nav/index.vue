@@ -16,41 +16,20 @@
         :unique-opened="true"
         @select="handSelect"
       >
-        <NavItem :menu="data.menuList"></NavItem>
+        <NavItem :menu="menuList"></NavItem>
       </el-menu>
     </el-scrollbar>
   </el-aside>
 </template>
 
 <script setup>
-import { reactive, ref, computed } from 'vue'
+import { computed } from 'vue'
 import NavItem from './NavItem.vue'
-// import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import home from '@/api/home'
 const store = useStore()
-const logo = ref(require('@/assets/images/logo_s.png'))
-let data = reactive({
-  menuList: [],
-  // currentRoute: '/home', //当前页面路由
-  tabsList: {},
-})
-// const instance = getCurrentInstance()
-// const $api = instance.proxy.$api
-home.getMenu().then((res) => {
-  data.menuList = res.result
-  store.commit('setMenuList', res.result)
-})
-// menuList = await $api.home.getMenu() //会将组件变为异步组件
+const logo = require('@/assets/images/logo_s.png')
+const menuList = computed(() => store.state.menuList)
 const currentRoute = computed(() => store.state.currentRoute)
-// let router = useRouter()
-// watch(
-//   () => router,
-//   (newValue, oldValue) => {
-//     store.commit('switchCurrentRoute', newValue.currentRoute.value.fullPath)
-//   },
-//   { immediate: true }
-// )
 const handSelect = (index, indexPath, item, routeResult) => {}
 </script>
 
@@ -58,6 +37,7 @@ const handSelect = (index, indexPath, item, routeResult) => {}
 .el-aside {
   height: 100%;
   background-color: var(--color);
+  transition: all 0.2s;
   .logo {
     display: flex;
     justify-content: center;

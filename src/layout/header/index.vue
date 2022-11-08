@@ -1,7 +1,7 @@
 <template>
   <div class="header-left">
-    <el-icon @click="switchCollapse">
-      <expand v-if="collapse" />
+    <el-icon @click="$store.commit('switchCollapse')">
+      <expand v-if="$store.state.collapse" />
       <fold v-else />
     </el-icon>
     <el-tooltip effect="dark" content="刷新" placement="bottom">
@@ -47,23 +47,16 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
-import { useStore } from 'vuex'
+import { ref } from 'vue'
 import BreadCrumbVue from './BreadCrumb.vue'
 import FormDrawer from '@/components/FormDrawer.vue'
 import { useRepassword, useLogout } from '@/hooks/useAdmin'
 import { handleFullScreen } from '@/utils/utils'
 
-const store = useStore()
-const collapse = computed(() => store.state.collapse)
 const full = ref(false)
 
 const { formDrawerRef, formRef, form, rules, password, onSubmit } = useRepassword()
 const { logout } = useLogout()
-
-const switchCollapse = () => {
-  store.commit('switchCollapse')
-}
 
 const refresh = () => {
   location.reload()

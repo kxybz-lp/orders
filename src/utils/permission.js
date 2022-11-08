@@ -24,9 +24,13 @@ router.beforeEach(async (to, from, next) => {
     toast('请勿重复登录', 'error')
     return next({ path: from.path ? from.path : '/' })
   }
+  let hasNewRoutes = false
   // 获取登录账号信息
   if (token && !store.state.adminInfo) {
-    await store.dispatch('getinfo')
+    let { menu } = await store.dispatch('getinfo')
+    console.log(menu)
+    // 动态添加路由
+    //hasNewRoutes = addRoutes(menu)
   }
 
   // 设置页面标题

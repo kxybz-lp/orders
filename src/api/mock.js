@@ -17,7 +17,7 @@ Mock.mock('/index/banner', {
   },
 })
 
-Mock.mock('/api/index/menu', 'get', {
+Mock.mock('/index/menu', 'get', {
   code: 1,
   msg: 'ok',
   result: [

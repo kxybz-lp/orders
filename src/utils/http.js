@@ -50,10 +50,11 @@ axios.interceptors.response.use(
         case 401:
           toast('登录过期，请重新登录', 'error')
           store.dispatch('logout').finally(() => {
-            router.replace({
-              path: '/login',
-              query: { redirect: router.currentRoute.fullPath },
-            })
+            location.reload()
+            // router.replace({
+            //   path: '/login',
+            //   query: { redirect: router.currentRoute.fullPath },
+            // })
           })
           break
         // 404请求不存在

@@ -65,7 +65,9 @@ export default createStore({
         admin
           .getInfo()
           .then((res) => {
-            commit('setAdminInfo', res.result)
+            console.log(res)
+            commit('setAdminInfo', res.result.adminInfo)
+            commit('setMenuList', res.result.menu)
             resolve(res)
           })
           .catch((err) => reject(err))
