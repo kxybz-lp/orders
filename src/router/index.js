@@ -51,6 +51,18 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import(/* webpackChunkName: "login" */ '../views/Login.vue'),
+    meta: { title: '登录', permissions: false },
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: () => import(/* webpackChunkName: "404" */ '../views/404.vue'),
+    meta: { title: '404', permissions: false },
+  },
   // {
   //   path: '/about',
   //   name: 'about',
@@ -61,11 +73,6 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
-})
-
-router.beforeEach((to, from) => {
-  //console.log(store)
-  //store.commit('switchCurrentRoute', to.fullPath)
 })
 
 export default router

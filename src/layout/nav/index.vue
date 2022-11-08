@@ -5,21 +5,29 @@
         <img :src="logo" :width="$store.state.collapse ? '25' : '40'" alt="logo" />
         <p v-show="!$store.state.collapse">订单系统</p>
       </div>
-      <el-menu :default-active="currentRoute" background-color="var(--color)" text-color="#fff"
-        active-text-color="#fff" :collapse="$store.state.collapse" :collapse-transition="false"
-        :router="true" :unique-opened="true" @select="handSelect">
-        <NavItemVue :menu="data.menuList"></NavItemVue>
+      <el-menu
+        :default-active="currentRoute"
+        background-color="var(--color)"
+        text-color="#fff"
+        active-text-color="#fff"
+        :collapse="$store.state.collapse"
+        :collapse-transition="false"
+        :router="true"
+        :unique-opened="true"
+        @select="handSelect"
+      >
+        <NavItem :menu="data.menuList"></NavItem>
       </el-menu>
     </el-scrollbar>
   </el-aside>
 </template>
 
 <script setup>
-import { getCurrentInstance, reactive, ref, toRaw, watch, computed } from 'vue'
-import NavItemVue from './NavItem.vue'
-import { useRouter } from 'vue-router'
+import { reactive, ref, computed } from 'vue'
+import NavItem from './NavItem.vue'
+// import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-
+import home from '@/api/home'
 const store = useStore()
 const logo = ref(require('@/assets/images/logo_s.png'))
 let data = reactive({
@@ -27,9 +35,9 @@ let data = reactive({
   // currentRoute: '/home', //当前页面路由
   tabsList: {},
 })
-const instance = getCurrentInstance()
-const $api = instance.proxy.$api
-$api.home.getMenu().then((res) => {
+// const instance = getCurrentInstance()
+// const $api = instance.proxy.$api
+home.getMenu().then((res) => {
   data.menuList = res.result
   store.commit('setMenuList', res.result)
 })

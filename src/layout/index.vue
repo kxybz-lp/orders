@@ -8,7 +8,12 @@
         </el-header>
         <el-main>
           <tagsView></tagsView>
-          <router-view />
+          <!-- <router-view /> -->
+          <router-view #default="{ route, Component }">
+            <transition enter-active-class="animate__animated animate__fadeIn">
+              <component :is="Component"></component>
+            </transition>
+          </router-view>
         </el-main>
       </el-container>
     </el-container>
@@ -19,20 +24,7 @@
 import Nav from '@/layout/nav/index.vue'
 import Header from '@/layout/header/index.vue'
 import tagsView from '@/layout/tags/index.vue'
-import { getCurrentInstance } from 'vue'
-const internalInstance = getCurrentInstance()
 // const $api = internalInstance.proxy.$api
-// console.log($api)
-// ElMessage({
-//   message: '你错拉！！！' || 'Error',
-//   type: 'error',
-//   duration: 5 * 1000,
-// })
-// ElMessageBox.confirm('You have been logged out,  or log in again', 'Confirm logout', {
-//   confirmButtonText: 'Re-Login',
-//   cancelButtonText: 'Cancel',
-//   type: 'warning',
-// }).then(() => {})
 </script>
 
 <style lang="scss" scoped>

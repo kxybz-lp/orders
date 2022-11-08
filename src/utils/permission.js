@@ -1,0 +1,45 @@
+import router from '@/router'
+import { toast } from '@/utils/utils'
+import { getToken, removeToken } from '@/utils/token'
+// 引入页面加载loading
+import Loading from '@/components/loading/index'
+import store from '@/store'
+
+//全局前置守卫
+const whileList = ['/admin/index']
+router.beforeEach(async (to, from, next) => {
+  // if(token || whileList.includes(to.path)){
+  //   next()
+  // }
+  const token = getToken()
+  // 没有登录，强制跳转回登录页
+  if (!token && to.path != '/login') {
+    toast('请先登录', 'error')
+    removeToken()
+    return next({ path: '/login' })
+  }
+
+  // 防止重复登录
+  if (token && to.path == '/login') {
+    toast('请勿重复登录', 'error')
+    return next({ path: from.path ? from.path : '/' })
+  }
+  // 获取登录账号信息
+  if (token && !store.state.adminInfo) {
+    await store.dispatch('getinfo')
+  }
+
+  // 设置页面标题
+  let title = (to.meta.title ? to.meta.title + '-' : '') + '订单管理系统'
+  document.title = title
+
+  // 页面加载进度条
+  Loading.component?.exposed?.startLoading()
+
+  next()
+})
+
+// 全局后置守卫
+router.afterEach((to, from) => {
+  Loading.component?.exposed?.endLoading()
+})

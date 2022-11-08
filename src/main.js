@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import { createApp, createVNode, render } from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
@@ -12,7 +12,10 @@ for (let iconName in ElIcon) {
   app.component(iconName, ElIcon[iconName])
 }
 
-app.config.globalProperties.$utils = utils
-app.config.globalProperties.$api = api
+// app.config.globalProperties.$utils = utils
+// app.config.globalProperties.$api = api
+
+// 权限控制
+import '@/utils/permission'
 
 app.use(store).use(router).mount('#app')

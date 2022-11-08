@@ -1,8 +1,16 @@
 <template>
   <div class="tabs">
-    <el-tag :key="tag.path" type="info" size="small" v-for="(tag, index) in tabsList"
-      :closable="tag.name !== 'Home'" :disable-transitions="false" @close="handleClose(tag, index)"
-      @click="changeMenu(tag)" :effect="currentRoute === tag.path ? 'dark' : 'plain'">
+    <el-tag
+      :key="tag.path"
+      type="info"
+      size="small"
+      v-for="(tag, index) in tabsList"
+      :closable="tag.name !== 'Home'"
+      :disable-transitions="false"
+      @close="handleClose(tag, index)"
+      @click="changeMenu(tag)"
+      :effect="currentRoute === tag.path ? 'dark' : 'plain'"
+    >
       {{ tag.label }}
     </el-tag>
   </div>

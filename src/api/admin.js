@@ -4,15 +4,31 @@
 import { get, post } from '@/utils/http'
 
 const admin = {
+  // 管理员分类
+  getList() {
+    return get('/order/admin/index')
+  },
+  // 登录
+  login(params) {
+    return post('/order/account/login', params)
+  },
+  // 查询个人信息
+  getInfo() {
+    return post('/order/admin/getInfo')
+  },
+  // 退出
+  logout() {
+    return post('/order/account/logout')
+  },
+  // 修改密码
+  password(params) {
+    return post('/order/admin/password', params)
+  },
   // 商品列表
   getGoodsList(id, params) {
     return get(`/getGoodsList/${id}`, {
       params,
     })
-  },
-  // 商品分类
-  getList() {
-    return get(`/getList`)
   },
   // 新闻详情,演示
   //  articleDetail (id, params) {

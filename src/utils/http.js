@@ -5,26 +5,12 @@ import axios from 'axios'
 import QS from 'qs' // 引入qs模块，用来序列化post类型的数据
 import store from '@/store/index'
 import base from '@/api/base' // 导入接口域名列表
-// 弹窗提示
-//  ElMessage({
-//      message: res.message || 'Error',
-//      type: 'error',
-//      duration: 5 * 1000
-//  })
-//  // 确认弹窗提示并添加成功的回调
-//  MessageBox.confirm('You have been logged out,  or log in again', 'Confirm logout', {
-//     confirmButtonText: 'Re-Login',
-//     cancelButtonText: 'Cancel',
-//     type: 'warning'
-// }).then(() => {
-//     store.dispatch('user/resetToken').then(() => {
-//         location.reload()
-//    })
-// })
+import { getToken } from '@/utils/token'
+import { toast } from './utils'
 
 // 环境的切换
 if (process.env.NODE_ENV == 'development') {
-  axios.defaults.baseURL = ''
+  axios.defaults.baseURL = '/api'
 } else if (process.env.NODE_ENV == 'debug') {
   axios.defaults.baseURL = ''
 } else if (process.env.NODE_ENV == 'production') {
@@ -39,8 +25,8 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 // 请求拦截器
 axios.interceptors.request.use(
   (config) => {
-    const token = store.state.token
-    token && (config.headers.Authorization = token)
+    const token = getToken()
+    token && (config.headers.token = token)
     return config
   },
   (error) => {
@@ -62,45 +48,21 @@ axios.interceptors.response.use(
     if (error.response.status) {
       switch (error.response.status) {
         case 401:
-          router.replace({
-            path: '/login',
-            query: { redirect: router.currentRoute.fullPath },
-          })
-          break
-        case 403:
-          ElMessage({
-            message: '登录过期，请重新登录',
-            type: 'error',
-            duration: 1500,
-          })
-          // 清除token
-          localStorage.removeItem('token')
-          store.commit('loginSuccess', null)
-          // 跳转登录页面，并将要浏览的页面fullPath传过去，登录成功后跳转需要访问的页面
-          setTimeout(() => {
+          toast('登录过期，请重新登录', 'error')
+          store.dispatch('logout').finally(() => {
             router.replace({
               path: '/login',
-              query: {
-                redirect: router.currentRoute.fullPath,
-              },
+              query: { redirect: router.currentRoute.fullPath },
             })
-          }, 1000)
+          })
           break
         // 404请求不存在
         case 404:
-          ElMessage({
-            message: '网络请求不存在',
-            type: 'error',
-            duration: 1500,
-          })
+          toast('网络请求不存在', 'error')
           break
         // 其他错误，直接抛出错误提示
         default:
-          ElMessage({
-            message: error.response.data.message,
-            type: 'error',
-            duration: 1500,
-          })
+          toast(error.response.data.message, 'error')
       }
       return Promise.reject(error.response)
     }

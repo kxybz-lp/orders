@@ -4,52 +4,84 @@
       <expand v-if="collapse" />
       <fold v-else />
     </el-icon>
+    <el-tooltip effect="dark" content="刷新" placement="bottom">
+      <el-icon @click="refresh"><Refresh /></el-icon>
+    </el-tooltip>
     <BreadCrumbVue></BreadCrumbVue>
   </div>
   <div class="header-right">
-    <el-icon @click="switchFull">
-      <copy-document v-if="full" />
-      <full-screen v-else />
-    </el-icon>
-    <el-dropdown>
+    <el-tooltip effect="dark" content="全屏" placement="bottom">
+      <el-icon @click="switchFull">
+        <copy-document v-if="full" />
+        <full-screen v-else />
+      </el-icon>
+    </el-tooltip>
+    <el-dropdown @command="handleCommand">
       <span class="el-dropdown-link">
-        西双版纳公司
+        {{ $store.state.adminInfo?.name }}
         <el-icon class="el-icon--right">
           <arrow-down />
         </el-icon>
       </span>
       <template #dropdown>
         <el-dropdown-menu>
-          <el-dropdown-item>修改密码</el-dropdown-item>
-          <el-dropdown-item>退出</el-dropdown-item>
+          <el-dropdown-item command="password">修改密码</el-dropdown-item>
+          <el-dropdown-item command="logout">退出</el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
   </div>
+  <FormDrawer ref="formDrawerRef" title="修改密码" :close-on-click-modal="false" @submit="onSubmit">
+    <el-form ref="formRef" :rules="rules" :model="form" label-width="80px" size="small">
+      <el-form-item prop="oldpassword" label="旧密码">
+        <el-input v-model="form.oldpassword" placeholder="请输入旧密码"></el-input>
+      </el-form-item>
+      <el-form-item prop="password" label="新密码">
+        <el-input type="password" v-model="form.password" placeholder="请输入密码" show-password></el-input>
+      </el-form-item>
+      <el-form-item prop="repassword" label="确认密码">
+        <el-input type="password" v-model="form.repassword" placeholder="请输入确认密码" show-password></el-input>
+      </el-form-item>
+    </el-form>
+  </FormDrawer>
 </template>
 
 <script setup>
-import { reactive, toRefs, computed, getCurrentInstance, ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useStore } from 'vuex'
 import BreadCrumbVue from './BreadCrumb.vue'
-
-const { useStore } = require('vuex')
-
-const collapse = computed(() => store.state.collapse)
-const internalInstance = getCurrentInstance()
+import FormDrawer from '@/components/FormDrawer.vue'
+import { useRepassword, useLogout } from '@/hooks/useAdmin'
+import { handleFullScreen } from '@/utils/utils'
 
 const store = useStore()
-const data = reactive({
-  full: false,
-})
-const { full } = toRefs(data)
-//console.log(full.value)
+const collapse = computed(() => store.state.collapse)
+const full = ref(false)
+
+const { formDrawerRef, formRef, form, rules, password, onSubmit } = useRepassword()
+const { logout } = useLogout()
+
 const switchCollapse = () => {
   store.commit('switchCollapse')
 }
+
+const refresh = () => {
+  location.reload()
+}
+
+const handleCommand = (command) => {
+  switch (command) {
+    case 'logout':
+      logout()
+      break
+    case 'password':
+      password()
+      break
+  }
+}
 // const $utils = internalInstance.appContext.config.globalProperties.$utils
-const $utils = internalInstance.proxy.$utils
 const switchFull = () => {
-  $utils.handleFullScreen(data.full)
+  handleFullScreen(full.value)
   full.value = !full.value
 }
 </script>

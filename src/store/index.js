@@ -1,10 +1,13 @@
 import { createStore } from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
+import admin from '@/api/admin'
+import { removeToken } from '@/utils/token'
 
 export default createStore({
   state: {
     collapse: false,
     token: '',
+    adminInfo: null,
     currentRoute: '/home', //当前页面路由
     menuList: [],
     tabsList: [
@@ -25,8 +28,6 @@ export default createStore({
     //设置当前页面路由
     switchCurrentRoute(state, val) {
       state.currentRoute = val
-      //根据当前路由设置面包屑导航
-      // console.log(state.menuList.filter((item) => item.path === val))
     },
     //设置权限菜单
     setMenuList(state, val) {
@@ -38,7 +39,6 @@ export default createStore({
         state.currentRoute = '/home'
       } else {
         state.currentRoute = val.path
-        //如果等于-1说明tabsList不存在那么插入，否则什么都不做
         let result = state.tabsList.findIndex((item) => item.path === val.path)
         result === -1 ? state.tabsList.push(val) : ''
       }
@@ -48,21 +48,35 @@ export default createStore({
     closeTab(state, val) {
       let index = state.tabsList.findIndex((item) => item.name === val.name)
       state.tabsList.splice(index, 1)
-      if (index === state.tabsList.length) {
-        // if (flag) state.currentRoute = state.tabsList[index - 1].path
-      } else {
-        // if (flag) state.currentRoute = state.tabsList[index].path
-      }
-      console.log(state.currentRoute)
     },
     pushtags(state, val) {
-      //如果等于-1说明tabs不存在那么插入，否则什么都不做
-      //findindex找角标，循环判断一下，如果等于那么就代表有相同的，就不必添加，如果找不到那就是-1.就添加
       let result = state.tabsList.findIndex((item) => item.name === val.name)
       result === -1 ? state.tabsList.push(val) : ''
     },
+    //设置登录管理员账号信息
+    setAdminInfo(state, val) {
+      state.adminInfo = val
+    },
   },
-  actions: {},
+  actions: {
+    // 获取当前登录用户信息
+    getinfo({ commit }) {
+      return new Promise((resolve, reject) => {
+        admin
+          .getInfo()
+          .then((res) => {
+            commit('setAdminInfo', res.result)
+            resolve(res)
+          })
+          .catch((err) => reject(err))
+      })
+    },
+    // 退出登录
+    logout({ commit }) {
+      removeToken()
+      commit('setAdminInfo', null)
+    },
+  },
   modules: {},
   plugins: [
     createPersistedState({
@@ -73,6 +87,7 @@ export default createStore({
           tabsList: val.tabsList,
           currentRoute: val.currentRoute,
           menuList: val.menuList,
+          adminInfo: val.adminInfo,
         }
       },
     }),

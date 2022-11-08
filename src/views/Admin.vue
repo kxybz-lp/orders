@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     admin
+    <p><el-button @click="$router.push('/login')">login</el-button></p>
   </div>
 </template>
 

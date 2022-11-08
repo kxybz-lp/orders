@@ -2,6 +2,7 @@ const { defineConfig } = require('@vue/cli-service')
 const AutoImport = require('unplugin-auto-import/webpack')
 const Components = require('unplugin-vue-components/webpack')
 const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
+const WindiCSSWebpackPlugin = require('windicss-webpack-plugin')
 module.exports = defineConfig({
   transpileDependencies: true,
   lintOnSave: false,
@@ -11,9 +12,9 @@ module.exports = defineConfig({
       '/api': {
         target: 'https://api.xydec.com.cn',
         changeOrigin: true,
-        // pathRewrite: {
-        //     '^/api': '' //将URL中的/api替换为空
-        // }
+        pathRewrite: {
+            '^/api': '' //将URL中的/api替换为空
+        }
       },
     },
   },
@@ -25,6 +26,7 @@ module.exports = defineConfig({
       Components({
         resolvers: [ElementPlusResolver()],
       }),
+      new WindiCSSWebpackPlugin(),
     ],
   },
 })

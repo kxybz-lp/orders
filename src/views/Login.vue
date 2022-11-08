@@ -1,0 +1,214 @@
+<template>
+  <div class="login">
+    <div class="login-main">
+      <div class="switch">
+          <div v-if="isDesktop" class="switch-item"  @click="swtichType">
+            <span></span>
+            <img src="@/assets/images/desktop.png" alt="密码登录" />
+          </div>
+          <div v-else class="switch-item"  @click="swtichType">
+            <span></span>
+            <img src="@/assets/images/ewm.png" alt="扫码登录" />
+          </div>
+        </div>
+      <div class="login-nomal" v-if="isDesktop">
+        <div class="title">星艺装饰订单系统</div>
+        <el-form ref="formRef" :rules="rules" :model="form" class="login-from">
+                <el-form-item prop="name">
+                    <el-input v-model="form.name" placeholder="请输入用户名" class="login-input">
+                        <template #prefix>
+                            <el-icon><user-filled /></el-icon>
+                        </template>
+                    </el-input>
+                </el-form-item>
+                <el-form-item prop="password">
+                    <el-input type="password" v-model="form.password" placeholder="请输入密码" show-password class="login-input">
+                        <template #prefix>
+                            <el-icon><lock /></el-icon>
+                        </template>
+                    </el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button style="width:100%" round color="#004c59" class="submit" type="primary" @click="onSubmit" :loading="loading">登 录</el-button>
+                </el-form-item>
+            </el-form>
+      </div>
+      <div class="login-wechat" v-else>
+        <div class="title">扫码登录</div>
+        <div class="ewm">
+          <img src="@/assets/images/ewm-large.png" alt="扫码登录" />
+        </div>
+        <div class="toolsip">打开「微信」扫一扫登录系统</div>
+      </div>
+    </div>
+  </div>
+</template>
+<script setup>
+import { ref,reactive,onMounted,onBeforeUnmount } from 'vue'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import { setToken } from '@/utils/token'
+import { toast } from '@/utils/utils'
+import admin from '@/api/admin'
+
+const store = useStore()
+const router = useRouter()
+// do not use same name with ref
+const form = reactive({
+  name:"",
+  password:""
+})
+const rules = {
+    name:[
+        { 
+            required: true, 
+            message: '用户名不能为空', 
+            trigger: 'blur' 
+        },
+    ],
+    password:[
+        { 
+            required: true, 
+            message: '密码不能为空', 
+            trigger: 'blur' 
+        },
+    ]
+}
+
+let isDesktop = ref(true)
+const swtichType = () => {
+  isDesktop.value = !isDesktop.value
+}
+
+
+const formRef = ref(null)
+const loading = ref(false)
+const onSubmit = () => {
+    formRef.value.validate((valid)=>{
+        if(!valid){
+            return false
+        }
+        loading.value = true
+        //发送网络请求
+        admin.login(form).then((res) => {
+          if(res.code > 0){
+            const {token} = res.result
+            //存储token
+            setToken(token)
+            router.push({path: '/'})
+            toast('登录成功')
+          } else {
+            toast(res.message || 'error', 'error')
+            return false;
+          }
+        }).finally(()=>{
+          console.log('finally')
+          loading.value = false
+        })
+        
+      
+        
+        // store.dispatch("login",form).then(res=>{
+        //     toast("登录成功")
+        //     router.push("/")
+        // }).finally(()=>{
+        //     loading.value = false
+        // })
+    })
+}
+
+// 监听回车事件
+function onKeyUp(e){
+    if(e.key == "Enter") onSubmit()
+}
+
+// 添加键盘监听
+onMounted(()=>{
+    document.addEventListener("keyup",onKeyUp)
+})
+// 移除键盘监听
+onBeforeUnmount(()=>{
+    document.removeEventListener("keyup",onKeyUp)
+})
+</script>
+<style lang='scss' scoped>
+ .login {
+  min-height: 100vh;
+  background: radial-gradient( #016f82 30%,#004c59 70%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &-main {
+    width: 360px;
+    height: 300px;
+    overflow: hidden;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgb(26 26 26 / 10%);
+    .switch {
+      display: flex;
+      justify-content: end;
+      padding: 5px 5px 0 0;
+      &-item {
+        display: flex;
+        align-items: flex-start;
+        font-size: 12px;
+        color: #016f82;
+        width: 40px;
+        height: 40px;
+        overflow: hidden;
+        position: relative;
+        span {
+          width: 40px;
+          height: 40px;
+          background-color: #fff;
+          position: absolute;
+          left: -20px;
+          bottom: -20px;
+          transform: rotate(135deg);
+        }
+        img {
+          width: 100%;
+        }
+      }
+    }
+    .login-wechat {
+      .ewm {
+        width: 128px;
+        margin: 0 auto;
+      }
+      .toolsip {
+        font-size: 12px;
+        color: #004c59;
+        text-align: center;
+        padding: 10px 0 0 0;
+      }
+    }
+    .title {
+      font-size: 24px;
+      color: #004c59;
+      margin: 10px 0 20px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .login-nomal {
+      padding: 15px 30px;
+      .el-form-item {
+        margin-bottom: 24px;
+      }
+      .el-icon.is-loading {
+        color: #fff !important;
+      }
+      .submit :deep(.el-icon) {color: #fff !important;}
+      .login-input{
+        border:1px solid #004c59;
+        border-radius:3px;
+      }
+      /** el-input 正常模式下、readonly模式下的文字颜色 */
+      .el-input__inner{
+        color:#004c59;
+      }
+    }
+  }
+ }
+</style>
