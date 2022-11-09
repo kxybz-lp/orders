@@ -2,36 +2,36 @@
   <div class="login">
     <div class="login-main">
       <div class="switch">
-          <div v-if="isDesktop" class="switch-item"  @click="swtichType">
-            <span></span>
-            <img src="@/assets/images/desktop.png" alt="密码登录" />
-          </div>
-          <div v-else class="switch-item"  @click="swtichType">
-            <span></span>
-            <img src="@/assets/images/ewm.png" alt="扫码登录" />
-          </div>
+        <div v-if="isDesktop" class="switch-item" @click="swtichType">
+          <span></span>
+          <img src="@/assets/images/desktop.png" alt="密码登录" />
         </div>
+        <div v-else class="switch-item" @click="swtichType">
+          <span></span>
+          <img src="@/assets/images/ewm.png" alt="扫码登录" />
+        </div>
+      </div>
       <div class="login-nomal" v-if="isDesktop">
         <div class="title">星艺装饰订单系统</div>
         <el-form ref="formRef" :rules="rules" :model="form" class="login-from">
-                <el-form-item prop="name">
-                    <el-input v-model="form.name" placeholder="请输入用户名" class="login-input">
-                        <template #prefix>
-                            <el-icon><user-filled /></el-icon>
-                        </template>
-                    </el-input>
-                </el-form-item>
-                <el-form-item prop="password">
-                    <el-input type="password" v-model="form.password" placeholder="请输入密码" show-password class="login-input">
-                        <template #prefix>
-                            <el-icon><lock /></el-icon>
-                        </template>
-                    </el-input>
-                </el-form-item>
-                <el-form-item>
-                    <el-button style="width:100%" round color="#004c59" class="submit" type="primary" @click="onSubmit" :loading="loading">登 录</el-button>
-                </el-form-item>
-            </el-form>
+          <el-form-item prop="name">
+            <el-input v-model="form.name" placeholder="请输入用户名">
+              <template #prefix>
+                <el-icon><user-filled /></el-icon>
+              </template>
+            </el-input>
+          </el-form-item>
+          <el-form-item prop="password">
+            <el-input type="password" v-model="form.password" placeholder="请输入密码" show-password>
+              <template #prefix>
+                <el-icon><lock /></el-icon>
+              </template>
+            </el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button style="width: 100%" round color="#004c59" class="submit" type="primary" @click="onSubmit" :loading="loading">登 录</el-button>
+          </el-form-item>
+        </el-form>
       </div>
       <div class="login-wechat" v-else>
         <div class="title">扫码登录</div>
@@ -44,7 +44,7 @@
   </div>
 </template>
 <script setup>
-import { ref,reactive,onMounted,onBeforeUnmount } from 'vue'
+import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { setToken } from '@/utils/token'
@@ -55,24 +55,24 @@ const store = useStore()
 const router = useRouter()
 // do not use same name with ref
 const form = reactive({
-  name:"",
-  password:""
+  name: '',
+  password: '',
 })
 const rules = {
-    name:[
-        { 
-            required: true, 
-            message: '用户名不能为空', 
-            trigger: 'blur' 
-        },
-    ],
-    password:[
-        { 
-            required: true, 
-            message: '密码不能为空', 
-            trigger: 'blur' 
-        },
-    ]
+  name: [
+    {
+      required: true,
+      message: '用户名不能为空',
+      trigger: 'blur',
+    },
+  ],
+  password: [
+    {
+      required: true,
+      message: '密码不能为空',
+      trigger: 'blur',
+    },
+  ],
 }
 
 let isDesktop = ref(true)
@@ -80,61 +80,54 @@ const swtichType = () => {
   isDesktop.value = !isDesktop.value
 }
 
-
 const formRef = ref(null)
 const loading = ref(false)
 const onSubmit = () => {
-    formRef.value.validate((valid)=>{
-        if(!valid){
-            return false
+  formRef.value.validate((valid) => {
+    if (!valid) {
+      return false
+    }
+    loading.value = true
+    //发送网络请求
+    admin
+      .login(form)
+      .then((res) => {
+        if (res.code > 0) {
+          const { token } = res.result
+          //存储token
+          setToken(token)
+          router.push({ path: '/' })
+          toast('登录成功')
+        } else {
+          toast(res.message || 'error', 'error')
+          return false
         }
-        loading.value = true
-        //发送网络请求
-        admin.login(form).then((res) => {
-          if(res.code > 0){
-            const {token} = res.result
-            //存储token
-            setToken(token)
-            router.push({path: '/'})
-            toast('登录成功')
-          } else {
-            toast(res.message || 'error', 'error')
-            return false;
-          }
-        }).finally(()=>{
-          console.log('finally')
-          loading.value = false
-        })
-        
-      
-        
-        // store.dispatch("login",form).then(res=>{
-        //     toast("登录成功")
-        //     router.push("/")
-        // }).finally(()=>{
-        //     loading.value = false
-        // })
-    })
+      })
+      .finally(() => {
+        console.log('finally')
+        loading.value = false
+      })
+  })
 }
 
 // 监听回车事件
-function onKeyUp(e){
-    if(e.key == "Enter") onSubmit()
+function onKeyUp(e) {
+  if (e.key == 'Enter') onSubmit()
 }
 
 // 添加键盘监听
-onMounted(()=>{
-    document.addEventListener("keyup",onKeyUp)
+onMounted(() => {
+  document.addEventListener('keyup', onKeyUp)
 })
 // 移除键盘监听
-onBeforeUnmount(()=>{
-    document.removeEventListener("keyup",onKeyUp)
+onBeforeUnmount(() => {
+  document.removeEventListener('keyup', onKeyUp)
 })
 </script>
-<style lang='scss' scoped>
- .login {
+<style lang="scss" scoped>
+.login {
   min-height: 100vh;
-  background: radial-gradient( #016f82 30%,#004c59 70%);
+  background: radial-gradient(#016f82 30%, #004c59 70%);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -199,16 +192,18 @@ onBeforeUnmount(()=>{
       .el-icon.is-loading {
         color: #fff !important;
       }
-      .submit :deep(.el-icon) {color: #fff !important;}
-      .login-input{
-        border:1px solid #004c59;
-        border-radius:3px;
+      .submit :deep(.el-icon) {
+        color: #fff !important;
       }
-      /** el-input 正常模式下、readonly模式下的文字颜色 */
-      .el-input__inner{
-        color:#004c59;
-      }
+      // .login-input{
+      //   border:1px solid #004c59;
+      //   border-radius:3px;
+      // }
+      // /** el-input 正常模式下、readonly模式下的文字颜色 */
+      // .el-input__inner{
+      //   color:#004c59;
+      // }
     }
   }
- }
+}
 </style>

@@ -6,8 +6,8 @@
         <slot></slot>
       </div>
       <div class="actions">
-        <el-button type="primary" color="#004c59" @click="submit" :loading="loading">{{ confirmText }}</el-button>
-        <el-button type="default" @click="closeDrawer">取消</el-button>
+        <el-button size="small" type="primary" color="#004c59" @click="submit" :loading="loading">{{ confirmText }}</el-button>
+        <el-button size="small" type="default" @click="closeDrawer">取消</el-button>
       </div>
     </div>
   </el-drawer>

@@ -1,12 +1,12 @@
-import router from '@/router'
+import { router, addRoutes } from '@/router'
 import { toast } from '@/utils/utils'
 import { getToken, removeToken } from '@/utils/token'
 // 引入页面加载loading
 import Loading from '@/components/loading/index'
 import store from '@/store'
-
 //全局前置守卫
 const whileList = ['/admin/index']
+let hasGetInfo = false
 router.beforeEach(async (to, from, next) => {
   // if(token || whileList.includes(to.path)){
   //   next()
@@ -15,7 +15,6 @@ router.beforeEach(async (to, from, next) => {
   // 没有登录，强制跳转回登录页
   if (!token && to.path != '/login') {
     toast('请先登录', 'error')
-    removeToken()
     return next({ path: '/login' })
   }
 
@@ -25,12 +24,18 @@ router.beforeEach(async (to, from, next) => {
     return next({ path: from.path ? from.path : '/' })
   }
   let hasNewRoutes = false
-  // 获取登录账号信息
-  if (token && !store.state.adminInfo) {
+  // 获取登录账号信息,刷新页面重新获取
+  if (token && !hasGetInfo) {
     let { menu } = await store.dispatch('getinfo')
-    console.log(menu)
+    console.log(hasGetInfo)
     // 动态添加路由
-    //hasNewRoutes = addRoutes(menu)
+    hasNewRoutes = addRoutes(menu)
+    hasGetInfo = true
+  }
+
+  // 删除临时路由
+  if (router.hasRoute('TempRoute')) {
+    router.removeRoute('TempRoute')
   }
 
   // 设置页面标题
@@ -39,8 +44,8 @@ router.beforeEach(async (to, from, next) => {
 
   // 页面加载进度条
   Loading.component?.exposed?.startLoading()
-
-  next()
+  // 解决刷新页面404问题
+  hasNewRoutes ? next(to.fullPath) : next()
 })
 
 // 全局后置守卫

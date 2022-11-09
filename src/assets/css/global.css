@@ -52,11 +52,48 @@ div:focus {
 .el-dropdown-menu__item:hover {
   color: var(--color) !important;
 }
+.el-card {
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.05) !important;
+}
+.el-input__wrapper.is-focus,.el-input__wrapper:hover {
+  box-shadow: 0 0 0 1px var(--color) inset !important;
+}
+.el-radio__input.is-checked .el-radio__inner,
+.el-checkbox__input.is-checked .el-checkbox__inner,
+.el-checkbox__input.is-indeterminate .el-checkbox__inner {
+  border-color: var(--color) !important;
+  background: var(--color) !important;
+}
+.el-radio__input.is-checked + .el-radio__label {
+  color: var(--color) !important;
+}
+.el-textarea__inner:hover {
+  border-color: var(--color) !important;
+}
+.el-pagination {
+  justify-content: center;
+  margin: 20px 0 10px;
+}
+.el-pagination.is-background .el-pager li:not(.is-disabled).is-active {
+  background-color: var(--color) !important;
+}
+.el-pager li:hove {
+  color: var(--color) !important;
+}
+.el-pagination button:hover {
+  color: var(--color) !important;
+}
+
+.el-pagination.is-background .el-pager li:not(.is-disabled):hover {
+  color: var(--color) !important;
+}
+.el-pagination.is-background .el-pager li.is-active:hover {
+  color: #fff !important;
+}
 
 .app-container {
-  height: 100%;
-  overflow-y: auto;
   background: #f0f2f5;
+  margin: 15px;
 }
 .app-container::-webkit-scrollbar-track-piece {
   background-color: rgba(255, 255, 255, 0.6);
