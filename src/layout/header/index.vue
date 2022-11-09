@@ -52,7 +52,6 @@ import BreadCrumbVue from './BreadCrumb.vue'
 import FormDrawer from '@/components/FormDrawer.vue'
 import { useRepassword, useLogout } from '@/hooks/useAdmin'
 import { handleFullScreen } from '@/utils/utils'
-
 const full = ref(false)
 
 const { formDrawerRef, formRef, form, rules, password, onSubmit } = useRepassword()

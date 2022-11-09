@@ -9,9 +9,11 @@
         <el-main>
           <tagsView></tagsView>
           <!-- <router-view /> -->
-          <router-view #default="{ route, Component }">
-            <transition enter-active-class="animate__animated animate__fadeIn">
-              <component :is="Component"></component>
+          <router-view #default="{ Component }">
+            <transition name="fade">
+              <keep-alive :max="10">
+                <component :is="Component"></component>
+              </keep-alive>
             </transition>
           </router-view>
         </el-main>
@@ -44,8 +46,43 @@ import tagsView from '@/layout/tags/index.vue'
   }
   .el-main {
     background-color: #f0f2f5;
-    overflow-y: hidden;
+    overflow-y: auto;
     padding: 0;
+  }
+  .el-main::-webkit-scrollbar-track-piece {
+    background-color: rgba(255, 255, 255, 0.6);
+  }
+  .el-main::-webkit-scrollbar {
+    width: 5px !important;
+    height: 3px;
+  }
+  .el-main::-webkit-scrollbar-thumb {
+    background-color: #999;
+    background-clip: padding-box;
+    min-height: 28px;
+    overflow-x: hidden;
+  }
+  .el-main::-webkit-scrollbar-thumb:hover {
+    background-color: #000;
+  }
+  .fade-enter-from {
+    opacity: 0;
+  }
+  .fade-enter-to {
+    opacity: 1;
+  }
+  .fade-leave-from {
+    opacity: 1;
+  }
+  .fade-leave-to {
+    opacity: 0;
+  }
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: all 0.3s;
+  }
+  .fade-enter-active {
+    transition-delay: 0.3s;
   }
 }
 </style>

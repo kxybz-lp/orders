@@ -1,55 +1,80 @@
 <template>
-  <div class="tabs">
-    <el-tag
-      :key="tag.path"
-      type="info"
-      size="small"
-      v-for="(tag, index) in tabsList"
-      :closable="tag.name !== 'Home'"
-      :disable-transitions="false"
-      @close="handleClose(tag, index)"
-      @click="changeMenu(tag)"
-      :effect="currentRoute === tag.path ? 'dark' : 'plain'"
-    >
-      {{ tag.label }}
-    </el-tag>
+  <div class="tablist">
+    <el-icon @click="scroll(0)">
+      <el-icon-arrow-left />
+    </el-icon>
+    <div class="tabs">
+      <el-scrollbar ref="scrollbar">
+        <div class="tabs-scroll">
+          <el-tag
+            :key="tag.path"
+            type="info"
+            size="small"
+            v-for="(tag, index) in tabList"
+            :closable="tag.path !== '/'"
+            :disable-transitions="false"
+            @close="closeTab(tag, index)"
+            @click="changeMenu(tag)"
+            :effect="currentRoute === tag.path ? 'dark' : 'plain'"
+          >
+            {{ tag.label }}
+          </el-tag>
+        </div>
+      </el-scrollbar>
+    </div>
+    <el-icon @click="scroll(200)">
+      <el-icon-arrow-right />
+    </el-icon>
+    <el-dropdown @command="handleCommand">
+      <span class="tabs-close">
+        <el-icon>
+          <el-icon-arrow-down />
+        </el-icon>
+      </span>
+      <template #dropdown>
+        <el-dropdown-menu>
+          <el-dropdown-item command="other">关闭其他</el-dropdown-item>
+          <el-dropdown-item command="all">关闭全部</el-dropdown-item>
+        </el-dropdown-menu>
+      </template>
+    </el-dropdown>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
-
-const store = useStore()
-const router = useRouter()
-const tabsList = computed(() => store.state.tabsList)
-const currentRoute = computed(() => store.state.currentRoute)
-
-const handleClose = (tag, index) => {
-  let tab = tabsList.value
-  let length = tab.length - 1
-  store.commit('closeTab', tag)
-  // 如果关闭的标签不是当前路由的话，就不跳转
-  if (tag.path !== currentRoute.value) {
-    return
-  }
-
-  // 关闭的标签是最右边的话，往左边跳转一个
-  if (index === length) {
-    router.push(tab[index - 1].path)
-  } else {
-    // 否则往右边跳转
-    router.push(tab[index].path)
-  }
-}
-const changeMenu = (tag) => {
-  router.push({ name: tag.name }).catch((err) => err) //catch解决重复点击报错
-  store.commit('selectMenu', tag)
+import { useTabList } from '@/hooks/useTabList'
+import { ref } from 'vue'
+const { currentRoute, tabList, closeTab, changeMenu, handleCommand } = useTabList()
+const scrollbar = ref(null)
+const scroll = (pos) => {
+  scrollbar.value.scrollTo(pos)
 }
 </script>
 
 <style lang="scss" scoped>
+.tablist {
+  display: flex;
+  align-items: center;
+  height: 25px;
+  line-height: 25px;
+  background-color: #fff;
+  overflow: hidden;
+  .tabs {
+    flex: 1;
+    overflow: hidden;
+  }
+  .tabs-scroll {
+    display: flex;
+    flex-wrap: nowrap;
+  }
+  .el-dropdown {
+    border-left: 1px solid #f6f6f6;
+  }
+}
+.tablist .el-icon {
+  width: 30px;
+  cursor: pointer;
+}
 .el-tag {
   border-radius: 0;
   cursor: pointer;
@@ -72,5 +97,8 @@ const changeMenu = (tag) => {
 }
 .el-tag--medium {
   line-height: 28px;
+}
+.el-tag--small {
+  height: 23px;
 }
 </style>

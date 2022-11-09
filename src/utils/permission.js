@@ -15,7 +15,6 @@ router.beforeEach(async (to, from, next) => {
   // 没有登录，强制跳转回登录页
   if (!token && to.path != '/login') {
     toast('请先登录', 'error')
-    removeToken()
     return next({ path: '/login' })
   }
 
@@ -28,10 +27,10 @@ router.beforeEach(async (to, from, next) => {
   // 获取登录账号信息,刷新页面重新获取
   if (token && !hasGetInfo) {
     let { menu } = await store.dispatch('getinfo')
+    console.log(hasGetInfo)
     // 动态添加路由
     hasNewRoutes = addRoutes(menu)
     hasGetInfo = true
-    console.log(hasNewRoutes)
   }
 
   // 删除临时路由

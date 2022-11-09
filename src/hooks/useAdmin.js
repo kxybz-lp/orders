@@ -51,9 +51,8 @@ export function useRepassword() {
         .then((res) => {
           if (res.code > 0) {
             toast('修改密码成功，请重新登录')
-            store.dispatch('logout').finally(() => {
-              router.push('/login')
-            })
+            store.dispatch('logout')
+            router.push('/login')
           } else {
             toast(res.message, 'error')
           }
@@ -80,10 +79,9 @@ export function useLogout() {
   function logout() {
     showModal('是否要退出登录？').then((res) => {
       admin.logout().finally(() => {
-        store.dispatch('logout').finally(() => {
-          router.push('/login')
-          toast('退出登录成功')
-        })
+        store.dispatch('logout')
+        router.push('/login')
+        toast('退出登录成功')
       })
     })
   }

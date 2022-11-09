@@ -34,11 +34,11 @@
       <div class="app-body">
         <el-table :data="state.dataList" stripe style="width: 100%" :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }">
           <el-table-column type="selection" prop="id" width="55"> </el-table-column>
-          <el-table-column prop="name" label="登录名"> </el-table-column>
-          <el-table-column prop="role_name" label="角色"> </el-table-column>
-          <el-table-column prop="branch_name" label="所属公司"> </el-table-column>
-          <el-table-column prop="ip" label="最后登录IP"> </el-table-column>
-          <el-table-column sortable label="最后登录时间">
+          <el-table-column prop="name" label="登录名" width="140"> </el-table-column>
+          <el-table-column prop="role_name" label="角色" width="140"> </el-table-column>
+          <el-table-column prop="branch_name" label="所属公司" width="160"> </el-table-column>
+          <el-table-column prop="ip" label="最后登录IP" width="140"> </el-table-column>
+          <el-table-column sortable label="最后登录时间" width="140">
             <template #default="scope">
               {{ $filters.dateFormart(scope.row.last_login_time, 'hour') }}
             </template>
@@ -50,7 +50,7 @@
           </el-table-column>
           <el-table-column label="操作" width="140">
             <template #default="scope">
-              <el-button size="small" class="el-button--theme" @click="handleEdit(scope.$index, scope.row)">编辑 </el-button>
+              <el-button size="small" color="var(--color)" @click="handleEdit(scope.$index, scope.row)">编辑 </el-button>
               <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)"> 删除 </el-button>
             </template>
           </el-table-column>

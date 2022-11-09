@@ -8,15 +8,13 @@ export default createStore({
     collapse: false,
     token: '',
     adminInfo: null,
-    currentRoute: '/home', //当前页面路由
+    currentRoute: '/', //当前页面路由
     menuList: null,
-    tabsList: [
+    tabList: [
       //标签导航
       {
-        name: 'Home',
         label: '首页',
-        icon: 'HomeFilled',
-        path: '/home',
+        path: '/',
       },
     ],
   },
@@ -26,12 +24,16 @@ export default createStore({
       state.collapse = !state.collapse
     },
     //设置当前页面路由
-    switchCurrentRoute(state, val) {
+    setCurrentRoute(state, val) {
       state.currentRoute = val
     },
     //设置权限菜单
     setMenuList(state, val) {
       state.menuList = val
+    },
+    //设置权限菜单
+    setTabList(state, val) {
+      state.tabList = val
     },
     //选择标签
     selectMenu(state, val) {
@@ -42,16 +44,6 @@ export default createStore({
         let result = state.tabsList.findIndex((item) => item.path === val.path)
         result === -1 ? state.tabsList.push(val) : ''
       }
-    },
-
-    //关闭标签
-    closeTab(state, val) {
-      let index = state.tabsList.findIndex((item) => item.name === val.name)
-      state.tabsList.splice(index, 1)
-    },
-    pushtags(state, val) {
-      let result = state.tabsList.findIndex((item) => item.name === val.name)
-      result === -1 ? state.tabsList.push(val) : ''
     },
     //设置登录管理员账号信息
     setAdminInfo(state, val) {
@@ -76,7 +68,7 @@ export default createStore({
     logout({ commit }) {
       removeToken()
       commit('setAdminInfo', null)
-      commit('setMenuList', null)
+      // commit('setMenuList', [])
     },
   },
   modules: {},
@@ -86,7 +78,7 @@ export default createStore({
       reducer(val) {
         return {
           // 只储存state中的token
-          tabsList: val.tabsList,
+          tabList: val.tabList,
           currentRoute: val.currentRoute,
           menuList: val.menuList,
           adminInfo: val.adminInfo,

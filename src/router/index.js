@@ -9,7 +9,6 @@ const routes = [
     name: 'LayOut',
     component: Layout,
     meta: { title: '首页' },
-    // redirect: '/home',
   },
   {
     path: '/login',
@@ -28,7 +27,7 @@ const routes = [
 // 权限路由,
 const authRoutes = [
   {
-    path: '/home',
+    path: '/',
     name: 'Home',
     component: Home,
     meta: { title: '数据概览', permissions: true },
@@ -79,7 +78,7 @@ if (!router.hasRoute()) {
   router.addRoute({
     path: window.location.pathname,
     name: 'TempRoute',
-    component: () => import('@/layout/index.vue'),
+    component: () => import('@/views/other/404.vue'),
   })
 }
 
@@ -103,6 +102,6 @@ export function addRoutes(menus) {
   findAndAddRoutesByMenus(menus)
 
   //查看router里所有路由
-  console.log(router.getRoutes())
+  // console.log(router.getRoutes())
   return hasNewRoutes
 }
