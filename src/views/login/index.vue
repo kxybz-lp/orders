@@ -140,7 +140,7 @@ onBeforeUnmount(() => {
     box-shadow: 0 1px 3px rgb(26 26 26 / 10%);
     .switch {
       display: flex;
-      justify-content: end;
+      justify-content: flex-end;
       padding: 5px 5px 0 0;
       &-item {
         display: flex;
