@@ -9,7 +9,9 @@ const app = createApp(App)
 for (let iconName in ElIcon) {
   app.component(iconName, ElIcon[iconName])
 }
-
+// 权限指令
+import permission from '@/directives/permission'
+app.use(permission)
 // 全局方法
 app.config.globalProperties.$filters = {
   dateFormart(val, type = 'date') {
