@@ -1,6 +1,6 @@
 <!-- 全局抽屉组件 -->
 <template>
-  <el-drawer v-model="showDrawer" :title="title" :size="size" :close-on-click-modal="false">
+  <el-drawer v-model="showDrawer" :title="title" :size="size" :close-on-click-modal="false" @closed="drawerClosed">
     <div class="formDrawer">
       <div class="body">
         <slot></slot>
@@ -43,8 +43,9 @@ const openDrawer = () => (showDrawer.value = true)
 const closeDrawer = () => (showDrawer.value = false)
 
 // 提交
-const emit = defineEmits(['submit'])
+const emit = defineEmits(['submit', 'drawerClosed'])
 const submit = () => emit('submit')
+const drawerClosed = () => emit('drawerClosed')
 
 defineExpose({
   openDrawer,
@@ -75,5 +76,8 @@ defineExpose({
   margin-top: auto;
   display: flex;
   align-items: center;
+}
+.actions :deep(.el-icon) {
+  color: #fff;
 }
 </style>

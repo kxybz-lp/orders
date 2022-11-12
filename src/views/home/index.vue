@@ -53,7 +53,7 @@
     </el-row>
     <el-row :gutter="20" class="statistical">
       <el-col :sapn="24">
-        <el-card shadow="hover">
+        <el-card shadow="hover" :body-style="{ padding: 0 }">
           <template #header>
             <div class="statistical-header">
               <div class="type">

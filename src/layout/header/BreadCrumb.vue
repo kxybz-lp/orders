@@ -15,7 +15,7 @@ import { useStore } from 'vuex'
 const route = useRoute()
 const router = useRouter()
 const store = useStore()
-//当前路由的完整路径
+//当前路由的完整路径,嵌套路由
 //console.log(route.matched)
 const breadcrumbList = ref([])
 const initBreadcrumbList = () => {

@@ -14,7 +14,6 @@
         :collapse-transition="false"
         :router="true"
         :unique-opened="true"
-        @select="handSelect"
       >
         <NavItem :menu="menuList"></NavItem>
       </el-menu>
@@ -30,7 +29,6 @@ const store = useStore()
 const logo = require('@/assets/images/logo_s.png')
 const menuList = computed(() => store.state.menuList)
 const currentRoute = computed(() => store.state.currentRoute)
-const handSelect = (index, indexPath, item, routeResult) => {}
 </script>
 
 <style lang="scss" scoped>
