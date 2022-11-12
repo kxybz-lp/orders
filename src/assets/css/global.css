@@ -44,6 +44,7 @@ div:focus {
 }
 :root {
   --color: #004c59;
+  --el-color-primary: #004c59;
 }
 
 .el-menu {
@@ -90,7 +91,9 @@ div:focus {
 .el-pagination.is-background .el-pager li.is-active:hover {
   color: #fff !important;
 }
-
+.el-loading-spinner .path{
+  stroke: #005432 !important;
+}
 .app-container {
   background: #f0f2f5;
   margin: 15px;

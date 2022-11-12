@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Layout from '@/layout/index.vue'
-import Home from '@/views/home/index.vue'
 
 //通用路由
 const routes = [
@@ -24,49 +23,49 @@ const routes = [
   },
 ]
 
-// 权限路由,
-const authRoutes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home,
-    meta: { title: '数据概览', permissions: true },
-  },
-  {
-    path: '',
-    name: 'Admins',
-    meta: { title: '用户管理' },
-    path: '/admin',
-    redirect: '/admin/index',
-    children: [
-      {
-        path: '/admin/index',
-        name: 'Admin',
-        component: () => import(/* webpackChunkName: "admin" */ '@/views/admin/index.vue'),
-        meta: { title: '管理员列表', permissions: true },
-      },
-      {
-        path: '/admin/role',
-        name: 'Role',
-        component: () => import(/* webpackChunkName: "role" */ '@/views/role/index.vue'),
-        meta: { title: '角色列表', permissions: true },
-      },
-    ],
-  },
-  {
-    path: '/system',
-    name: 'System',
-    meta: { title: '系统管理', permissions: true },
-    children: [
-      {
-        path: '/system/menu',
-        name: 'Menu',
-        component: () => import(/* webpackChunkName: "menu" */ '@/views/menu/index.vue'),
-        meta: { title: '菜单列表', permissions: true },
-      },
-    ],
-  },
-]
+// 权限路由,面包屑导航需要使用嵌套路由
+// const authRoutes = [
+//   {
+//     path: '/',
+//     name: 'Home',
+//     component: Home,
+//     meta: { title: '数据概览', permissions: true },
+//   },
+//   {
+//     path: '',
+//     name: 'Admins',
+//     meta: { title: '用户管理' },
+//     path: '/admin',
+//     redirect: '/admin/index',
+//     children: [
+//       {
+//         path: '/admin/index',
+//         name: 'Admin',
+//         component: () => import(/* webpackChunkName: "admin" */ '@/views/admin/index.vue'),
+//         meta: { title: '管理员列表', permissions: true },
+//       },
+//       {
+//         path: '/admin/role',
+//         name: 'Role',
+//         component: () => import(/* webpackChunkName: "role" */ '@/views/role/index.vue'),
+//         meta: { title: '角色列表', permissions: true },
+//       },
+//     ],
+//   },
+//   {
+//     path: '/system',
+//     name: 'System',
+//     meta: { title: '系统管理', permissions: true },
+//     children: [
+//       {
+//         path: '/system/menu',
+//         name: 'Menu',
+//         component: () => import(/* webpackChunkName: "menu" */ '@/views/menu/index.vue'),
+//         meta: { title: '菜单列表', permissions: true },
+//       },
+//     ],
+//   },
+// ]
 
 export const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
@@ -88,12 +87,17 @@ export function addRoutes(menus) {
   let hasNewRoutes = false
   const findAndAddRoutesByMenus = (arr) => {
     arr.forEach((e) => {
-      let item = authRoutes.find((o) => o.path == e.path)
-      if (item && !router.hasRoute(item.path)) {
+      if (e.is_route && !router.hasRoute(e.path)) {
+        let item = {
+          path: e.path,
+          name: e.name,
+          component: e.component ? () => import('@/' + e.component) : '',
+          meta: e.meta,
+        }
         router.addRoute('LayOut', item)
         hasNewRoutes = true
       }
-      if (e.child && e.child.length > 0) {
+      if (e.children && e.children.length > 0) {
         findAndAddRoutesByMenus(e.children)
       }
     })
