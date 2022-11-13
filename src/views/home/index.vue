@@ -24,7 +24,7 @@
         </el-col>
       </template>
       <el-col :xs="24" :sm="12" :lg="6" :offset="0" v-for="(item, index) in panels" :key="item.title">
-        <el-card>
+        <el-card shadow="hover" class="border-0">
           <div class="el-card-header">
             <span>{{ item.title }}</span>
             <el-tooltip :content="item.tooltip" placement="top">

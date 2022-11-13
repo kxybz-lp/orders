@@ -5,17 +5,17 @@
         {{ item.name }}
       </AsideList>
     </el-scrollbar>
+    <FormDrawer :title="drawerTitle" ref="formDrawerRef" @drawerClosed="drawerClosed" @submit="handleSubmit">
+      <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false">
+        <el-form-item label="分类名称" prop="name">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="排序号" prop="sort_no">
+          <el-input-number v-model="form.sort_no" :min="1" :max="1000" />
+        </el-form-item>
+      </el-form>
+    </FormDrawer>
   </el-aside>
-  <FormDrawer :title="drawerTitle" ref="formDrawerRef" @drawerClosed="drawerClosed" @submit="handleSubmit">
-    <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false">
-      <el-form-item label="分类名称" prop="name">
-        <el-input v-model="form.name"></el-input>
-      </el-form-item>
-      <el-form-item label="排序号" prop="sort_no">
-        <el-input-number v-model="form.sort_no" :min="1" :max="1000" />
-      </el-form-item>
-    </el-form>
-  </FormDrawer>
 </template>
 <script setup>
 import { ref, computed, reactive } from 'vue'
@@ -152,6 +152,7 @@ const handleSubmit = () => {
 }
 // 弹窗关闭重置表单
 const drawerClosed = () => {
+  if (!formRef.value) return
   formRef.value.resetFields()
 }
 defineExpose({

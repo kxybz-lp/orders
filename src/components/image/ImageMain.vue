@@ -4,13 +4,14 @@
       <el-scrollbar>
         <el-empty description="暂无图片" v-if="!imageList.length" />
         <el-row :gutter="10">
-          <el-col :span="6" :offset="0" v-for="item in imageList" :key="item.id" style="margin-bottom: 15px">
-            <el-card shadow="hover" :body-style="{ padding: 0 }">
+          <el-col :sm="12" :md="6" :offset="0" v-for="item in imageList" :key="item.id" style="margin-bottom: 15px">
+            <el-card shadow="hover" :body-style="{ padding: 0 }" :class="item.checked ? 'checked' : ''">
               <div class="img-tit">
                 <el-image :src="item.url" fit="cover" style="width: 100%; height: 150px" :preview-src-list="[item.url]" :initial-index="0"></el-image>
                 <div class="title">{{ item.name }}</div>
               </div>
               <div class="buttons">
+                <el-checkbox v-if="openChoose" v-model="item.checked" @change="handleChooseChange(item)" />
                 <el-button class="buttons-edit" text type="primary" size="small" @click.stop="handleEdit(item)"> 编辑 </el-button>
                 <el-button class="buttons-delete" text type="primary" size="small" @click.stop="handleDelete(item.id)"> 删除 </el-button>
               </div>
@@ -22,22 +23,22 @@
     <div class="image-page">
       <el-pagination background layout="prev, pager, next" :total="count" :current-page="params.page" :page-size="params.pageSize" @current-change="getData" />
     </div>
+    <el-drawer v-model="drawer" title="上传图片" :destroy-on-close="true">
+      <UploadFile :data="{ class_id: params.class_id }" @success="handleUploadSuccess" />
+    </el-drawer>
+    <FormDrawer title="修改" ref="formDrawerRef" @drawerClosed="drawerClosed" @submit="handleSubmit">
+      <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false">
+        <el-form-item label="所属分类" prop="form.class_id">
+          <el-select style="width: 100%" v-model="form.class_id" placeholder="请选择">
+            <el-option :value="item.id" :label="item.name" v-for="item in classList" :key="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+    </FormDrawer>
   </el-main>
-  <el-drawer v-model="drawer" title="上传图片" :destroy-on-close="true">
-    <UploadFile :data="{ class_id: params.class_id }" @success="handleUploadSuccess" />
-  </el-drawer>
-  <FormDrawer title="修改" ref="formDrawerRef" @drawerClosed="drawerClosed" @submit="handleSubmit">
-    <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false">
-      <el-form-item label="所属分类" prop="form.class_id">
-        <el-select style="width: 100%" v-model="form.class_id" placeholder="请选择">
-          <el-option :value="item.id" :label="item.name" v-for="item in classList" :key="item.id"></el-option>
-        </el-select>
-      </el-form-item>
-    </el-form>
-  </FormDrawer>
 </template>
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import { toast, showModal } from '@/utils/utils'
 import FormDrawer from '../FormDrawer.vue'
 import image from '@/api/image'
@@ -108,17 +109,10 @@ const handleEdit = (item) => {
   form.class_id = item.class_id
   form.name = item.name
   form.url = item.url
-  loading.value = true
-  image
-    .getClassList()
-    .then((res) => {
-      classList.value = res.result
-      console.log(classList.value)
-      formDrawerRef.value.openDrawer()
-    })
-    .finally(() => {
-      loading.value = false
-    })
+  image.getClassList().then((res) => {
+    classList.value = res.result
+    formDrawerRef.value.openDrawer()
+  })
 }
 // 删除
 const handleDelete = (id) => {
@@ -171,7 +165,30 @@ const handleSubmit = () => {
 }
 // 弹窗关闭重置表单
 const drawerClosed = () => {
+  if (!formRef.value) return
   formRef.value.resetFields()
+}
+
+const props = defineProps({
+  openChoose: {
+    type: Boolean,
+    default: false,
+  },
+  limit: {
+    type: Number,
+    default: 1,
+  },
+})
+
+// 选中的图片
+const emit = defineEmits(['choose'])
+const checkedImage = computed(() => imageList.value.filter((o) => o.checked))
+const handleChooseChange = (item) => {
+  if (item.checked && checkedImage.value.length > props.limit) {
+    item.checked = false
+    return toast(`最多只能选中${props.limit}张`, 'error')
+  }
+  emit('choose', checkedImage.value)
 }
 defineExpose({
   loadData,
@@ -186,6 +203,9 @@ defineExpose({
   .image-lists {
     flex: 1;
     overflow: hidden;
+    .checked {
+      border: 1px solid var(--color);
+    }
     .img-tit {
       height: 150px;
       position: relative;
@@ -209,6 +229,9 @@ defineExpose({
       align-items: center;
       justify-content: center;
       padding: 5px 0;
+      .el-button {
+        margin-left: 0 !important;
+      }
     }
   }
   .image-page {

@@ -30,6 +30,7 @@ router.beforeEach(async (to, from, next) => {
     // 动态添加路由
     hasNewRoutes = addRoutes(menu)
     hasGetInfo = true
+    console.log(hasNewRoutes)
   }
 
   // 删除临时路由
