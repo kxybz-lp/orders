@@ -72,7 +72,7 @@ defineExpose({
   overflow-y: auto;
 }
 .formDrawer .actions {
-  height: 50px;
+  height: 40px;
   margin-top: auto;
   display: flex;
   align-items: center;

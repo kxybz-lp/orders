@@ -14,6 +14,17 @@ export function useRepassword() {
     password: '',
     repassword: '',
   })
+  // 确认密码验证
+  const validateCheckPass = (rule, value, callback) => {
+    if (value === '') {
+      callback(new Error('确认密码不能为空'))
+    } else {
+      if (value != form.password) {
+        callback(new Error('确认密码与密码不一致'))
+      }
+      callback()
+    }
+  }
   const rules = {
     oldpassword: [
       {
@@ -31,8 +42,7 @@ export function useRepassword() {
     ],
     repassword: [
       {
-        required: true,
-        message: '确认密码不能为空',
+        validator: validateCheckPass,
         trigger: 'blur',
       },
     ],
