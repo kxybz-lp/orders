@@ -63,7 +63,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="排序号">
-          <el-input v-model="form.sort_no"></el-input>
+          <el-input v-model="form.sort_no" type="number"></el-input>
         </el-form-item>
         <el-form-item label="描述" prop="remark">
           <el-input type="textarea" row="2" v-model="form.remark" minlength="2" maxlength="20" show-word-limit></el-input>
@@ -78,7 +78,7 @@ import ListHeader from '@/components/ListHeader.vue'
 import IconSelect from '@/components/IconSelect.vue'
 import menu from '@/api/menu'
 import { useInitTable, useInitForm } from '@/hooks/useCommon'
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 const defaultExpandedKeys = ref([])
 const { loading, dataList, handleDelete, getData } = useInitTable({
   api: menu,

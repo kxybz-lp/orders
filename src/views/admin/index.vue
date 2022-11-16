@@ -31,11 +31,7 @@
         <el-table-column prop="role_name" label="角色" width="140"> </el-table-column>
         <el-table-column prop="branch_name" label="所属公司" width="160"> </el-table-column>
         <el-table-column prop="ip" label="最后登录IP" width="140"> </el-table-column>
-        <el-table-column prop="last_login_time" sortable label="最后登录时间" width="140">
-          <template #default="scope">
-            {{ $filters.dateFormart(scope.row.last_login_time, 'hour') }}
-          </template>
-        </el-table-column>
+        <el-table-column prop="last_login_time" sortable label="最后登录时间" width="140"></el-table-column>
         <el-table-column label="状态" v-permission="32">
           <template #default="scope">
             <el-switch
@@ -114,6 +110,7 @@ const { loading, count, dataList, params, getData, handleCurrentChange, handleSw
   onGetListSuccess: (res) => {
     count.value = res.result.count
     dataList.value = res.result.data.map((o) => {
+      o.last_login_time = dateFormart(o.last_login_time, 'hour')
       o.statusLoading = false
       return o
     })
@@ -200,10 +197,30 @@ const { drawerTitle, formDrawerRef, formRef, rules, form, editId, handleAdd, han
   },
 })
 
+// 将字符串日期转时间戳， 2020-09-12 12:11:22
+// let time = (new Date(row.create_time)).getTime()
+// 当前时间戳
+let time_current = new Date().getTime()
+console.log(time_current)
 // const params_branch = reactive({
 //   page: 1,
 //   pageSize: 10,
 // })
+// 时间戳格式化
+function dateFormart(val, type = 'date') {
+  const dt = new Date(parseInt(val) * 1000) //后台返回的时间戳是以秒单位，js是以毫秒为单位
+  const y = dt.getFullYear()
+  const m = (dt.getMonth() + 1 + '').padStart(2, '0')
+  const d = (dt.getDate() + '').padStart(2, '0')
+  const hh = (dt.getHours() + '').padStart(2, '0')
+  const mm = (dt.getMinutes() + '').padStart(2, '0')
+  const ss = (dt.getSeconds() + '').padStart(2, '0')
+  if (type == 'hour') {
+    return `${y}-${m}-${d} ${hh}:${mm}`
+  } else {
+    return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
+  }
+}
 
 const roleList = ref([])
 const branchList = ref([])
