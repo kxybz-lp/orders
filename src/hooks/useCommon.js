@@ -1,4 +1,4 @@
-import { reactive, ref, computed, nextTick } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import { toast, showModal } from '@/utils/utils'
 
 // 列表，分页，搜索，删除，修改状态，排序
@@ -111,36 +111,43 @@ export function useInitTable(opt = {}) {
 // 新增，修改
 export function useInitForm(opt = {}) {
   const editId = ref(0)
+  const defaultForm = opt.form
   const drawerTitle = computed(() => (editId.value ? '用户修改' : '用户新增'))
   const formDrawerRef = ref(null)
   const formRef = ref(null)
-  const form = reactive({ ...opt.form })
-  // const rules = opt.rules || {}
+  let form = reactive({ ...opt.form })
+  const rules = opt.rules || {}
+
+  // 重置表单
+  function resetForm(row = false) {
+    if (formRef.value) formRef.value.clearValidate()
+    for (const key in defaultForm) {
+      form[key] = row[key]
+    }
+  }
 
   // 新增
   const handleAdd = () => {
     editId.value = 0
     formDrawerRef.value.openDrawer()
+    resetForm(defaultForm)
   }
   // 编辑，重要内容请求服务器获取item
   const handleEdit = (row) => {
     editId.value = row.id
-
     formDrawerRef.value.openDrawer()
-    // 页面渲染后赋值，解决关闭弹窗resetFields无效问题
-    nextTick(() => {
-      form.name = row.name
-      form.password = ''
-      form.role_id = row.role_id
-      form.status = row.status
-      form.branch_id = row.branch_id.split(',').map((o) => parseInt(o))
-    })
+    if (opt.fliterParam && typeof opt.fliterParam == 'function') {
+      opt.fliterParam(row)
+    } else {
+      resetForm(row)
+    }
   }
 
   // 提交
   const handleSubmit = () => {
     formRef.value.validate((valid) => {
       if (!valid) return
+      // console.log(form)
       formDrawerRef.value.showLoading()
       if (editId.value) {
         opt.api
@@ -186,7 +193,7 @@ export function useInitForm(opt = {}) {
     formDrawerRef,
     formRef,
     form,
-    // rules,
+    rules,
     editId,
     handleAdd,
     handleEdit,

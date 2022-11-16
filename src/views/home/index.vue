@@ -85,7 +85,7 @@
                 <div ref="chatBar" id="chart"></div>
               </el-col>
               <el-col :md="24" :lg="6" :offset="0">
-                <div class="branch_sort" v-permission="1">
+                <div class="branch_sort">
                   <div class="branch_sort-title">门店签单排名</div>
                   <div class="branch_sort-body">
                     <div class="branch_sort-item" v-for="(item, index) in store" :key="index">

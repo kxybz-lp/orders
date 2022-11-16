@@ -32,11 +32,11 @@ const admin = {
   password(params) {
     return post('/order/admin/password', params)
   },
-  // 用户新增
+  // 新增
   create(params) {
     return post('/order/admin/create', params)
   },
-  // 用户更新
+  // 更新
   edit(id, params) {
     return post(`/order/admin/edit/${id}`, params)
   },
@@ -44,7 +44,7 @@ const admin = {
   status(id, params) {
     return post(`/order/admin/status/${id}`, params)
   },
-  // 用户删除
+  // 删除
   delete(id) {
     return post(`/order/admin/delete/${id}`)
   },

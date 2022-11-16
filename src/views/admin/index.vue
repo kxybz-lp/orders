@@ -1,27 +1,21 @@
 <template>
   <div class="app-container">
     <el-card class="admin-card" shadow="hover">
-      <el-row :gutter="0" class="search">
-        <el-col :md="8" :offset="0">
-          <el-button type="primary" size="small" @click="handleAdd">新增</el-button>
-        </el-col>
-        <el-col :md="16" :offset="0" style="height: 24px">
-          <el-form ref="searchRef" label-width="0px" size="small">
-            <el-form-item label="">
-              <el-select v-model="params.role_id" placeholder="选择角色" clearable @clear="getData">
-                <!-- <el-option value="" label="选择角色" /> -->
-                <el-option :value="item.id" :label="item.name" v-for="item in roleList" :key="item.id"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="">
-              <el-input v-model="params.name" placeholder="输入用户名" clearable @clear="getData"></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="getData">搜索</el-button>
-            </el-form-item>
-          </el-form>
-        </el-col>
-      </el-row>
+      <ListHeader :ruleid="ruleid" @add="handleAdd">
+        <el-form class="search-form" :model="params" ref="searchRef" label-width="0px" size="small">
+          <el-form-item label="">
+            <el-select v-model="params.role_id" placeholder="选择角色" clearable @clear="getData">
+              <el-option :value="item.id" :label="item.name" v-for="item in roleList" :key="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="">
+            <el-input v-model="params.name" placeholder="输入用户名" clearable @clear="getData"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="getData">搜索</el-button>
+          </el-form-item>
+        </el-form>
+      </ListHeader>
       <el-table :data="dataList" stripe style="width: 100%" :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }" @sort-change="sortChange" v-loading="loading">
         <el-table-column type="selection" prop="id" width="55"> </el-table-column>
         <el-table-column prop="name" label="登录名" width="140"> </el-table-column>
@@ -33,7 +27,7 @@
             {{ $filters.dateFormart(scope.row.last_login_time, 'hour') }}
           </template>
         </el-table-column>
-        <el-table-column label="状态">
+        <el-table-column label="状态" v-permission="32">
           <template #default="scope">
             <el-switch
               :modelValue="scope.row.status"
@@ -47,8 +41,8 @@
         </el-table-column>
         <el-table-column label="操作" width="140">
           <template #default="scope">
-            <el-button size="small" type="primary" :disabled="scope.row.id == 777" @click="handleEdit(scope.row)">编辑 </el-button>
-            <el-button size="small" type="danger" :disabled="scope.row.id == 777" @click="handleDelete(scope.row.id)"> 删除 </el-button>
+            <el-button v-permission="31" size="small" type="primary" :disabled="scope.row.id == 777" @click="handleEdit(scope.row)">编辑 </el-button>
+            <el-button v-permission="33" size="small" type="danger" :disabled="scope.row.id == 777" @click="handleDelete(scope.row.id)"> 删除 </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -88,8 +82,9 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import FormDrawer from '@/components/FormDrawer.vue'
+import ListHeader from '@/components/ListHeader.vue'
 // import ChooseImage from '@/components/ChooseImage.vue'
 import admin from '@/api/admin'
 import { toast } from '@/utils/utils'
@@ -111,28 +106,8 @@ const { loading, count, dataList, params, getData, handleCurrentChange, handleSw
     })
   },
 })
-const { drawerTitle, formDrawerRef, formRef, form, editId, handleAdd, handleEdit, handleSubmit, drawerClosed } = useInitForm({
-  api: admin,
-  getData,
-  form: {
-    name: '',
-    password: '',
-    password_confirm: '',
-    role_id: '',
-    branch_id: [],
-    // avatar: '',
-    status: 1,
-  },
-})
 
-// const params_branch = reactive({
-//   page: 1,
-//   pageSize: 10,
-// })
-
-const roleList = ref([])
-const branchList = ref([])
-
+const ruleid = ref(8) //新增 权限ID
 // 密码验证
 const validatePass = (rule, value, callback) => {
   if (value === '' && editId.value == 0) {
@@ -152,46 +127,71 @@ const validateCheckPass = (rule, value, callback) => {
     callback()
   }
 }
-const rules = {
-  name: [
-    {
-      required: true,
-      message: '登录名不能为空',
-      trigger: 'blur',
-    },
-  ],
-  password: [
-    {
-      validator: validatePass,
-      trigger: 'blur',
-    },
-    { min: 6, max: 20, message: '密码长度6至20位之间', trigger: 'blur' },
-  ],
-  password_confirm: [
-    {
-      validator: validateCheckPass,
-      trigger: 'blur',
-    },
-  ],
-  role_id: [
-    {
-      required: true,
-      message: '请选择角色',
-      trigger: 'blur',
-    },
-  ],
-  branch_id: [
-    {
-      type: 'array',
-      required: true,
-      message: '请选择所属公司',
-      trigger: 'blur',
-    },
-  ],
-}
+const { drawerTitle, formDrawerRef, formRef, rules, form, editId, handleAdd, handleEdit, handleSubmit, drawerClosed } = useInitForm({
+  api: admin,
+  getData,
+  form: {
+    name: '',
+    password: '',
+    password_confirm: '',
+    role_id: '',
+    branch_id: [],
+    // avatar: '',
+    status: 1,
+  },
+  rules: {
+    name: [
+      {
+        required: true,
+        message: '登录名不能为空',
+        trigger: 'blur',
+      },
+    ],
+    password: [
+      {
+        validator: validatePass,
+        trigger: 'blur',
+      },
+      { min: 6, max: 20, message: '密码长度6至20位之间', trigger: 'blur' },
+    ],
+    password_confirm: [
+      {
+        validator: validateCheckPass,
+        trigger: 'blur',
+      },
+    ],
+    role_id: [
+      {
+        required: true,
+        message: '请选择角色',
+        trigger: 'blur',
+      },
+    ],
+    branch_id: [
+      {
+        type: 'array',
+        required: true,
+        message: '请选择所属公司',
+        trigger: 'blur',
+      },
+    ],
+  },
+  fliterParam: (row) => {
+    row['password'] = ''
+    row['branch_id'] = row['branch_id'].split(',').map((o) => parseInt(o))
+    for (const key in form) {
+      form[key] = row[key]
+    }
+  },
+})
 
-// const instance = getCurrentInstance()
-// const $api = instance.proxy.$api
+// const params_branch = reactive({
+//   page: 1,
+//   pageSize: 10,
+// })
+
+const roleList = ref([])
+const branchList = ref([])
 
 // select数据,合并远程请求
 admin.getSelect().then((res) => {
@@ -202,20 +202,8 @@ admin.getSelect().then((res) => {
     toast(res.message || 'Error', 'error')
   }
 })
+
+// const instance = getCurrentInstance()
+// const $api = instance.proxy.$api
 </script>
-<style lang="scss" scoped>
-.search {
-  margin: 0 0 20px 0;
-  padding: 0 0 15px 0;
-  border-bottom: 1px solid #eee;
-  align-items: center;
-  .el-form {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    .el-form-item {
-      margin-right: 10px;
-    }
-  }
-}
-</style>
+<style lang="scss" scoped></style>
