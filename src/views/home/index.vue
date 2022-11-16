@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-row :gutter="20" class="panels">
+    <el-row v-permission="54" :gutter="20" class="panels">
       <template v-if="panels.length == 0">
         <el-col :xs="24" :md="12" :lg="6" v-for="i in 4" :key="i">
           <el-skeleton style="width: 100%" animated loading>
@@ -81,10 +81,10 @@
           </template>
           <div class="statistical-body">
             <el-row :gutter="20">
-              <el-col :md="24" :lg="18" :span="18" :offset="0">
+              <el-col :md="24" :lg="18" :span="18" :offset="0" v-permission="55">
                 <div ref="chatBar" id="chart"></div>
               </el-col>
-              <el-col :md="24" :lg="6" :offset="0">
+              <el-col :md="24" :lg="6" :offset="0" v-permission="56">
                 <div class="branch_sort">
                   <div class="branch_sort-title">门店签单排名</div>
                   <div class="branch_sort-body">

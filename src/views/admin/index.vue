@@ -67,7 +67,7 @@
         </el-form-item>
         <el-form-item label="所属公司" prop="branch_id">
           <el-select clearable multiple filterable v-model="form.branch_id" placeholder="选择公司">
-            <el-option :value="item.id" :label="item.name" :disabled="item.status == 2" v-for="item in branchList" :key="item.id"></el-option>
+            <el-option :value="item.id.toString()" :label="item.name" :disabled="item.status == 2" v-for="item in branchList" :key="item.id"></el-option>
           </el-select>
         </el-form-item>
         <!-- <el-form-item label="头像" prop="avatar">
@@ -177,8 +177,9 @@ const { drawerTitle, formDrawerRef, formRef, rules, form, editId, handleAdd, han
     ],
   },
   fliterParam: (row) => {
+    console.log(row['branch_id'])
     row['password'] = ''
-    row['branch_id'] = row['branch_id'].split(',').map((o) => parseInt(o))
+    // row['branch_id'] = row['branch_id'].split(',').map((o) => parseInt(o))
     for (const key in form) {
       form[key] = row[key]
     }
