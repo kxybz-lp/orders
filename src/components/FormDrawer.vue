@@ -1,6 +1,6 @@
 <!-- 全局抽屉组件 -->
 <template>
-  <el-drawer v-model="showDrawer" :title="title" :size="size" :close-on-click-modal="false" @closed="drawerClosed">
+  <el-drawer v-model="showDrawer" :title="title" :size="size" :close-on-click-modal="false" :destroy-on-close="destroyOnClose" @closed="drawerClosed">
     <div class="formDrawer">
       <div class="body">
         <slot></slot>
@@ -21,6 +21,7 @@ const props = defineProps({
     type: String,
     default: '45%',
   },
+  // 关闭后清空组件
   destroyOnClose: {
     type: Boolean,
     default: false,

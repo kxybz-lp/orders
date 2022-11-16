@@ -1,7 +1,8 @@
 <template>
   <el-row :gutter="0" class="list-header">
     <el-col :md="8" :offset="0">
-      <el-button v-permission="ruleid" type="primary" size="small" @click="$emit('add')">新增</el-button>
+      <el-button v-if="btns.includes('create')" v-permission="ruleid" type="primary" size="small" @click="$emit('add')">新增</el-button>
+      <el-button v-if="btns.includes('delete')" v-permission="ruleid" type="danger" size="small" @click="$emit('delete')">批量删除</el-button>
     </el-col>
     <el-col :md="16" :offset="0" style="height: 24px">
       <slot />
@@ -24,13 +25,20 @@
   </el-row>
 </template>
 <script setup>
-defineProps({
+import { computed } from 'vue'
+
+const props = defineProps({
   ruleid: {
     type: Number,
     default: '',
   },
+  layout: {
+    type: String,
+    default: 'create',
+  },
 })
-defineEmits(['add'])
+const btns = computed(() => props.layout.split(','))
+defineEmits(['add', 'delete'])
 </script>
 <style lang="scss" scoped>
 .list-header {
