@@ -87,7 +87,7 @@ export function addRoutes(menus) {
   let hasNewRoutes = false
   const findAndAddRoutesByMenus = (arr) => {
     arr.forEach((e) => {
-      if (e.is_route && !router.hasRoute(e.path)) {
+      if (e.component && !router.hasRoute(e.path)) {
         let item = {
           path: e.path,
           name: e.name,

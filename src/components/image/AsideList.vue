@@ -2,10 +2,10 @@
   <div class="aside-list" :class="{ active: active }">
     <div class="name"><slot /></div>
     <div class="buttons">
-      <el-button class="buttons-edit" text type="primary" size="small" @click.stop="$emit('edit')">
+      <el-button v-permission="47" class="buttons-edit" text type="primary" size="small" @click.stop="$emit('edit')">
         <el-icon :size="12"><Edit /></el-icon>
       </el-button>
-      <el-button class="buttons-delete" text type="primary" size="small" @click.stop="$emit('delete')">
+      <el-button v-permission="48" class="buttons-delete" text type="primary" size="small" @click.stop="$emit('delete')">
         <el-icon :size="12"><Close /></el-icon>
       </el-button>
     </div>

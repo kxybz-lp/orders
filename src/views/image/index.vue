@@ -1,8 +1,8 @@
 <template>
   <el-container class="image-container" :style="{ height: h + 'px' }">
     <el-header class="image-header">
-      <el-button color="var(--color)" size="small" @click="handleOpenCreate">新增分类</el-button>
-      <el-button type="warning" size="small" @click="handleOpenUpload">图片上传</el-button>
+      <el-button v-permission="46" color="var(--color)" size="small" @click="handleOpenCreate">新增分类</el-button>
+      <el-button v-permission="49" type="warning" size="small" @click="handleOpenUpload">图片上传</el-button>
     </el-header>
     <el-container :style="{ height: vh + 'px' }">
       <ImageAside ref="ImageAsideRef" @change="handleAsideChange"></ImageAside>

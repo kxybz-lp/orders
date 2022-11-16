@@ -57,7 +57,9 @@ export default createStore({
         admin
           .getInfo()
           .then((res) => {
-            commit('setAdminInfo', res.result.adminInfo)
+            let adminInfo = res.result.adminInfo
+            adminInfo.auths = adminInfo.auths.split(',').map((o) => parseInt(o))
+            commit('setAdminInfo', adminInfo)
             commit('setMenuList', res.result.menu)
             resolve(res.result)
           })

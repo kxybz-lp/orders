@@ -22,13 +22,46 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, toRaw } from 'vue'
 import NavItem from './NavItem.vue'
 import { useStore } from 'vuex'
 const store = useStore()
 const logo = require('@/assets/images/logo_s.png')
 const menuList = computed(() => store.state.menuList)
 const currentRoute = computed(() => store.state.currentRoute)
+
+// 递归将多维数据转成一维数组
+// const filterMenu1 = (menuList, arr = []) => {
+//   menuList.forEach((item, index) => {
+//     if (item.is_menu) {
+//       arr.push({ id: item.id, pid: item.pid, name: item.name, label: item.label, icon: item.icon, path: item.path, children: [] })
+//       if (item.children && item.children.length > 0) {
+//         filterMenu1(item.children, arr)
+//       }
+//     }
+//     return arr
+//   })
+// }
+// 递归获取数组中的菜单
+// const filterMenu = (menuList, arr = []) => {
+//   menuList.forEach((item) => {
+//     if (item.is_menu == 1) {
+//       arr[item.id] = { id: item.id, pid: item.pid, name: item.name, label: item.label, icon: item.icon, path: item.path }
+//       if (item.children && item.children.length > 0 && item.is_menu == 1) {
+//         filterMenu(item.children, (arr[item.id].children = []))
+//       }
+//     }
+//     return arr
+//   })
+// }
+// let menu = []
+// filterMenu(toRaw(menuList.value), menu)
+// console.log(menu)
+// // 删除数组中的空元素
+// menu = menu.filter(Boolean)
+// menu.filter((item) => {
+//   if (item.children) item.children = item.children.filter(Boolean)
+// })
 </script>
 
 <style lang="scss" scoped>

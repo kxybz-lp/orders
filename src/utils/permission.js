@@ -26,11 +26,11 @@ router.beforeEach(async (to, from, next) => {
   let hasNewRoutes = false
   // 获取登录账号信息,刷新页面重新获取
   if (token && !hasGetInfo) {
-    let { menu } = await store.dispatch('getinfo')
+    let { menus } = await store.dispatch('getinfo')
     // 动态添加路由
-    hasNewRoutes = addRoutes(menu)
+    hasNewRoutes = addRoutes(menus)
     hasGetInfo = true
-    console.log(hasNewRoutes)
+    // console.log(hasNewRoutes)
   }
 
   // 删除临时路由

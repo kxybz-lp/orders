@@ -116,7 +116,7 @@ const handleEdit = (item) => {
 }
 // 删除
 const handleDelete = (id) => {
-  showModal('确认要删除该分类吗？')
+  showModal('确认要删除该数据吗？')
     .then((res) => {
       loading.value = true
       image
