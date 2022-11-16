@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-card class="admin-card" shadow="hover">
-      <ListHeader :ruleid="ruleid" @add="handleAdd">
+      <ListHeader layout="create,delete" :ruleid="ruleid" @add="handleAdd" @delete="handleMultiDelete">
         <el-form class="search-form" :model="params" ref="searchRef" label-width="0px" size="small">
           <el-form-item label="">
             <el-select v-model="params.role_id" placeholder="选择角色" clearable @clear="getData">
@@ -16,7 +16,16 @@
           </el-form-item>
         </el-form>
       </ListHeader>
-      <el-table :data="dataList" stripe style="width: 100%" :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }" @sort-change="sortChange" v-loading="loading">
+      <el-table
+        ref="multipleTableRef"
+        :data="dataList"
+        stripe
+        style="width: 100%"
+        :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }"
+        @sort-change="sortChange"
+        @selection-change="handleSelectionChange"
+        v-loading="loading"
+      >
         <el-table-column type="selection" prop="id" width="55"> </el-table-column>
         <el-table-column prop="name" label="登录名" width="140"> </el-table-column>
         <el-table-column prop="role_name" label="角色" width="140"> </el-table-column>
@@ -73,6 +82,9 @@
         <!-- <el-form-item label="头像" prop="avatar">
           <ChooseImage v-model="form.avatar" />
         </el-form-item> -->
+        <!-- <el-form-item label="规格值" prop="default">
+          <TagInput v-model="form.default" />
+        </el-form-item> -->
         <el-form-item label="状态">
           <el-switch v-model="form.status" :active-value="1" :inactive-value="0" />
         </el-form-item>
@@ -86,10 +98,11 @@ import { ref } from 'vue'
 import FormDrawer from '@/components/FormDrawer.vue'
 import ListHeader from '@/components/ListHeader.vue'
 // import ChooseImage from '@/components/ChooseImage.vue'
+// import TagInput from '@/components/TagInput.vue'
 import admin from '@/api/admin'
 import { toast } from '@/utils/utils'
 import { useInitTable, useInitForm } from '@/hooks/useCommon'
-const { loading, count, dataList, params, getData, handleCurrentChange, handleSwitch, sortChange, handleDelete } = useInitTable({
+const { loading, count, dataList, params, getData, handleCurrentChange, handleSwitch, sortChange, handleDelete, handleSelectionChange, multipleTableRef, handleMultiDelete } = useInitTable({
   api: admin,
   params: {
     page: 1,
@@ -137,6 +150,7 @@ const { drawerTitle, formDrawerRef, formRef, rules, form, editId, handleAdd, han
     role_id: '',
     branch_id: [],
     // avatar: '',
+    default: '', //规格值
     status: 1,
   },
   rules: {

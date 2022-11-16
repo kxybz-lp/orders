@@ -46,7 +46,13 @@ const admin = {
   },
   // 删除
   delete(id) {
+    id = !Array.isArray(id) ? [id] : id
     return post(`/order/admin/delete/${id}`)
+  },
+  // 批量删除
+  deleteAll(ids) {
+    ids = !Array.isArray(ids) ? [ids] : ids
+    return post('/order/admin/deleteAll', { ids })
   },
 }
 
