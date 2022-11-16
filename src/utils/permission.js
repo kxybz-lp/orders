@@ -51,5 +51,5 @@ router.beforeEach(async (to, from, next) => {
 // 全局后置守卫
 router.afterEach((to, from) => {
   Loading.component?.exposed?.endLoading()
-  console.log(router.getRoutes())
+  // console.log(router.getRoutes())
 })
