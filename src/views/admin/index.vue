@@ -1,18 +1,18 @@
 <template>
   <div class="app-container">
     <el-card class="admin-card" shadow="hover">
-      <ListHeader layout="create,delete" :ruleid="ruleid" @add="handleAdd" @delete="handleMultiDelete">
+      <ListHeader :rule="{ create: 8 }" @add="handleAdd">
         <el-form class="search-form" :model="params" ref="searchRef" label-width="0px" size="small">
           <el-form-item label="">
-            <el-select v-model="params.role_id" placeholder="选择角色" clearable @clear="getData">
+            <el-select v-model="params.role_id" placeholder="选择角色" clearable @clear="getData(1)">
               <el-option :value="item.id" :label="item.name" v-for="item in roleList" :key="item.id"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="">
-            <el-input v-model="params.name" placeholder="输入用户名" clearable @clear="getData"></el-input>
+            <el-input v-model="params.name" placeholder="输入用户名" clearable @clear="getData(1)"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="getData">搜索</el-button>
+            <el-button type="primary" @click="getData(1)">搜索</el-button>
           </el-form-item>
         </el-form>
       </ListHeader>
@@ -98,7 +98,7 @@ import ListHeader from '@/components/ListHeader.vue'
 import admin from '@/api/admin'
 import { toast } from '@/utils/utils'
 import { useInitTable, useInitForm } from '@/hooks/useCommon'
-const { loading, count, dataList, params, getData, handleCurrentChange, handleSwitch, sortChange, handleDelete, handleSelectionChange, multipleTableRef, handleMultiDelete } = useInitTable({
+const { loading, count, dataList, params, getData, handleCurrentChange, handleSwitch, sortChange, handleDelete, handleSelectionChange } = useInitTable({
   api: admin,
   params: {
     page: 1,
@@ -117,7 +117,6 @@ const { loading, count, dataList, params, getData, handleCurrentChange, handleSw
   },
 })
 
-const ruleid = ref(8) //新增 权限ID
 // 密码验证
 const validatePass = (rule, value, callback) => {
   if (value === '' && editId.value == 0) {

@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-card class="admin-card" shadow="hover">
-      <ListHeader :ruleid="ruleid" @add="handleAdd" />
+      <ListHeader :rule="{ create: 35 }" @add="handleAdd" />
       <el-table :data="dataList" stripe style="width: 100%" :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }" v-loading="loading">
         <el-table-column type="selection" prop="id" width="55"> </el-table-column>
         <el-table-column prop="name" label="角色名" width="180"> </el-table-column>
@@ -21,7 +21,7 @@
         <el-table-column prop="create_time" label="创建时间" width="180"></el-table-column>
         <el-table-column label="操作" width="260">
           <template #default="scope">
-            <el-button size="small" type="warning" @click="handleAuths(scope.row)">授权角色 </el-button>
+            <el-button v-permission="38" size="small" type="warning" @click="handleAuths(scope.row)">授权角色 </el-button>
             <el-button v-permission="36" size="small" type="primary" :disabled="scope.row.id == 1" @click="handleEdit(scope.row)">编辑 </el-button>
             <el-button v-permission="39" size="small" type="danger" :disabled="scope.row.id == 1" @click="handleDelete(scope.row.id)"> 删除 </el-button>
           </template>
@@ -34,7 +34,7 @@
           <el-input minlength="2" maxlength="20" show-word-limit v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item label="描述" prop="remark">
-          <el-input type="textarea" minlength="2" maxlength="30" show-word-limit v-model="form.remark"></el-input>
+          <el-input type="textarea" minlength="2" maxlength="30" show-word-limit v-model="form.remark" :resize="false"></el-input>
         </el-form-item>
         <el-form-item label="状态">
           <el-switch v-model="form.status" :active-value="1" :inactive-value="0" />

@@ -15,6 +15,17 @@ export function showModal(content = '提示内容', type = 'warning', title = ''
   })
 }
 
+let loadingInstance
+export function elLoading(message = '数据加载中...') {
+  loadingInstance = ElLoading.service({
+    lock: true,
+    text: message,
+    background: 'rgba(255, 255, 255, .5)',
+  })
+}
+export function closeElLoading() {
+  loadingInstance.close()
+}
 // 弹出输入框
 export function showPrompt(tip, value = '') {
   return ElMessageBox.prompt(tip, '', {

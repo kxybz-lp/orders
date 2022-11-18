@@ -1,44 +1,29 @@
 <template>
   <el-row :gutter="0" class="list-header">
-    <el-col :md="8" :offset="0">
-      <el-button v-if="btns.includes('create')" v-permission="ruleid" type="primary" size="small" @click="$emit('add')">新增</el-button>
-      <el-button v-if="btns.includes('delete')" v-permission="ruleid" type="danger" size="small" @click="$emit('delete')">批量删除</el-button>
+    <el-col :md="9" :offset="0">
+      <el-button v-if="rule.create" v-permission="rule.create" type="primary" size="small" @click="$emit('add')">新增</el-button>
+      <el-button v-if="rule.delete" v-permission="rule.delete" type="danger" size="small" @click="$emit('delete')">批量删除</el-button>
+      <el-button v-if="rule.sort" v-permission="rule.sort" type="success" size="small" @click="$emit('sort')">排序</el-button>
+      <el-button v-if="rule.export" v-permission="rule.export" type="danger" size="small" @click="$emit('export')">导出</el-button>
+      <UploadExcel v-if="rule.import" v-permission="rule.import" @success="$emit('import')" />
+      <el-button v-if="rule.download" v-permission="rule.download" type="warning" size="small" @click="$emit('download')">下载模板</el-button>
     </el-col>
-    <el-col :md="16" :offset="0" style="height: 24px">
+    <el-col :md="15" :offset="0" style="height: 24px">
       <slot />
     </el-col>
-    <!-- <el-col :md="16" :offset="0" style="height: 24px">
-      <el-form :model="model" ref="searchRef" label-width="0px" size="small">
-        <el-form-item label="">
-          <el-select v-model="model.role_id" placeholder="选择角色" clearable @clear="getData">
-            <el-option :value="item.id" :label="item.name" v-for="item in roleList" :key="item.id"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="">
-          <el-input v-model="model.name" placeholder="输入用户名" clearable @clear="getData"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="$emit('getData')">搜索</el-button>
-        </el-form-item>
-      </el-form>
-    </el-col> -->
   </el-row>
 </template>
 <script setup>
-import { computed } from 'vue'
+import UploadExcel from './UploadExcel.vue'
 
 const props = defineProps({
-  ruleid: {
-    type: Number,
-    default: '',
-  },
-  layout: {
-    type: String,
-    default: 'create',
+  rule: {
+    type: Object,
+    default: null,
   },
 })
-const btns = computed(() => props.layout.split(','))
-defineEmits(['add', 'delete'])
+// const btns = computed(() => props.layout.split(','))
+defineEmits(['add', 'sort', 'delete', 'export', 'import', 'download'])
 </script>
 <style lang="scss" scoped>
 .list-header {

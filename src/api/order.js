@@ -4,21 +4,31 @@
 import { get, post } from '@/utils/http'
 
 const order = {
-  // 新闻列表
-  articleList() {
-    return get(`/topics`)
+  // 列表
+  getList(params) {
+    return get('/order/order/index', params)
   },
-  // 新闻详情,演示
-  articleDetail(id, params) {
-    return get(`/topic/${id}`, {
-      params: params,
-    })
+  // select数据
+  getSelect() {
+    return post('/order/order/getSelectData')
   },
-  // post提交
-  login(params) {
-    return post(`/accesstoken`, qs.stringify(params))
+  // 新增
+  create(params) {
+    return post('/order/order/create', params)
   },
-  // 其他接口…………
+  // 更新
+  edit(id, params) {
+    return post(`/order/order/edit/${id}`, params)
+  },
+  // 状态更新
+  status(id, params) {
+    return post(`/order/order/status/${id}`, params)
+  },
+  // 删除
+  delete(id) {
+    id = !Array.isArray(id) ? [id] : id
+    return post(`/order/order/delete/${id}`)
+  },
 }
 
 export default order

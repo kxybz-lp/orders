@@ -21,8 +21,11 @@ export function useInitTable(opt = {}) {
   const dataList = ref([])
   // opt.api  数据请求的模型
   // opt.onGetListSuccess 数据请求成功后的回调
-  const getData = () => {
+  const getData = (page = null) => {
     loading.value = true
+    if (typeof page == 'number') {
+      params.page = page
+    }
     opt.api
       .getList(params)
       .then((res) => {
@@ -48,6 +51,11 @@ export function useInitTable(opt = {}) {
     params.page = page
     getData()
   }
+  // 切换分页数
+  const handleSizeChange = (pageSize) => {
+    params.pageSize = pageSize
+    getData()
+  }
 
   //设置状态
   const handleSwitch = (val, row) => {
@@ -67,7 +75,7 @@ export function useInitTable(opt = {}) {
       })
   }
 
-  // 排序
+  // 表格数据字段排序
   const sortChange = (column, prop, order) => {
     params.page = 1
     params.sort = column.order == 'descending' ? column.prop + ' desc' : column.prop + ' asc'
@@ -101,6 +109,27 @@ export function useInitTable(opt = {}) {
         loading.value = false
       })
   }
+  // 排序
+  const handleSort = () => {
+    let sort = []
+    dataList.value.map((o) => {
+      sort.push({ id: o.id, list_order: o.list_order })
+    })
+    loading.value = true
+    opt.api
+      .sort(sort)
+      .then((res) => {
+        if (res.code > 0) {
+          toast('数据更新成功')
+          getData()
+        } else {
+          toast(res.message || 'Error', 'error')
+        }
+      })
+      .finally(() => {
+        loading.value = false
+      })
+  }
   // 批量修改状态
 
   // 删除
@@ -127,8 +156,10 @@ export function useInitTable(opt = {}) {
     getData,
     resetParams,
     handleCurrentChange,
+    handleSizeChange,
     handleSwitch,
     sortChange,
+    handleSort,
     handleDelete,
     multiSelectionIds,
     handleSelectionChange,
@@ -141,7 +172,7 @@ export function useInitTable(opt = {}) {
 export function useInitForm(opt = {}) {
   const editId = ref(0)
   const defaultForm = opt.form
-  const drawerTitle = computed(() => (editId.value ? '用户修改' : '用户新增'))
+  const drawerTitle = computed(() => (editId.value ? '修改' : '新增'))
   const formDrawerRef = ref(null)
   const formRef = ref(null)
   let form = reactive({ ...opt.form })

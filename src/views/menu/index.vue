@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-card class="menu-card" shadow="hover">
-      <ListHeader :ruleid="ruleid" @add="handleAdd" />
+      <ListHeader :rule="{ create: 41 }" @add="handleAdd" />
       <el-tree :data="dataList" :props="{ children: 'children', label: 'label' }" v-loading="loading" node-key="id" :default-expanded-keys="defaultExpandedKeys">
         <template #default="{ node, data }">
           <div class="custom-tree-left">
@@ -135,7 +135,7 @@ const { drawerTitle, formDrawerRef, formRef, rules, form, handleAdd, handleEdit,
     ],
   },
 })
-const ruleid = ref(41) //新增 权限ID
+
 const types = ref([
   {
     id: 0,
@@ -143,26 +143,30 @@ const types = ref([
   },
   {
     id: 1,
-    name: '新增',
+    name: '登录',
   },
   {
     id: 2,
-    name: '更新',
+    name: '新增',
   },
   {
     id: 3,
-    name: '删除',
+    name: '修改',
   },
   {
     id: 4,
-    name: '上传',
+    name: '删除',
   },
   {
     id: 5,
-    name: '下载',
+    name: '上传',
   },
   {
     id: 6,
+    name: '下载',
+  },
+  {
+    id: 10,
     name: '其他',
   },
 ])
