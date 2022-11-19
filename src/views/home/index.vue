@@ -124,7 +124,7 @@
             </div>
           </template>
           <div id="notice">
-            <div class="notice-item" v-for="item in notice" :key="item.id">
+            <div class="notice-item" v-for="item in notice" :key="item.id" @click="readNotice(item)">
               <div class="title">{{ item.title }}</div>
               <div class="time">{{ item.create_time }}</div>
             </div>
@@ -132,6 +132,17 @@
         </el-card>
       </el-col>
     </el-row>
+    <el-dialog v-model="dialogVisible" :title="noticeDetail.title" width="40%">
+      <div class="main">
+        <div style="font-size: 14px; color: #333; line-height: 24px; margin: 0 0 15px">{{ noticeDetail.content }}</div>
+        <div style="font-size: 14px; color: #666">发布时间:{{ noticeDetail.create_time }}</div>
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="dialogVisible = false"> 确认 </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -168,7 +179,6 @@ home.getBranch().then((res) => {
 // 公告数据
 home.getNotice().then((res) => {
   notice.value = res.result
-  console.log(res.result)
 })
 
 const setType = (val) => {
@@ -312,6 +322,14 @@ const getPieData = () => {
     .finally(() => {
       chartPie.hideLoading()
     })
+}
+
+// 查看公告详情
+const dialogVisible = ref(false)
+const noticeDetail = ref([])
+const readNotice = (item) => {
+  noticeDetail.value = item
+  dialogVisible.value = true
 }
 </script>
 
@@ -473,6 +491,12 @@ const getPieData = () => {
     padding-left: 10px;
     font-size: 14px;
     color: #666;
+  }
+}
+.notice-item:hover {
+  .title,
+  .time {
+    color: var(--color);
   }
 }
 </style>
