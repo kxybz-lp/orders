@@ -51,7 +51,7 @@
         </el-col>
       </el-row> -->
     </el-card>
-    <FormDrawer :title="drawerTitle" ref="formDrawerRef" @drawerClosed="drawerClosed" @submit="handleSubmit">
+    <FormDrawer :title="'订单' + drawerTitle" ref="formDrawerRef" @drawerClosed="drawerClosed" @submit="handleSubmit">
       <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false" size="small">
         <el-form-item label="客户名称" prop="name">
           <el-input minlength="2" maxlength="20" show-word-limit v-model="form.name" :disabled="editId != 0"></el-input>

@@ -20,7 +20,8 @@ export function elLoading(message = '数据加载中...') {
   loadingInstance = ElLoading.service({
     lock: true,
     text: message,
-    background: 'rgba(255, 255, 255, .5)',
+    // background: 'rgba(255, 255, 255, .5)',
+    background: 'rgba(0, 0, 0, .5)',
   })
 }
 export function closeElLoading() {

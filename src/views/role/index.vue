@@ -28,13 +28,13 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <FormDrawer :title="drawerTitle" ref="formDrawerRef" @drawerClosed="drawerClosed" @submit="handleSubmit">
+    <FormDrawer :title="'角色' + drawerTitle" ref="formDrawerRef" @drawerClosed="drawerClosed" @submit="handleSubmit">
       <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false" size="small">
         <el-form-item label="角色名" prop="name">
           <el-input minlength="2" maxlength="20" show-word-limit v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item label="描述" prop="remark">
-          <el-input type="textarea" minlength="2" maxlength="30" show-word-limit v-model="form.remark" :resize="false"></el-input>
+          <el-input type="textarea" minlength="2" maxlength="30" show-word-limit v-model="form.remark" resize="none"></el-input>
         </el-form-item>
         <el-form-item label="状态">
           <el-switch v-model="form.status" :active-value="1" :inactive-value="0" />
@@ -99,7 +99,6 @@ const { drawerTitle, formDrawerRef, formRef, rules, form, handleAdd, handleEdit,
   },
 })
 
-const ruleid = ref(35) //新增 权限ID
 const ruleList = ref([])
 const treeHeight = ref(0)
 const roleId = ref(0)

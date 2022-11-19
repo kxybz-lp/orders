@@ -117,7 +117,7 @@
         @size-change="handleSizeChange"
       />
     </el-card>
-    <FormDrawer :title="drawerTitle" size="50%" ref="formDrawerRef" @drawerClosed="drawerClosed" @submit="handleSubmit">
+    <FormDrawer :title="'门店' + drawerTitle" size="50%" ref="formDrawerRef" @drawerClosed="drawerClosed" @submit="handleSubmit">
       <el-form :model="form" ref="formRef" :rules="rules" label-width="85px" :inline="false" size="small">
         <el-form-item label="公司名称" prop="name">
           <el-input minlength="2" maxlength="20" show-word-limit v-model="form.name" :disabled="editId != 0"></el-input>
@@ -210,7 +210,6 @@ const { loading, count, dataList, params, getData, handleCurrentChange, handleSi
 
 const showSearch = ref(false) // 高级搜索
 const searchMoreRef = ref()
-const ruleid = ref(8) //新增 权限ID
 const { drawerTitle, formDrawerRef, formRef, rules, form, editId, handleAdd, handleEdit, handleSubmit, drawerClosed } = useInitForm({
   api: branch,
   getData,

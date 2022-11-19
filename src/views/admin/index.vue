@@ -54,7 +54,7 @@
       <el-pagination @current-change="handleCurrentChange" :current-page="params.page" :page-size="params.pageSize" :background="true" layout="prev, pager, next" :total="count" class="fenye">
       </el-pagination>
     </el-card>
-    <FormDrawer :title="drawerTitle" ref="formDrawerRef" @drawerClosed="drawerClosed" @submit="handleSubmit">
+    <FormDrawer :title="'管理员' + drawerTitle" ref="formDrawerRef" @drawerClosed="drawerClosed" @submit="handleSubmit">
       <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false" size="small">
         <el-form-item label="登录名" prop="name">
           <el-input minlength="2" maxlength="20" show-word-limit v-model="form.name" :disabled="editId != 0"></el-input>

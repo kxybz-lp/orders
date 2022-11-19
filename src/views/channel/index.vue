@@ -31,7 +31,7 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <FormDrawer :title="drawerTitle" ref="formDrawerRef" @drawerClosed="drawerClosed" @submit="handleSubmit">
+    <FormDrawer :title="'渠道/来源' + drawerTitle" ref="formDrawerRef" @drawerClosed="drawerClosed" @submit="handleSubmit">
       <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false" size="small">
         <el-form-item label="所属渠道" prop="pid">
           <el-cascader v-model="form.pid" :options="dataList" :props="{ value: 'id', label: 'name', children: 'children', checkStrictly: true, emitPath: false }" placeholder="作为一级渠道" />

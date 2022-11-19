@@ -71,7 +71,7 @@
                   range-separator="至"
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
-                  format="YYYY/MM/DD"
+                  format="YYYY-MM-DD"
                   value-format="YYYY-MM-DD"
                   @change="switchRangeTime"
                   size="default"
@@ -81,7 +81,7 @@
           </template>
           <div class="statistical-body">
             <el-row :gutter="20">
-              <el-col :md="24" :lg="18" :span="18" :offset="0" v-permission="55">
+              <el-col :md="24" :lg="18" :offset="0" v-permission="55">
                 <div ref="chatBar" id="chart"></div>
               </el-col>
               <el-col :md="24" :lg="6" :offset="0" v-permission="56">
@@ -105,22 +105,52 @@
         </el-card>
       </el-col>
     </el-row>
+    <el-row :gutter="15">
+      <el-col :md="24" :lg="14" :offset="0" v-permission="55">
+        <el-card shadow="hover">
+          <template #header>
+            <div>
+              <span>渠道统计</span>
+            </div>
+          </template>
+          <div ref="chatPie" id="pie"></div>
+        </el-card>
+      </el-col>
+      <el-col :md="24" :lg="10" :offset="0" v-permission="127">
+        <el-card shadow="hover">
+          <template #header>
+            <div>
+              <span>系统公告</span>
+            </div>
+          </template>
+          <div id="notice">
+            <div class="notice-item" v-for="item in notice" :key="item.id">
+              <div class="title">{{ item.title }}</div>
+              <div class="time">{{ item.create_time }}</div>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script setup>
 import CountTo from '@/components/CountTo.vue'
 import * as echarts from 'echarts/core'
-import { TooltipComponent, GridComponent } from 'echarts/components'
-import { BarChart } from 'echarts/charts'
+import { TooltipComponent, GridComponent, LegendComponent } from 'echarts/components'
+import { LabelLayout } from 'echarts/features'
+import { BarChart, PieChart } from 'echarts/charts'
 import { CanvasRenderer } from 'echarts/renderers'
 import home from '@/api/home'
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
 
 const panels = ref([])
+const notice = ref([])
 const tooltip_name = ref('订单数')
 const store = ref(null)
 const chatBar = ref(null)
+const chatPie = ref(null)
 const params = reactive({
   type: 'order',
   scope: 'week',
@@ -134,6 +164,11 @@ home.getPanels().then((res) => {
 // 签单门店数据
 home.getBranch().then((res) => {
   store.value = res.result
+})
+// 公告数据
+home.getNotice().then((res) => {
+  notice.value = res.result
+  console.log(res.result)
 })
 
 const setType = (val) => {
@@ -167,12 +202,17 @@ const switchRangeTime = (val) => {
   }
   getBarData()
 }
-echarts.use([TooltipComponent, GridComponent, BarChart, CanvasRenderer])
+echarts.use([TooltipComponent, GridComponent, BarChart, CanvasRenderer, LegendComponent, PieChart, LabelLayout])
 let chartBar = null
+let chartPie = null
 onMounted(() => {
   if (chatBar.value) {
     chartBar = echarts.init(chatBar.value)
     getBarData()
+  }
+  if (chatPie.value) {
+    chartPie = echarts.init(chatPie.value)
+    getPieData()
   }
 })
 onUnmounted(() => {
@@ -234,6 +274,43 @@ const getBarData = () => {
     })
     .finally(() => {
       chartBar.hideLoading()
+    })
+}
+// 饼状图数据
+const getPieData = () => {
+  let option = {
+    tooltip: {
+      trigger: 'item',
+    },
+    legend: {
+      orient: 'vertical',
+      left: 'left',
+    },
+    series: [
+      {
+        name: 'Access From',
+        type: 'pie',
+        radius: '50%',
+        data: [],
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)',
+          },
+        },
+      },
+    ],
+  }
+  chartBar.showLoading()
+  home
+    .getPieData(params)
+    .then((res) => {
+      option.series[0].data = res.result
+      chartPie.setOption(option)
+    })
+    .finally(() => {
+      chartPie.hideLoading()
     })
 }
 </script>
@@ -373,6 +450,29 @@ const getBarData = () => {
         text-overflow: ellipsis;
       }
     }
+  }
+}
+#pie,
+#notice {
+  height: 370px;
+}
+.notice-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 30px;
+  cursor: pointer;
+  .title {
+    font-size: 14px;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .time {
+    padding-left: 10px;
+    font-size: 14px;
+    color: #666;
   }
 }
 </style>

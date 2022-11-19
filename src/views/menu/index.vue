@@ -25,7 +25,7 @@
         </template>
       </el-tree>
     </el-card>
-    <FormDrawer :title="drawerTitle" ref="formDrawerRef" @drawerClosed="drawerClosed" @submit="handleSubmit">
+    <FormDrawer :title="'菜单/规则' + drawerTitle" ref="formDrawerRef" @drawerClosed="drawerClosed" @submit="handleSubmit">
       <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false" size="small">
         <el-form-item label="上级菜单" prop="pid">
           <el-cascader v-model="form.pid" :options="dataList" :props="{ value: 'id', label: 'label', children: 'children', checkStrictly: true, emitPath: false }" placeholder="请选择上级菜单" />
@@ -66,7 +66,7 @@
           <el-input v-model="form.sort_no" type="number"></el-input>
         </el-form-item>
         <el-form-item label="描述" prop="remark">
-          <el-input type="textarea" row="2" v-model="form.remark" minlength="2" maxlength="20" show-word-limit></el-input>
+          <el-input type="textarea" row="2" v-model="form.remark" minlength="2" maxlength="20" show-word-limit resize="none"></el-input>
         </el-form-item>
       </el-form>
     </FormDrawer>

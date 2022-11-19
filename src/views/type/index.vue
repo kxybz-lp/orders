@@ -23,7 +23,7 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <FormDrawer :title="drawerTitle" ref="formDrawerRef" @drawerClosed="drawerClosed" @submit="handleSubmit">
+    <FormDrawer :title="'类型' + drawerTitle" ref="formDrawerRef" @drawerClosed="drawerClosed" @submit="handleSubmit">
       <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false" size="small">
         <el-form-item label="名称" prop="name">
           <el-input minlength="2" maxlength="20" show-word-limit v-model="form.name"></el-input>
@@ -72,7 +72,5 @@ const { drawerTitle, formDrawerRef, formRef, rules, form, handleAdd, handleEdit,
     ],
   },
 })
-
-const ruleid = ref(35) //新增 权限ID
 </script>
 <style lang="scss" scoped></style>

@@ -72,8 +72,6 @@ const { loading, count, dataList, params, getData, handleCurrentChange, handleDe
   },
 })
 
-const ruleid = ref(8) //新增 权限ID
-
 const type = ref([
   {
     id: 0,
