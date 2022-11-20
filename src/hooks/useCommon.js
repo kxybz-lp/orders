@@ -26,6 +26,7 @@ export function useInitTable(opt = {}) {
     if (typeof page == 'number') {
       params.page = page
     }
+    // console.log(params)
     opt.api
       .getList(params)
       .then((res) => {
@@ -78,6 +79,7 @@ export function useInitTable(opt = {}) {
   // 表格数据字段排序
   const sortChange = (column, prop, order) => {
     params.page = 1
+    if (column.prop == 'order_time_date') column.prop = 'order_time'
     params.sort = column.order == 'descending' ? column.prop + ' desc' : column.prop + ' asc'
     getData()
   }
@@ -148,6 +150,37 @@ export function useInitTable(opt = {}) {
       .catch((err) => console.log(err))
   }
 
+  // 恢复软删除数据
+  const handleResave = (id) => {
+    showModal('确认要恢复该数据吗？')
+      .then((res) => {
+        opt.api.resave(id).then((res) => {
+          if (res.code > 0) {
+            toast('数据恢复成功')
+            getData()
+          } else {
+            toast(res.message, 'error')
+          }
+        })
+      })
+      .catch((err) => console.log(err))
+  }
+  //数据硬删除
+  const handleDel = (id) => {
+    showModal('确认要彻底删除该数据吗？')
+      .then((res) => {
+        opt.api.del(id).then((res) => {
+          if (res.code > 0) {
+            toast('数据彻底删除成功')
+            getData()
+          } else {
+            toast(res.message, 'error')
+          }
+        })
+      })
+      .catch((err) => console.log(err))
+  }
+
   return {
     loading,
     count,
@@ -165,6 +198,8 @@ export function useInitTable(opt = {}) {
     handleSelectionChange,
     multipleTableRef,
     handleMultiDelete,
+    handleResave,
+    handleDel,
   }
 }
 

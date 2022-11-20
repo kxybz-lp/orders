@@ -1,7 +1,9 @@
 <template>
   <el-row :gutter="0" class="list-header">
     <el-col :md="9" :offset="0">
-      <el-button v-if="rule.create" v-permission="rule.create" type="primary" size="small" @click="$emit('add')">新增</el-button>
+      <el-button v-if="rule.create && rule.create == 79" v-permission="rule.create" type="primary" size="small" @click="$router.push('/order/add')">新增</el-button>
+      <el-button v-if="rule.create && rule.create != 79" v-permission="rule.create" type="primary" size="small" @click="$emit('add')">新增</el-button>
+      <el-button v-if="rule.move" color="#409eff" style="color: #fff" v-permission="rule.move" type="primary" size="small" @click="$emit('move')">批量移动</el-button>
       <el-button v-if="rule.delete" v-permission="rule.delete" type="danger" size="small" @click="$emit('delete')">批量删除</el-button>
       <el-button v-if="rule.sort" v-permission="rule.sort" type="success" size="small" @click="$emit('sort')">排序</el-button>
       <el-button v-if="rule.export" v-permission="rule.export" type="danger" size="small" @click="$emit('export')">导出</el-button>
@@ -23,7 +25,7 @@ const props = defineProps({
   },
 })
 // const btns = computed(() => props.layout.split(','))
-defineEmits(['add', 'sort', 'delete', 'export', 'import', 'download'])
+defineEmits(['add', 'sort', 'move', 'delete', 'export', 'import', 'download'])
 </script>
 <style lang="scss" scoped>
 .list-header {

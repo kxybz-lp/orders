@@ -29,6 +29,14 @@ const order = {
     id = !Array.isArray(id) ? [id] : id
     return post(`/order/order/delete/${id}`)
   },
+  // 数据恢复
+  resave(id) {
+    return post('/order/order/resave', { id })
+  },
+  // 数据硬删除
+  del(id) {
+    return post('/order/order/del', { id })
+  },
 }
 
 export default order

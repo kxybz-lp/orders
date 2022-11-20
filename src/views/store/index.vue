@@ -316,6 +316,8 @@ const province = ref([])
 const city = ref([])
 const handleProvinceChange = (province_id) => {
   if (province_id) {
+    city.value = []
+    params.city_id = ''
     areaList.value.forEach((item) => {
       if (item.id == province_id) {
         item.children.forEach((itm) => {
