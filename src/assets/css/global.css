@@ -77,6 +77,9 @@ div:focus {
 .el-dialog__body {
   padding: 15px !important;
 }
+.el-icon.is-loading {
+  color: #fff !important;
+}
 
 .flex {
   display: -webkit-box;

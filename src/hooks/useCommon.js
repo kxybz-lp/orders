@@ -245,9 +245,20 @@ export function useInitForm(opt = {}) {
       if (!valid) return
       // console.log(form)
       formDrawerRef.value.showLoading()
+      // 提交前的数据处理
+      let body = {}
+      if (opt.beforeSubmit && typeof opt.beforeSubmit == 'function') {
+        body = opt.beforeSubmit({ ...form })
+      } else {
+        body = form
+      }
+      if (!body) {
+        formDrawerRef.value.hideLoading()
+        return
+      }
       if (editId.value) {
         opt.api
-          .edit(editId.value, form)
+          .edit(editId.value, body)
           .then((res) => {
             if (res.code > 0) {
               toast('数据更新成功')
@@ -262,7 +273,7 @@ export function useInitForm(opt = {}) {
           })
       } else {
         opt.api
-          .create(form)
+          .create(body)
           .then((res) => {
             if (res.code > 0) {
               toast('数据新增成功')
@@ -278,7 +289,7 @@ export function useInitForm(opt = {}) {
       }
     })
   }
-  // 弹窗关闭重置表单
+  // 弹窗关闭重置表单，esetFields只对有prop属性的生效
   const drawerClosed = () => {
     if (!formRef.value) return
     formRef.value.resetFields()

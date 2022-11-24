@@ -1,7 +1,7 @@
 <template>
   <el-upload
     class="upload-import"
-    action="/api/order/branch/import"
+    :action="action"
     :headers="{
       token,
     }"
@@ -16,6 +16,12 @@
 <script setup>
 import { toast, elLoading, closeElLoading } from '@/utils/utils'
 import { getToken } from '@/utils/token'
+defineProps({
+  action: {
+    type: String,
+    default: '',
+  },
+})
 const token = getToken()
 const uploadBefore = () => {
   elLoading('数据导入中...')

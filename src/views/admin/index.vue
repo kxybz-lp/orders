@@ -110,7 +110,7 @@ const { loading, count, dataList, params, getData, handleCurrentChange, handleSw
   onGetListSuccess: (res) => {
     count.value = res.result.count
     dataList.value = res.result.data.map((o) => {
-      o.last_login_time = dateFormart(o.last_login_time, 'hour')
+      // o.last_login_time = dateFormart(o.last_login_time, 'hour')
       o.statusLoading = false
       return o
     })

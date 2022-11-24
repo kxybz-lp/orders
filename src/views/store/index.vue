@@ -51,7 +51,15 @@
           </el-col>
         </el-row>
       </el-form>
-      <ListHeader ref="headerRef" :rule="{ create: 62, export: 64, import: 65, download: 65 }" @add="handleAdd" @export="exportExcel" @import="importExcel" @download="download">
+      <ListHeader
+        ref="headerRef"
+        action="/api/order/branch/import"
+        :rule="{ create: 62, export: 64, import: 65, download: 65 }"
+        @add="handleAdd"
+        @export="exportExcel"
+        @import="importExcel"
+        @download="download"
+      >
         <el-form class="search-form" :model="params" ref="searchRef" label-width="0px" size="small">
           <el-form-item label="" v-show="!showSearch">
             <el-input v-model="params.name" placeholder="输入公司名" clearable @clear="getData(1)"></el-input>

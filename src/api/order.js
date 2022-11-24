@@ -20,9 +20,13 @@ const order = {
   edit(id, params) {
     return post(`/order/order/edit/${id}`, params)
   },
-  // 状态更新
-  status(id, params) {
-    return post(`/order/order/status/${id}`, params)
+  // 详情
+  read(id) {
+    return post(`/order/order/read/${id}`)
+  },
+  // 获取公司对接人
+  getDockingMan(params) {
+    return post('/order/order/getDockingMan', params)
   },
   // 删除
   delete(id) {
@@ -32,6 +36,18 @@ const order = {
   // 数据恢复
   resave(id) {
     return post('/order/order/resave', { id })
+  },
+  // 导出
+  export(params) {
+    return post('/order/order/export', params)
+  },
+  // 导入
+  import(params) {
+    return post('/order/order/import', params)
+  },
+  // 移动
+  move(params) {
+    return post('/order/order/move', params)
   },
   // 数据硬删除
   del(id) {

@@ -50,10 +50,10 @@ export function useTabList() {
 
     // 关闭的标签是最右边的话，往左边跳转一个
     if (index === length) {
-      router.push(tab[index - 1].path)
+      router.push(tab[index - 1].path).catch((err) => {})
     } else {
       // 否则往右边跳转
-      router.push(tab[index].path)
+      router.push(tab[index].path).catch((err) => {})
     }
   }
   const changeMenu = (tag) => {
@@ -69,7 +69,7 @@ export function useTabList() {
         break
       case 'all':
         // 切换回首页
-        router.push('/')
+        router.push('/').catch((err) => {})
         tab = [
           {
             label: '首页',

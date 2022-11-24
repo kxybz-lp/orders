@@ -44,6 +44,7 @@ router.beforeEach(async (to, from, next) => {
 
   // 页面加载进度条
   Loading.component?.exposed?.startLoading()
+
   // 解决刷新页面404问题
   hasNewRoutes ? next(to.fullPath) : next()
 })
@@ -52,4 +53,8 @@ router.beforeEach(async (to, from, next) => {
 router.afterEach((to, from) => {
   Loading.component?.exposed?.endLoading()
   // console.log(router.getRoutes())
+  // 新增与更新订单后跳转并刷新
+  // if ((from.name === 'OrderEdit' || from.name === 'OrderAdd') && to.name === 'Order') {
+  //   location.reload()
+  // }
 })

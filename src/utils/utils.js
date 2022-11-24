@@ -78,7 +78,7 @@ export function parseTime(time, cFormat) {
         time = time.replace(new RegExp(/-/gm), '/')
       }
     }
-
+    // 后台返回的时间戳是以秒单位，js是以毫秒为单位,需要* 1000
     if (typeof time === 'number' && time.toString().length === 10) {
       time = time * 1000
     }
@@ -287,6 +287,7 @@ export function getTime(type) {
 }
 
 /**
+ * 防抖
  * @param {Function} func
  * @param {number} wait
  * @param {boolean} immediate
@@ -468,6 +469,24 @@ export const pickerOptionsRangeMonth = {
       },
     },
   ],
+}
+
+//获取当前时间
+export function time_init() {
+  var date = new Date()
+  var year = date.getFullYear()
+  var month = date.getMonth() + 1
+  var day = date.getDate()
+  var hh = date.getHours()
+  var mm = date.getMinutes()
+  var ss = date.getSeconds()
+  if (month < 10) month = '0' + month
+  if (day < 10) day = '0' + day
+  if (hh < 10) hh = '0' + hh
+  if (ss < 10) ss = '0' + ss
+  if (mm < 10) mm = '0' + mm
+  var rq = year + '-' + month + '-' + day + ' ' + hh + ':' + mm + ':' + ss
+  return rq
 }
 
 /**

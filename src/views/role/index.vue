@@ -21,7 +21,7 @@
         <el-table-column prop="create_time" label="创建时间" width="180"></el-table-column>
         <el-table-column label="操作" width="260">
           <template #default="scope">
-            <el-button v-permission="38" size="small" type="warning" @click="handleAuths(scope.row)">授权角色 </el-button>
+            <el-button :loading="loading" v-permission="38" size="small" type="warning" @click="handleAuths(scope.row)">授权角色 </el-button>
             <el-button v-permission="36" size="small" type="primary" :disabled="scope.row.id == 1" @click="handleEdit(scope.row)">编辑 </el-button>
             <el-button v-permission="39" size="small" type="danger" :disabled="scope.row.id == 1" @click="handleDelete(scope.row.id)"> 删除 </el-button>
           </template>
@@ -111,6 +111,7 @@ const checkStrictly = ref(false)
 
 // 授权角色
 const handleAuths = (row) => {
+  loading.value = true
   roleId.value = row.id
   treeHeight.value = window.innerHeight - 150
   checkStrictly.value = true //赋值前取消父子强制关联
@@ -118,6 +119,7 @@ const handleAuths = (row) => {
     ruleList.value = res.result.data
     defaultExpandedKeys.value = res.result.data.map((o) => o.id)
     setAuthsFormDrawerRef.value.openDrawer()
+    loading.value = false
     // 当前角色拥有的权限ID
     if (row.auths) ruleIds.value = row.auths.split(',').map((o) => parseInt(o))
     nextTick(() => {
