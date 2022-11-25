@@ -490,6 +490,21 @@ export function time_init() {
 }
 
 /**
+ * 获取当天日期与指定天数之前或之后的日期
+ * 近7日，fun_date(-7)
+ * @param {*} days
+ * @returns
+ */
+export function fun_date(days) {
+  var date1 = new Date(),
+    time1 = date1.getFullYear() + '-' + (date1.getMonth() + 1) + '-' + date1.getDate() //time1表示当前时间
+  var date2 = new Date(date1)
+  date2.setDate(date1.getDate() + days)
+  var time2 = date2.getFullYear() + '-' + (date2.getMonth() + 1) + '-' + date2.getDate()
+  return [time2, time1]
+}
+
+/**
  * 全屏、退出全屏事件
  */
 export function handleFullScreen(fullscreen) {

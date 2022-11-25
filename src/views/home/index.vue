@@ -33,19 +33,19 @@
           </div>
           <div class="el-card-body">
             <div class="number">
-              <CountTo v-if="index != 3" :value="item.total" />
-              <span v-else>{{ item.total }}</span>
+              <CountTo v-if="index != 3" :value="item.number" />
+              <span v-else>{{ item.number }}</span>
             </div>
           </div>
           <div class="el-card-footer">
             <div class="s">
               <span>当日{{ item.title }}</span>
-              <i>{{ item.number }}</i>
+              <i>{{ item.current }}</i>
             </div>
             <div class="c">
               <el-icon v-if="item.type === 'up'" class="success"><CaretTop /></el-icon>
               <el-icon v-else class="fail"><CaretBottom /></el-icon>
-              <span style="padding-left: 5px">10%</span>
+              <span style="padding-left: 5px">{{ item.diff }}</span>
             </div>
           </div>
         </el-card>
@@ -63,7 +63,8 @@
               </div>
               <div class="date">
                 <span :class="params.scope == 'week' ? 'current_scope' : ''" @click="setScope('week')">近7日</span>
-                <span :class="params.scope == 'month' ? 'current_scope' : ''" @click="setScope('month')">本月</span>
+                <span :class="params.scope == 'month' ? 'current_scope' : ''" @click="setScope('month')">近30日</span>
+                <span :class="params.scope == 'current_month' ? 'current_scope' : ''" @click="setScope('current_month')">本月</span>
                 <span :class="params.scope == 'year' ? 'current_scope' : ''" @click="setScope('year')">本年</span>
                 <el-date-picker
                   v-model="params.range_time"
@@ -94,7 +95,7 @@
                         <span class="name">{{ item.name }}</span>
                       </div>
                       <div class="value">
-                        <span class="number">{{ item.number }}</span>
+                        <span class="number">{{ item.total }}</span>
                       </div>
                     </div>
                   </div>
@@ -155,6 +156,7 @@ import { BarChart, PieChart } from 'echarts/charts'
 import { CanvasRenderer } from 'echarts/renderers'
 import home from '@/api/home'
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
+import moment from 'moment'
 
 const panels = ref([])
 const notice = ref([])
@@ -167,7 +169,22 @@ const params = reactive({
   scope: 'week',
   range_time: '',
 })
-
+// 当天日期
+const currentDay = moment().format('YYYY-MM-DD')
+// 6天前日期,近7日
+const weekDay = moment().add(-6, 'd').format('YYYY-MM-DD')
+// 29天前日期,近3日
+const week30Day = moment().add(-29, 'd').format('YYYY-MM-DD')
+// 当月1号日期
+const monthStartDay = moment().startOf('month').format('YYYY-MM-DD')
+// 当月最后一天日期
+const monthEndDay = moment().endOf('month').format('YYYY-MM-DD')
+// 当年第一天日期
+const yearStartDay = moment().startOf('year').format('YYYY-MM-DD')
+// 设置默认近7日
+params.range_time = [weekDay, currentDay]
+// console.log(moment().format('YYYY-MM-DD'))
+console.log(currentDay, weekDay, monthStartDay, monthEndDay, yearStartDay)
 // 面板数据
 home.getPanels().then((res) => {
   panels.value = res.result
@@ -197,11 +214,28 @@ const setType = (val) => {
       tooltip_name.value = '订单数'
       break
   }
-  console.log(tooltip_name.value)
   getBarData()
 }
 const setScope = (val) => {
+  switch (val) {
+    case 'week':
+      params.range_time = [weekDay, currentDay]
+      break
+    case 'month':
+      params.range_time = [week30Day, currentDay]
+      break
+    case 'current_scope':
+      params.range_time = [monthStartDay, currentDay]
+      break
+    case 'year':
+      params.range_time = [yearStartDay, currentDay]
+      break
+    default:
+      params.range_time = [weekDay, currentDay]
+      break
+  }
   params.scope = val
+  console.log(val)
   getBarData()
 }
 const switchRangeTime = (val) => {

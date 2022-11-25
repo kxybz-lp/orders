@@ -123,7 +123,7 @@
               <el-input v-model="form.designer" placeholder="请输入跟进设计师" />
             </el-form-item>
             <el-form-item label="跟进信息">
-              <el-row :gutter="2" v-for="(item, index) in form.follow" :key="item.key" style="width: 100%">
+              <el-row :gutter="2" v-for="(item, index) in form.follows" :key="item.key" style="width: 100%">
                 <el-col :md="8" :offset="0">
                   <el-date-picker
                     style="width: 100%"
@@ -310,7 +310,7 @@ const form = reactive({
   is_audit: 1,
   fail_reason: '',
   designer: '',
-  follow: [{ follow_time: '', follow_note: '' }],
+  follows: [{ follow_time: '', follow_note: '' }],
   is_amount: 0,
   status_id: 1,
   deal_time: '',
@@ -412,10 +412,10 @@ const loadData = (id) => {
         form.receive_company = form.receive_company === 0 ? '' : form.receive_company
         form.layout_id = form.layout_id === 0 ? '' : form.layout_id
         form.type_id = form.type_id === 0 ? '' : form.type_id
-        form.follow = form.follow.map((item) => {
+        form.follows = form.follows.map((item) => {
           return { follow_time: parseTime(item.follow_time), follow_note: item.follow_note }
         })
-        form.follow.push({ follow_time: '', follow_note: '' })
+        form.follows.push({ follow_time: '', follow_note: '' })
         form.visit = form.visit.map((item) => {
           return { visit_time: parseTime(item.visit_time), remark: item.remark }
         })
@@ -495,10 +495,10 @@ const invalidTagChange = (val) => {
 }
 // 跟进信息
 const addFollow = () => {
-  form.follow.push({ follow_time: '', follow_note: '' })
+  form.follows.push({ follow_time: '', follow_note: '' })
 }
 const minusFollow = (index) => {
-  form.follow.splice(index, 1)
+  form.follows.splice(index, 1)
 }
 
 // 交定时间
@@ -598,9 +598,9 @@ const submit = () => {
       }
     }
     // 跟进信息数据处理
-    form.follow = form.follow.filter((item) => item.follow_time && item.follow_note)
+    form.follows = form.follows.filter((item) => item.follow_time && item.follow_note)
     // 后台会自动删除空数组，导致报错
-    form.follow = form.follow.length === 0 ? '' : form.follow
+    form.follows = form.follows.length === 0 ? '' : form.follows
     // 回访信息数据处理
     form.visit = form.visit.filter((item) => item.visit_time && item.remark)
     form.visit = form.visit.length === 0 ? '' : form.visit
@@ -614,7 +614,7 @@ const submit = () => {
           // resetFields 只对有prop属性的生效
           formRef.value.resetFields()
           //重置无prop属性的字段
-          form.follow = [{ follow_time: '', follow_note: '' }]
+          form.follows = [{ follow_time: '', follow_note: '' }]
           form.visit = [{ visit_time: '', remark: '' }]
           form.province_id = ''
           form.city_id = ''

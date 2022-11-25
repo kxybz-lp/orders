@@ -46,7 +46,7 @@
               <el-descriptions-item label="跟进设计师：">{{ detail.designer }}</el-descriptions-item>
               <el-descriptions-item label="跟进信息：">
                 <el-descriptions style="margin-left: 115px" :column="1" border>
-                  <template v-for="item in detail.follow">
+                  <template v-for="item in detail.follows">
                     <el-descriptions-item label="跟进时间">{{ parseTime(item.follow_time) }}</el-descriptions-item>
                     <el-descriptions-item label="跟进说明">{{ item.follow_note }}</el-descriptions-item>
                   </template>

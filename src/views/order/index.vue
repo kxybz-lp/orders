@@ -212,7 +212,11 @@
         <el-table-column prop="status_name" label="订单状态" width="140" />
         <el-table-column prop="deal_time" sortable label="反馈交定时间" width="150" />
         <el-table-column prop="follow_time" sortable label="最新跟进时间" width="160" />
-        <el-table-column prop="follow_note" show-overflow-tooltip label="最新跟进进展" width="180" />
+        <el-table-column show-overflow-tooltip label="最新跟进进展" width="180">
+          <template #default="scope">
+            {{ scope.row.follows.length > 0 ? scope.row.follows[0]['follow_note'] : '' }}
+          </template>
+        </el-table-column>
         <el-table-column v-if="$store.state.adminInfo.branch_id === '1'" label="无效标签" width="160">
           <template #default="scope">
             <span style="color: #ff5722">{{ scope.row.invalid_tag }}</span>
@@ -226,12 +230,16 @@
           </template>
         </el-table-column>
         <el-table-column v-if="$store.state.adminInfo.branch_id === '1'" prop="visit_time" sortable label="最近回访时间" width="150" />
-        <el-table-column v-if="$store.state.adminInfo.branch_id === '1'" prop="v_remark" label="最近回访说明" show-overflow-tooltip width="160" />
+        <el-table-column v-if="$store.state.adminInfo.branch_id === '1'" prop="v_remark" label="最近回访说明" show-overflow-tooltip width="160">
+          <template #default="scope">
+            {{ scope.row.visit.length > 0 ? scope.row.visit[0]['remark'] : '' }}
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="210" fixed="right">
           <template #default="scope">
             <el-button v-if="params.tab !== 'recyc'" v-permission="83" size="small" type="success" @click="handleDetail(scope.row.id)">详情 </el-button>
             <el-button v-if="params.tab !== 'recyc'" v-permission="80" size="small" type="primary" @click="$router.push('/order/edit/' + scope.row.id)">编辑 </el-button>
-            <el-button v-if="params.tab !== 'recyc' && $store.state.adminInfo.branch_id !== '1'" type="primary" v-permission="80" size="small" @click="handleEdit(scope.row)"> 编辑 </el-button>
+            <el-button v-if="params.tab !== 'recyc'" type="primary" v-permission="80" size="small" @click="handleEdit(scope.row)"> 编辑 </el-button>
             <el-button v-if="params.tab !== 'recyc'" v-permission="87" size="small" type="danger" @click="handleDelete(scope.row.id)"> 删除 </el-button>
             <el-button v-if="params.tab == 'recyc'" v-permission="88" size="small" type="success" @click="handleResave(scope.row.id)">恢复 </el-button>
             <el-button v-if="params.tab == 'recyc'" v-permission="128" size="small" type="danger" @click="handleDel(scope.row.id)"> 彻底删除 </el-button>
@@ -261,7 +269,7 @@
           <el-input v-model="form.designer" />
         </el-form-item>
         <el-form-item label="跟进信息">
-          <el-row :gutter="2" v-for="(item, index) in form.follow" :key="item.key" style="width: 100%">
+          <el-row :gutter="2" v-for="(item, index) in form.follows" :key="item.key" style="width: 100%">
             <el-col :md="8" :offset="0">
               <el-date-picker
                 style="width: 100%"
@@ -447,6 +455,8 @@ const {
     dataList.value = res.result.data.map((o) => {
       o.arrange_time = parseTime(o.arrange_time, '{y}-{m}-{d} {h}:{i}')
       o.deal_time = parseTime(o.deal_time, '{y}-{m}-{d} {h}:{i}')
+      o.follow_time = parseTime(parseInt(o.follow_time), '{y}-{m}-{d} {h}:{i}')
+      o.visit_time = parseTime(parseInt(o.visit_time), '{y}-{m}-{d} {h}:{i}')
       return o
     })
   },
@@ -482,7 +492,7 @@ const { drawerTitle, editId, formDrawerRef, formRef, form, handleAdd, handleEdit
     is_audit: 1,
     fail_reason: '',
     designer: '',
-    follow: [{ follow_time: '', follow_note: '' }],
+    follows: [{ follow_time: '', follow_note: '' }],
     is_amount: 0,
     status_id: 1,
     deal_time: '',
@@ -504,10 +514,10 @@ const { drawerTitle, editId, formDrawerRef, formRef, form, handleAdd, handleEdit
   beforeSubmit: (from) => {
     let flag = false
     // 跟进信息数据处理
-    if (form.follow.length > 1) {
-      form.follow = form.follow.filter((item) => item.follow_time && item.follow_note)
+    if (form.follows.length > 1) {
+      form.follows = form.follows.filter((item) => item.follow_time && item.follow_note)
     }
-    form.follow.forEach((item) => {
+    form.follows.forEach((item) => {
       if (item.follow_time === '') {
         toast('请填写跟进时间', 'error')
         return
@@ -526,7 +536,6 @@ const { drawerTitle, editId, formDrawerRef, formRef, form, handleAdd, handleEdit
     }
     // 分公司更新--审核
     form.is_audit = 2
-    console.log(form)
     if (flag) return form
   },
 })
@@ -558,10 +567,10 @@ const loadData = (id) => {
         form.receive_company = form.receive_company === 0 ? '' : form.receive_company
         form.layout_id = form.layout_id === 0 ? '' : form.layout_id
         form.type_id = form.type_id === 0 ? '' : form.type_id
-        form.follow = form.follow.map((item) => {
+        form.follows = form.follows.map((item) => {
           return { follow_time: parseTime(item.follow_time), follow_note: item.follow_note }
         })
-        form.follow.push({ follow_time: '', follow_note: '' })
+        form.follows.push({ follow_time: '', follow_note: '' })
         // form.visit = form.visit.map((item) => {
         //   return { visit_time: parseTime(item.visit_time), remark: item.remark }
         // })
@@ -580,10 +589,10 @@ const loadData = (id) => {
     })
 }
 const addFollow = () => {
-  form.follow.push({ follow_time: '', follow_note: '' })
+  form.follows.push({ follow_time: '', follow_note: '' })
 }
 const minusFollow = (index) => {
-  form.follow.splice(index, 1)
+  form.follows.splice(index, 1)
 }
 
 // 移动
