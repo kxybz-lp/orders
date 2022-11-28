@@ -24,14 +24,14 @@
             </el-col>
             <el-col :md="6" :offset="0">
               <el-form-item label="推广渠道">
-                <el-select v-model="params.channel_id" placeholder="选择渠道" clearable multiple @clear="getData(1)">
+                <el-select v-model="params.channel_id" placeholder="选择或搜索渠道" filterable clearable multiple @clear="getData(1)">
                   <el-option :value="item.id" :label="item.name" v-for="item in channel" :key="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :md="6" :offset="0">
               <el-form-item label="客户来源">
-                <el-select v-model="params.source_id" placeholder="选择来源" clearable multiple @clear="getData(1)">
+                <el-select v-model="params.source_id" placeholder="选择或搜索来源" filterable clearable multiple @clear="getData(1)">
                   <el-option-group v-for="group in source" :key="group.label" :label="group.label">
                     <el-option :value="item.id" :label="item.name" v-for="item in group.options" :key="item.id"></el-option>
                   </el-option-group>
@@ -47,21 +47,21 @@
           <el-row :gutter="2">
             <el-col :md="6" :offset="0">
               <el-form-item label="所在省">
-                <el-select v-model="params.province_id" filterable placeholder="选择区域" clearable @clear="getData(1)">
+                <el-select v-model="params.province_id" filterable placeholder="选择或搜索省" clearable @clear="getData(1)">
                   <el-option :value="item.id" :label="item.areaname" v-for="item in province" :key="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :md="6" :offset="0">
               <el-form-item label="所在市">
-                <el-select v-model="params.city_id" placeholder="选择区域" filterable clearable @clear="getData(1)">
+                <el-select v-model="params.city_id" placeholder="选择或搜索城市" filterable clearable @clear="getData(1)">
                   <el-option :value="item.id" :label="item.areaname" v-for="item in city" :key="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :md="6" :offset="0">
               <el-form-item label="接单公司">
-                <el-select v-model="params.receive_company" placeholder="选择公司" clearable multiple filterable @clear="getData(1)">
+                <el-select v-model="params.receive_company" placeholder="选择或搜索公司" clearable multiple filterable @clear="getData(1)">
                   <el-option :value="item.id" :label="item.name" v-for="item in branch" :key="item.id"></el-option>
                 </el-select>
               </el-form-item>
@@ -239,7 +239,7 @@
           <template #default="scope">
             <el-button v-if="params.tab !== 'recyc'" v-permission="83" size="small" type="success" @click="handleDetail(scope.row.id)">详情 </el-button>
             <el-button v-if="params.tab !== 'recyc'" v-permission="80" size="small" type="primary" @click="$router.push('/order/edit/' + scope.row.id)">编辑 </el-button>
-            <el-button v-if="params.tab !== 'recyc'" type="primary" v-permission="80" size="small" @click="handleEdit(scope.row)"> 编辑 </el-button>
+            <el-button v-if="params.tab !== 'recyc' && $store.state.adminInfo.branch_id !== '1'" type="primary" v-permission="80" size="small" @click="handleEdit(scope.row)"> 编辑 </el-button>
             <el-button v-if="params.tab !== 'recyc'" v-permission="87" size="small" type="danger" @click="handleDelete(scope.row.id)"> 删除 </el-button>
             <el-button v-if="params.tab == 'recyc'" v-permission="88" size="small" type="success" @click="handleResave(scope.row.id)">恢复 </el-button>
             <el-button v-if="params.tab == 'recyc'" v-permission="128" size="small" type="danger" @click="handleDel(scope.row.id)"> 彻底删除 </el-button>
@@ -727,7 +727,8 @@ watch(
   route,
   () => {
     if (route.query.reload) {
-      route.query.page ? getData(1) : getData()
+      getData()
+      // route.query.page ? getData(1) : getData()
     }
   },
   { deep: true, immediate: true }

@@ -8,8 +8,8 @@
         </el-header>
         <el-main>
           <tagsView></tagsView>
-          <!-- <router-view v-if="$route.name === 'OrderEdit'" /> -->
-          <router-view #default="{ Component }">
+          <router-view :key="$route.params.id" v-if="$route.name === 'OrderEdit'" />
+          <router-view v-else #default="{ Component }">
             <transition name="fade">
               <keep-alive :max="10">
                 <component :is="Component"></component>

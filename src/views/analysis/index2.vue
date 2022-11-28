@@ -27,7 +27,7 @@
             size="small"
           />
         </el-form-item>
-        <el-form-item v-if="params.tab === 'area'" label="派单时间">
+        <el-form-item v-if="params.tab === 'area' || params.tab === 'arrange'" label="派单时间">
           <el-button-group>
             <el-button :type="params.scope === 'all' ? 'primary' : ''" @click="setScope('all')">全部</el-button>
             <el-button :type="params.scope === 'today' ? 'primary' : ''" @click="setScope('today')">今日</el-button>
@@ -77,91 +77,94 @@
           </el-select>
         </el-form-item>
         <el-form-item v-if="params.tab === 'source'" label="来源">
-          <el-select v-model="params.source_id" placeholder="选择或搜索来源" filterable clearable multiple @change="sourceChange">
+          <el-select v-model="params.source_id" placeholder="选择或搜索来源" filterable clearable multiple>
             <el-option-group v-for="group in source" :key="group.label" :label="group.label">
               <el-option :value="item.id" :label="item.name" v-for="item in group.options" :key="item.id"></el-option>
             </el-option-group>
           </el-select>
         </el-form-item>
         <el-form-item v-if="params.tab === 'area'" label="所在省">
-          <el-select v-model="params.province_id" filterable multiple placeholder="选择或搜索省" clearable>
+          <el-select v-model="params.province_id" filterable placeholder="选择或搜索省" clearable>
             <el-option :value="item.id" :label="item.areaname" v-for="item in province" :key="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item v-if="params.tab === 'area'" label="所在市">
-          <el-select v-model="params.city_id" placeholder="选择或搜索市" filterable multiple clearable>
-            <el-option-group v-for="group in city" :key="group.label" :label="group.label">
-              <el-option :value="item.id" :label="item.areaname" v-for="item in group.options" :key="item.id"></el-option>
-            </el-option-group>
+          <el-select v-model="params.city_id" placeholder="选择或搜索市" filterable clearable>
+            <el-option :value="item.id" :label="item.areaname" v-for="item in city" :key="item.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="params.tab === 'deal'" label="接单公司">
+        <el-form-item v-if="params.tab === 'arrange' || params.tab === 'deal'" label="接单公司">
           <el-select v-model="params.receive_company" placeholder="选择或搜索公司" clearable multiple filterable>
             <el-option :value="item.id" :label="item.name" v-for="item in branch" :key="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item v-if="params.tab !== 'other'">
           <el-button @click="onReset">重置</el-button>
-          <el-button type="primary" @click="onSubmit" :loading="loading">生成报表</el-button>
+          <el-button type="primary" @click="onSubmit">生成报表</el-button>
         </el-form-item>
       </el-form>
-      <!-- 常用查询 -->
-      <el-row :gutter="20" class="search-tag" v-if="params.tab === 'other'">
-        <el-col :span="24" :offset="0">
-          <el-tag :type="tagId === tag.id ? '' : 'info'" v-for="tag in dataSearchList" @click="handleSearch(tag)" :key="tag.id" closable @close="searchDelete(tag.id)">
-            {{ tag.name }}
-          </el-tag>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20" v-if="dataChannelList.length > 0 || dataSourceList.length > 0 || dataAreaList.length > 0 || dataDealList.length > 0">
-        <el-col :span="24" :offset="0" style="text-align: right; margin-bottom: 15px">
-          <el-button v-permission="129" v-if="params.tab !== 'other'" type="primary" size="small" @click="searchAdd" :loading="loading">添加到常用查询</el-button>
-          <el-button v-permission="120" type="danger" size="small" @click="handExport" :loading="loading">导出</el-button>
-        </el-col>
-      </el-row>
-
-      <div class="tableData" style="padding-bottom: 15px" v-loading="loading" element-loading-text="数据加载中......">
-        <!-- 渠道报表 -->
-        <el-table id="channelTable" v-if="dataChannelList.length > 0" :data="dataChannelList" border stripe show-summary :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }">
-          <el-table-column prop="channel_name" label="渠道" />
-          <el-table-column prop="order_number" label="下单数" />
-          <el-table-column prop="arrange_number" label="派单数" />
-          <el-table-column prop="docking_number" label="签单数" />
-        </el-table>
-        <!-- 来源报表 -->
-        <el-table
-          id="sourceTable"
-          v-if="dataSourceList.length > 0"
-          :data="dataSourceList"
-          style="width: 100%"
-          :span-method="objectSpanMethod"
-          border
-          :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }"
-          show-summary
-        >
-          <el-table-column :prop="item.prop" :label="item.label" v-for="(item, index) in SourceTableHeader" :key="index"></el-table-column>
-        </el-table>
-        <!-- 区域报表 -->
-        <el-table
-          id="areaTable"
-          v-if="dataAreaList.length > 0"
-          :data="dataAreaList"
-          style="width: 100%"
-          :span-method="objectSpanMethod"
-          border
-          :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }"
-          show-summary
-        >
-          <el-table-column :prop="item.prop" :label="item.label" v-for="(item, index) in AreaTableHeader" :key="index"></el-table-column>
-        </el-table>
-        <!-- 签单报表 -->
-        <el-table id="dealTable" v-if="dataDealList.length > 0" :data="dataDealList" border stripe :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }" s>
-          <el-table-column prop="branch_name" label="公司" />
-          <el-table-column prop="arrange_number" label="派单数" />
-          <el-table-column prop="docking_number" label="签单数" />
-          <el-table-column prop="per" label="签单率" />
-        </el-table>
-      </div>
+      <!-- 渠道报表 -->
+      <el-table v-if="params.tab === 'channel'" :data="dataChannelList" style="width: 100%">
+        <el-table-column align="center" label="/" width="150">共计</el-table-column>
+        <el-table-column align="center" prop="order_number" label="总下单数" width="150" />
+        <el-table-column align="center" prop="arrange_number" label="总派单数" width="150" />
+        <el-table-column align="center" prop="signing_number" label="总签单数" width="150" />
+        <el-table-column align="center" :label="item.name" v-for="item in dataChannelList[0].channel" :key="item.id">
+          <el-table-column align="center" label="下单数" width="120">
+            {{ item.order_number }}
+          </el-table-column>
+          <el-table-column align="center" label="派单数" width="120">
+            {{ item.arrange_number }}
+          </el-table-column>
+          <el-table-column align="center" label="签单数" width="120">
+            {{ item.signing_number }}
+          </el-table-column>
+        </el-table-column>
+      </el-table>
+      <!-- 来源报表 -->
+      <el-table v-if="params.tab === 'source'" :data="dataSourcelList" style="width: 100%">
+        <el-table-column align="center" label="/" width="150">共计</el-table-column>
+        <el-table-column align="center" prop="order_number" label="总下单数" width="150" />
+        <el-table-column align="center" prop="arrange_number" label="总派单数" width="150" />
+        <el-table-column align="center" prop="signing_number" label="总签单数" width="150" />
+        <el-table-column align="center" :label="item.name" v-for="item in dataSourcelList[0].channel" :key="item.id">
+          <el-table-column align="center" :label="itm.name" v-for="itm in item.source" :key="itm.id">
+            <el-table-column align="center" label="下单数" width="120">
+              {{ itm.order_number }}
+            </el-table-column>
+            <el-table-column align="center" label="派单数" width="120">
+              {{ itm.arrange_number }}
+            </el-table-column>
+            <el-table-column align="center" label="签单数" width="120">
+              {{ itm.signing_number }}
+            </el-table-column>
+          </el-table-column>
+        </el-table-column>
+      </el-table>
+      <!-- 区域报表，单列的行合并 -->
+      <el-table
+        v-if="params.tab === 'area'"
+        :data="dataAreaList"
+        style="width: 100%"
+        :span-method="objectSpanMethod"
+        border
+        :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }"
+        show-summary
+      >
+        <!-- 表头 -->
+        <el-table-column :prop="item.prop" :label="item.label" v-for="(item, index) in tableHeader" :key="index"></el-table-column>
+      </el-table>
+      <!-- 区域报表，多列的行合并 -->
+      <el-table v-if="params.tab === 'area'" :data="tableData" style="width: 100%" :span-method="objectSpanMethod2" border :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }">
+        <el-table-column :prop="item.prop" :label="item.label" v-for="(item, index) in tableHeader2" :key="index"></el-table-column>
+      </el-table>
+      <!-- 反馈签单报表 -->
+      <el-table v-if="params.tab === 'deal'" :data="dataSignList" border stripe show-summary :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }">
+        <el-table-column prop="name" label="分公司" />
+        <el-table-column prop="arrange_number" label="派单数" />
+        <el-table-column prop="signing_number" label="签单数" />
+        <el-table-column prop="per" label="下单签单率数" />
+      </el-table>
     </el-card>
   </div>
 </template>
@@ -169,10 +172,6 @@
 import { reactive, ref, computed, watch } from 'vue'
 import moment from 'moment'
 import order from '@/api/order'
-import { closeElLoading, createUniqueString, elLoading, showModal, showPrompt, toast, time_init } from '@/utils/utils'
-import search from '@/api/search'
-import * as FileSaver from 'file-saver'
-import * as XLSX from 'xlsx'
 
 // 当天
 const currentDay = moment().format('YYYY-MM-DD')
@@ -189,10 +188,9 @@ const monthEndDay = moment().endOf('month').format('YYYY-MM-DD')
 // 当年第一天
 const yearStartDay = moment().startOf('year').format('YYYY-MM-DD')
 
-const loading = ref(false)
 const formRef = ref(null)
 const params = reactive({
-  tab: 'channel',
+  tab: 'deal',
   order_time: '',
   arrange_time: '',
   deal_time: '',
@@ -220,52 +218,187 @@ const tabbars = [
   },
   {
     key: 'deal',
-    name: '反馈签单',
+    name: '签单',
   },
   {
     key: 'other',
     name: '常用查询',
   },
 ]
+// 签单报表数据
+const dataSignList = [
+  {
+    name: '广州公司',
+    arrange_number: 180,
+    signing_number: 180,
+    per: '10%',
+  },
+  {
+    name: '深圳公司',
+    arrange_number: 180,
+    signing_number: 180,
+    per: '10.88%',
+  },
+]
 
 // 渠道报表数据
-const dataChannelList = ref([])
-const dataSourceList = ref([])
-const dataAreaList = ref([])
-const dataDealList = ref([])
-const dataSearchList = ref([])
-const tagId = ref(0)
-
-const pos = ref(0)
-const spanArr = ref([])
-const SourceTableHeader = ref([
+const dataChannelList = [
   {
-    prop: 'channel_name',
-    label: '渠道',
+    order_number: 180,
+    arrange_number: 80,
+    signing_number: 30,
+    channel: [
+      {
+        id: 1,
+        name: '官网',
+        order_number: '50',
+        arrange_number: '30',
+        signing_number: '20',
+      },
+      {
+        id: 2,
+        name: '头条',
+        order_number: '90',
+        arrange_number: '60',
+        signing_number: '28',
+      },
+    ],
+  },
+]
+// 来源报表数据
+const dataSourcelList = [
+  {
+    order_number: 180,
+    arrange_number: 80,
+    signing_number: 30,
+    channel: [
+      {
+        id: 1,
+        name: '官网',
+        order_number: '50',
+        arrange_number: '30',
+        signing_number: '20',
+        source: [
+          {
+            id: 111,
+            name: '希百信息流',
+            order_number: 180,
+            arrange_number: 80,
+            signing_number: 30,
+          },
+          {
+            id: 112,
+            name: '在线下单',
+            order_number: 180,
+            arrange_number: 80,
+            signing_number: 30,
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: '头条',
+        order_number: '90',
+        arrange_number: '60',
+        signing_number: '28',
+        source: [
+          {
+            id: 211,
+            name: '皮厂抖音',
+            order_number: 180,
+            arrange_number: 80,
+            signing_number: 30,
+          },
+          {
+            id: 212,
+            name: '在线咨询',
+            order_number: 180,
+            arrange_number: 80,
+            signing_number: 30,
+          },
+        ],
+      },
+    ],
+  },
+]
+// 区域报表数据  参考https://blog.csdn.net/weixin_48201324/article/details/125192153 合并行数据
+const dataAreaList = ref([
+  {
+    province_name: '广东省',
+    city_name: '广州市',
+    order_number: 180,
+    arrange_number: 150,
+    signing_number: 120,
   },
   {
-    prop: 'source_name',
-    label: '来源',
+    province_name: '广东省',
+    city_name: '深圳市',
+    order_number: 140,
+    arrange_number: 120,
+    signing_number: 100,
   },
   {
-    prop: 'order_number',
-    label: '下单数',
+    province_name: '广东省',
+    city_name: '佛山市',
+    order_number: 110,
+    arrange_number: 66,
+    signing_number: 33,
   },
   {
-    prop: 'arrange_number',
-    label: '派单数',
+    province_name: '广东省',
+    city_name: '合计',
+    order_number: 430,
+    arrange_number: 336,
+    signing_number: 253,
   },
   {
-    prop: 'docking_number',
-    label: '签单数',
+    province_name: '江苏省',
+    city_name: '南京市',
+    order_number: 180,
+    arrange_number: 150,
+    signing_number: 120,
+  },
+  {
+    province_name: '江苏省',
+    city_name: '昆山市',
+    order_number: 180,
+    arrange_number: 150,
+    signing_number: 120,
+  },
+  {
+    province_name: '江苏省',
+    city_name: '合计',
+    order_number: 360,
+    arrange_number: 300,
+    signing_number: 240,
+  },
+  {
+    province_name: '江西省',
+    city_name: '南昌市',
+    order_number: 180,
+    arrange_number: 150,
+    signing_number: 120,
+  },
+  {
+    province_name: '江西省',
+    city_name: '合计',
+    order_number: 180,
+    arrange_number: 150,
+    signing_number: 120,
   },
 ])
-const AreaTableHeader = ref([
+let pos = 0
+let spanArr = []
+const tableHeader = [
   {
     prop: 'province_name',
     label: '省份',
   },
   {
+    prop: 'city_name',
+    label: '城市',
+  },
+  {
     prop: 'order_number',
     label: '下单数',
   },
@@ -274,11 +407,10 @@ const AreaTableHeader = ref([
     label: '派单数',
   },
   {
-    prop: 'docking_number',
+    prop: 'signing_number',
     label: '签单数',
   },
-])
-
+]
 /**
  * 合并省名相同的单元格，[4, 0, 0, 0, 3, 0, 0, 2, 0]，
  * 0表示删除该单元格，1为默认不合并，大于1则为需要合并的行数
@@ -287,39 +419,20 @@ const AreaTableHeader = ref([
 const getSpanArr = (data) => {
   for (var i = 0; i < data.length; i++) {
     if (i === 0) {
-      spanArr.value.push(1) //第一行的第一个单元格初始化不合并
-      pos.value = 0
+      spanArr.push(1) //第一行的第一个单元格初始化不合并
+      pos = 0
     } else {
-      if (params.tab === 'area') {
-        if (data[i].province_name === data[i - 1].province_name) {
-          spanArr.value[pos.value] += 1
-          spanArr.value.push(0)
-        } else {
-          spanArr.value.push(1)
-          pos.value = i
-        }
+      if (data[i].province_name === data[i - 1].province_name) {
+        spanArr[pos] += 1
+        spanArr.push(0)
       } else {
-        if (data[i].channel_name === data[i - 1].channel_name) {
-          spanArr.value[pos.value] += 1
-          spanArr.value.push(0)
-        } else {
-          spanArr.value.push(1)
-          pos.value = i
-        }
+        spanArr.push(1)
+        pos = i
       }
     }
   }
 }
-watch(dataSourceList, (newval) => {
-  pos.value = 0
-  spanArr.value = []
-  getSpanArr(dataSourceList.value)
-})
-watch(dataAreaList, (newval) => {
-  pos.value = 0
-  spanArr.value = []
-  getSpanArr(dataAreaList.value)
-})
+getSpanArr(dataAreaList.value)
 // console.log(spanArr)
 /**
  * 单行或对行合并参考：https://blog.csdn.net/weixin_48201324/article/details/125192153
@@ -327,8 +440,144 @@ watch(dataAreaList, (newval) => {
 const objectSpanMethod = ({ rowIndex, columnIndex }) => {
   //只对第一列的数据合并
   if (columnIndex === 0) {
-    const _row = spanArr.value[rowIndex]
+    const _row = spanArr[rowIndex]
     // 合并数为0则删除该单元格，为1则不进行合并，如广东省的所有行[4,1],[0,0],[0,0],[0,0]
+    const _col = _row > 0 ? 1 : 0
+    return {
+      rowspan: _row,
+      colspan: _col,
+    }
+  }
+}
+
+// 区域报表多列的行合并,如果两个省的某个合并字段的值相同时，会导致合并错误，可以在可能相同的合并列值加个标识，然后渲染的时候处理标识，或者使用合并单列行合并的方法
+const tableData = ref([
+  {
+    province_name: '广东省',
+    order_number_total: 500,
+    arrange_number_total: 350,
+    signing_number_total: 150,
+    city_name: '广州市',
+    order_number: 180,
+    arrange_number: 150,
+    signing_number: 120,
+  },
+  {
+    province_name: '广东省',
+    order_number_total: 500,
+    arrange_number_total: 350,
+    signing_number_total: 150,
+    city_name: '深圳市',
+    order_number: 140,
+    arrange_number: 120,
+    signing_number: 100,
+  },
+  {
+    province_name: '广东省',
+    order_number_total: 500,
+    arrange_number_total: 350,
+    signing_number_total: 150,
+    city_name: '佛山市',
+    order_number: 110,
+    arrange_number: 66,
+    signing_number: 33,
+  },
+  {
+    province_name: '江苏省',
+    order_number_total: 400,
+    arrange_number_total: 250,
+    signing_number_total: 110,
+    city_name: '南京市',
+    order_number: 180,
+    arrange_number: 150,
+    signing_number: 120,
+  },
+  {
+    province_name: '江苏省',
+    order_number_total: 400,
+    arrange_number_total: 250,
+    signing_number_total: 110,
+    city_name: '昆山市',
+    order_number: 180,
+    arrange_number: 150,
+    signing_number: 120,
+  },
+  {
+    province_name: '江西省',
+    order_number_total: 200,
+    arrange_number_total: 150,
+    signing_number_total: 100,
+    city_name: '南昌市',
+    order_number: 180,
+    arrange_number: 150,
+    signing_number: 120,
+  },
+])
+let position = 0
+let spanMap = {}
+// 需要合并的列
+let mergedColumns = ['province_name', 'order_number_total', 'arrange_number_total', 'signing_number_total']
+
+const tableHeader2 = [
+  {
+    prop: 'province_name',
+    label: '省份',
+  },
+  {
+    prop: 'order_number_total',
+    label: '总下单数',
+  },
+  {
+    prop: 'arrange_number_total',
+    label: '总派单数',
+  },
+  {
+    prop: 'signing_number_total',
+    label: '总签单数',
+  },
+  {
+    prop: 'city_name',
+    label: '城市',
+  },
+  {
+    prop: 'order_number',
+    label: '下单数',
+  },
+  {
+    prop: 'arrange_number',
+    label: '派单数',
+  },
+  {
+    prop: 'signing_number',
+    label: '签单数',
+  },
+]
+const getSpanArr2 = (data) => {
+  for (var i = 0; i < data.length; i++) {
+    if (i === 0) {
+      mergedColumns.forEach((column) => {
+        spanMap[column] = {
+          spanArr: [1],
+          position: 0,
+        }
+      })
+    } else {
+      mergedColumns.forEach((column) => {
+        if (data[i][column] === data[i - 1][column]) {
+          spanMap[column].spanArr[spanMap[column].position] += 1
+          spanMap[column].spanArr.push(0)
+        } else {
+          spanMap[column].spanArr.push(1)
+          spanMap[column].position = i
+        }
+      })
+    }
+  }
+}
+getSpanArr2(tableData.value)
+const objectSpanMethod2 = ({ column, rowIndex }) => {
+  if (spanMap[column.property]) {
+    const _row = spanMap[column.property].spanArr[rowIndex]
     const _col = _row > 0 ? 1 : 0
     return {
       rowspan: _row,
@@ -339,26 +588,7 @@ const objectSpanMethod = ({ rowIndex, columnIndex }) => {
 
 // tabs切换
 const handleTabChange = (val) => {
-  params.order_time = ''
-  params.arrange_time = ''
-  params.deal_time = ''
-  params.channel_id = ''
-  params.receive_company = ''
-  params.scope = 'all'
-  dataChannelList.value = []
-  dataSourceList.value = []
-  dataAreaList.value = []
-  dataDealList.value = []
-  pos.value = 0
-  tagId.value = 0
-  spanArr.value = []
-  if (val === 'other') {
-    getSearch()
-  }
-}
-// 来源选择
-const sourceChange = (val) => {
-  dataSourceList.value = []
+  console.log(val, params.tab)
 }
 // 时间按钮切换
 const setScope = (val) => {
@@ -432,6 +662,7 @@ const setScope = (val) => {
       break
   }
   params.scope = val
+  console.log(val)
   // getBarData()
 }
 // 时间选择器切换
@@ -443,154 +674,12 @@ const switchTime = (val) => {
   }
   // getBarData()
 }
-
-// 获取常用搜索数据
-const getSearch = () => {
-  search.getList().then((res) => {
-    if (res.code > 0) {
-      dataSearchList.value = res.result.data
-    } else {
-      toast('查询数据获取失败', 'error')
-    }
-  })
-}
-// 新增常用搜索
-const searchAdd = () => {
-  showPrompt('输入查询名称')
-    .then((name) => {
-      loading.value = true
-      search
-        .create({ name: name.value, params: params })
-        .then((res) => {
-          if (res.code > 0) {
-            toast('数据添加成功')
-          } else {
-            toast(res.message || '数据添加失败', 'error')
-          }
-        })
-        .finally(() => {
-          loading.value = false
-        })
-    })
-    .catch((error) => {})
-}
-// 删除常用搜索
-const searchDelete = (id) => {
-  // 判断是否有删除权限 权限ID130
-  showModal('确认要删除该数据吗？')
-    .then((res) => {
-      search.delete(id).then((res) => {
-        if (res.code > 0) {
-          toast('数据删除成功')
-          getSearch()
-        } else {
-          toast(res.message || '数据添加失败', 'error')
-        }
-      })
-    })
-    .catch((err) => {})
-}
-// 常用查询点击
-const handleSearch = (item) => {
-  tagId.value = item.id
-  dataChannelList.value = []
-  dataSourceList.value = []
-  dataAreaList.value = []
-  dataDealList.value = []
-  pos.value = 0
-  spanArr.value = []
-  getData(item.params)
-}
 // 生成报表
 const onSubmit = () => {
-  if (params.tab === 'source' && !params.source_id) {
-    toast('请选择来源', 'error')
-    return
-  }
-  getData(params)
-}
-
-// 导出报表
-const handExport = () => {
-  elLoading('数据导出中...')
-  let filename = time_init(true) + '-' + createUniqueString() + '.xlsx'
-  /* 从表生成工作簿对象 */
-  let dom
-  if (dataChannelList.value.length > 0) {
-    dom = document.querySelector('#channelTable')
-  } else if (dataSourceList.value.length > 0) {
-    dom = document.querySelector('#sourceTable')
-  } else if (dataAreaList.value.length > 0) {
-    dom = document.querySelector('#areaTable')
-  } else if (dataDealList.value.length > 0) {
-    dom = document.querySelector('#dealTable')
-  }
-  var wb = XLSX.utils.table_to_book(dom)
-  /* 获取二进制字符串作为输出 */
-  var wbout = XLSX.write(wb, {
-    bookType: 'xlsx',
-    bookSST: true,
-    type: 'array',
-  })
-  try {
-    FileSaver.saveAs(
-      new Blob([wbout], { type: 'application/octet-stream' }),
-      //设置导出文件名称
-      filename
-    )
-  } catch (e) {
-    if (typeof console !== 'undefined') toast(e.wbout, 'error')
-  }
-  console.log(FileSaver)
-  closeElLoading()
-  return wbout
-}
-
-// 获取查询数据
-const getData = (param) => {
-  loading.value = true
-  order
-    .getAnalysis(param)
-    .then((res) => {
-      if (res.code > 0) {
-        if (param.tab === 'channel') {
-          dataChannelList.value = res.result
-        } else if (param.tab === 'source') {
-          dataSourceList.value = res.result.map((item) => {
-            return { channel_name: item.channel_name, source_name: item.source_name, order_number: item.order_number, arrange_number: item.arrange_number, docking_number: item.docking_number }
-          })
-        } else if (param.tab === 'area') {
-          dataAreaList.value = res.result.map((item) => {
-            return { province_name: item.province_name, city_name: item.city_name || '', order_number: item.order_number, arrange_number: item.arrange_number, docking_number: item.docking_number }
-          })
-        } else if (param.tab === 'deal') {
-          dataDealList.value = res.result
-        }
-      } else {
-        let msg = res.message || '数据请求失败'
-        toast(msg, 'error')
-      }
-    })
-    .finally(() => {
-      loading.value = false
-    })
+  console.log(params)
 }
 // 重置
-const onReset = () => {
-  params.arrange_time = ''
-  params.deal_time = ''
-  params.channel_id = ''
-  params.province_id = ''
-  params.city_id = ''
-  params.receive_company = ''
-  params.scope = 'all'
-  dataChannelList.value = []
-  dataSourceList.value = []
-  dataAreaList.value = []
-  dataDealList.value = []
-  pos.value = 0
-  spanArr.value = []
-}
+const onReset = () => {}
 
 // 获取select数据
 const channelList = ref([])
@@ -617,11 +706,16 @@ const city = computed(() => {
   params.city_id = ''
   if (params.province_id) {
     let city = []
-    areaList.value.forEach((item) => {
-      if (params.province_id.includes(item.id)) {
-        city.push({ label: item.areaname, options: [...item.children] })
-      }
-    })
+    try {
+      areaList.value.forEach((item) => {
+        if (item.id === params.province_id) {
+          city = item.children
+          throw new Error('break')
+        }
+      })
+    } catch (error) {
+      // 终止循环执行
+    }
     return city
   } else {
     return []
@@ -630,60 +724,14 @@ const city = computed(() => {
 
 // 监听省市变化更新branch数据
 watch([() => params.province_id, () => params.city_id], (newValue, oldValue) => {
-  dataAreaList.value = []
-  pos.value = 0
-  spanArr.value = []
+  params.receive_company = ''
   if (newValue[1]) {
-    AreaTableHeader.value = [
-      {
-        prop: 'province_name',
-        label: '省份',
-      },
-      {
-        prop: 'city_name',
-        label: '城市',
-      },
-      {
-        prop: 'order_number',
-        label: '下单数',
-      },
-      {
-        prop: 'arrange_number',
-        label: '派单数',
-      },
-      {
-        prop: 'docking_number',
-        label: '签单数',
-      },
-    ]
+    branch.value = branchList.value.filter((o) => o.city_id === newValue[1])
+  } else if (newValue[0]) {
+    branch.value = branchList.value.filter((o) => o.province_id === newValue[0])
   } else {
-    AreaTableHeader.value = [
-      {
-        prop: 'province_name',
-        label: '省份',
-      },
-      {
-        prop: 'order_number',
-        label: '下单数',
-      },
-      {
-        prop: 'arrange_number',
-        label: '派单数',
-      },
-      {
-        prop: 'docking_number',
-        label: '签单数',
-      },
-    ]
+    branch.value = branchList.value
   }
-  // params.receive_company = ''
-  // if (newValue[1]) {
-  //   branch.value = branchList.value.filter((o) => o.city_id === newValue[1])
-  // } else if (newValue[0]) {
-  //   branch.value = branchList.value.filter((o) => o.province_id === newValue[0])
-  // } else {
-  //   branch.value = branchList.value
-  // }
 })
 
 const getSelectData = () => {
@@ -714,13 +762,5 @@ getSelectData()
 }
 .el-form-item__label {
   font-weight: 700;
-}
-.search-tag {
-  margin-bottom: 20px;
-}
-.search-tag .el-tag {
-  margin-right: 5px;
-  margin-bottom: 5px;
-  cursor: pointer;
 }
 </style>

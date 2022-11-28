@@ -49,6 +49,10 @@ const order = {
   move(params) {
     return post('/order/order/move', params)
   },
+  // 统计
+  getAnalysis(params) {
+    return post('/order/order/analysis', params)
+  },
   // 数据硬删除
   del(id) {
     return post('/order/order/del', { id })

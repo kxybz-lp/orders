@@ -184,7 +184,7 @@ const yearStartDay = moment().startOf('year').format('YYYY-MM-DD')
 // 设置默认近7日
 params.range_time = [weekDay, currentDay]
 // console.log(moment().format('YYYY-MM-DD'))
-console.log(currentDay, weekDay, monthStartDay, monthEndDay, yearStartDay)
+// console.log(currentDay, weekDay, monthStartDay, monthEndDay, yearStartDay)
 // 面板数据
 home.getPanels().then((res) => {
   panels.value = res.result
@@ -235,7 +235,6 @@ const setScope = (val) => {
       break
   }
   params.scope = val
-  console.log(val)
   getBarData()
 }
 const switchRangeTime = (val) => {

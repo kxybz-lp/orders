@@ -39,10 +39,11 @@
         v-loading="loading"
       >
         <el-table-column type="selection" prop="id" width="55"> </el-table-column>
-        <el-table-column prop="type" label="类型" width="80"> </el-table-column>
-        <el-table-column prop="details" label="内容" width="160"> </el-table-column>
-        <el-table-column prop="name" label="操作者" width="120"> </el-table-column>
-        <el-table-column prop="ip" label="IP" width="150"> </el-table-column>
+        <el-table-column prop="type" label="操作类型" width="100"> </el-table-column>
+        <el-table-column prop="url" label="操作地址" width="180" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="details" label="操作内容" width="140" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="admin_name" label="操作者" width="120" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="ip" label="IP" width="110"> </el-table-column>
         <el-table-column prop="create_time" label="操作时间"></el-table-column>
         <el-table-column label="操作" width="120">
           <template #default="scope">

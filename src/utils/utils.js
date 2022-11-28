@@ -472,20 +472,25 @@ export const pickerOptionsRangeMonth = {
 }
 
 //获取当前时间
-export function time_init() {
-  var date = new Date()
-  var year = date.getFullYear()
-  var month = date.getMonth() + 1
-  var day = date.getDate()
-  var hh = date.getHours()
-  var mm = date.getMinutes()
-  var ss = date.getSeconds()
+export function time_init(file = false) {
+  let date = new Date()
+  let year = date.getFullYear()
+  let month = date.getMonth() + 1
+  let day = date.getDate()
+  let hh = date.getHours()
+  let mm = date.getMinutes()
+  let ss = date.getSeconds()
   if (month < 10) month = '0' + month
   if (day < 10) day = '0' + day
   if (hh < 10) hh = '0' + hh
   if (ss < 10) ss = '0' + ss
   if (mm < 10) mm = '0' + mm
-  var rq = year + '-' + month + '-' + day + ' ' + hh + ':' + mm + ':' + ss
+  let rq
+  if (file) {
+    rq = year.toString() + month.toString() + day.toString() + hh.toString() + mm.toString() + ss.toString()
+  } else {
+    rq = year + '-' + month + '-' + day + ' ' + hh + ':' + mm + ':' + ss
+  }
   return rq
 }
 

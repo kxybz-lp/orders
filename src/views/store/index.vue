@@ -29,14 +29,14 @@
         <el-row :gutter="2">
           <el-col :md="6" :offset="0">
             <el-form-item label="所在省">
-              <el-select v-model="params.province_id" placeholder="选择区域" clearable @change="handleProvinceChange" @clear="getData(1)">
+              <el-select v-model="params.province_id" filterable placeholder="选择或搜索省" clearable @change="handleProvinceChange" @clear="getData(1)">
                 <el-option :value="item.id" :label="item.areaname" v-for="item in province" :key="item.id"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :md="6" :offset="0">
             <el-form-item label="所在市">
-              <el-select v-model="params.city_id" placeholder="选择区域" clearable @clear="getData(1)">
+              <el-select v-model="params.city_id" filterable placeholder="选择或搜索市" clearable @clear="getData(1)">
                 <el-option :value="item.id" :label="item.areaname" v-for="item in city" :key="item.id"></el-option>
               </el-select>
             </el-form-item>

@@ -48,6 +48,9 @@
         <el-form-item label="路由地址" prop="path">
           <el-input v-model="form.path" placeholder="前端路由地址,如/home"></el-input>
         </el-form-item>
+        <el-form-item label="后端地址">
+          <el-input v-model="form.backend_path" placeholder="后端请求地址,如/order/admin/index"></el-input>
+        </el-form-item>
         <el-form-item label="路由组件" prop="component" v-if="(form.is_menu == 1 && form.pid > 0) || form.is_menu == 0">
           <el-input v-model="form.component" placeholder="前端路由对应组件,如views/home/index.vue"></el-input>
         </el-form-item>
@@ -103,6 +106,7 @@ const { drawerTitle, formDrawerRef, formRef, rules, form, handleAdd, handleEdit,
     label: '',
     is_menu: 0,
     path: '',
+    backend_path: '',
     icon: '',
     component: '',
     type: 0,

@@ -58,6 +58,9 @@ export function useTabList() {
   }
   const changeMenu = (tag) => {
     router.push(tag.path).catch((err) => err) //catch解决重复点击报错
+    if (tag.name === 'OrderEdit' || tag.label === '订单更新') {
+      // location.reload()
+    }
     // store.commit('selectMenu', tag)
   }
   const handleCommand = (command) => {

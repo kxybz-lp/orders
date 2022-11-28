@@ -35,12 +35,12 @@
               />
             </el-form-item>
             <el-form-item label="推广渠道" prop="channel_id">
-              <el-select v-model="form.channel_id" placeholder="请选择渠道">
+              <el-select v-model="form.channel_id" filterable placeholder="请选择或搜索渠道">
                 <el-option :disabled="item.status === 0" :value="item.id" :label="item.name" v-for="item in channel" :key="item.id" />
               </el-select>
             </el-form-item>
             <el-form-item label="客户来源" prop="source_id">
-              <el-select v-model="form.source_id" placeholder="请选择来源">
+              <el-select v-model="form.source_id" filterable placeholder="请选择或搜索来源">
                 <el-option :disabled="item.status === 0" :value="item.id" :label="item.name" v-for="item in source" :key="item.id" />
               </el-select>
             </el-form-item>
@@ -106,7 +106,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="接单公司" prop="receive_company">
-              <el-select v-model="form.receive_company" filterable placeholder="请选择接单公司,可搜索" @change="getDockingMan">
+              <el-select v-model="form.receive_company" filterable placeholder="请选择或搜索接单公司" @change="getDockingMan">
                 <el-option :disabled="item.status === 2" :value="item.id" :label="item.name" v-for="item in branchList" :key="item.id" />
               </el-select>
             </el-form-item>
@@ -398,7 +398,6 @@ const loadData = (id) => {
           tabList.splice(index, 1)
           store.commit('setTabList', tabList)
         }
-        console.log(res.result)
         for (const key in form) {
           form[key] = result[key]
         }
@@ -433,18 +432,19 @@ const loadData = (id) => {
       loading.value = false
     })
 }
-let id
-watch(
-  route,
-  () => {
-    if (route.name === 'OrderEdit') {
-      id = route.params.id
-      // 因为使用KeepAlice打开多个编辑页显示的是同一个订单内容，需要重新获取数据
-      loadData(id)
-    }
-  },
-  { deep: true, immediate: true }
-)
+let id = route.params.id
+loadData(id)
+// watch(
+//   route,
+//   () => {
+//     if (route.name === 'OrderEdit') {
+//       id = route.params.id
+//       // 因为使用KeepAlice打开多个编辑页显示的是同一个订单内容，需要重新获取数据
+//       loadData(id)
+//     }
+//   },
+//   { deep: true, immediate: true }
+// )
 
 // tabs切换
 const activeTab = ref('order')
