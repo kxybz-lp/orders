@@ -836,12 +836,6 @@ const searchMobile = (mobile) => {
 const showSearch = ref(false)
 const searchMoreRef = ref()
 
-watch(showSearch, (newVal) => {
-  if (newVal && channelList.value.length === 0) {
-    getSelectData()
-  }
-})
-
 const getSelectData = () => {
   order.getSelect().then((res) => {
     if (res.code > 0) {
@@ -863,6 +857,13 @@ const getSelectData = () => {
     }
   })
 }
+
+// watch(showSearch, (newVal) => {
+//   if (newVal && channelList.value.length === 0) {
+//     getSelectData()
+//   }
+// })
+getSelectData()
 
 // 表单重置
 const resetFrom = () => {

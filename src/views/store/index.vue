@@ -98,7 +98,7 @@
         <el-table-column prop="docking_phone" label="对接人电话" width="120" />
         <el-table-column prop="respon_man" label="负责人" width="100" />
         <el-table-column prop="respon_phone" label="负责人电话" width="120" />
-        <el-table-column prop="business_hours" label="营业时间" width="140" />
+        <el-table-column prop="business_hours" :formatter="businessFormatter" label="营业时间" width="140" />
         <el-table-column prop="service_area" show-overflow-tooltip label="服务区域" width="150" />
         <el-table-column prop="status" sortable label="状态">
           <template #default="scope">
@@ -215,6 +215,10 @@ const { loading, count, dataList, params, getData, handleCurrentChange, handleSi
     dataList.value = res.result.data
   },
 })
+
+const businessFormatter = (row, column) => {
+  return row.business_hours ? row.business_hours : row.business_hour[0] + '-' + row.business_hour[1]
+}
 
 const showSearch = ref(false) // 高级搜索
 const searchMoreRef = ref()

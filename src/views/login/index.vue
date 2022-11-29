@@ -34,9 +34,12 @@
         </el-form>
       </div>
       <div class="login-wechat" v-else>
-        <div class="title">扫码登录</div>
+        <div class="title" style="margin: 0">扫码登录</div>
         <div class="ewm">
-          <img src="@/assets/images/ewm-large.png" alt="扫码登录" />
+          <img :src="img" v-if="img" alt="" style="max-width: 200px; display: block; margin: 20px auto 0px" />
+          <p style="font-size: 14px; text-aling: center; color: #666; margin: 40px auto 40px" v-else>
+            <el-icon><Loading /></el-icon>二维码生成中...
+          </p>
         </div>
         <div class="toolsip">打开「微信」扫一扫登录系统</div>
       </div>
@@ -44,7 +47,7 @@
   </div>
 </template>
 <script setup>
-import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
+import { ref, reactive, onMounted, onBeforeUnmount, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { setToken } from '@/utils/token'
@@ -75,10 +78,43 @@ const rules = {
   ],
 }
 
+const session_id = ref('')
+const img = ref('')
+let timer = null
 let isDesktop = ref(true)
 const swtichType = () => {
   isDesktop.value = !isDesktop.value
+  // 微信登录
+  if (!isDesktop.value) {
+    admin.loginWechat().then((res) => {
+      if (res.code > 0) {
+        session_id.value = res.result.session_id
+        img.value = res.result.img
+
+        timer = setInterval(() => {
+          admin.loginWechatCheck({ session_id: session_id.value }).then((res) => {
+            if (res.code > 0) {
+              const { token } = res.result
+              //存储token
+              setToken(token)
+              clearInterval(timer)
+              router.push({ path: '/' })
+              toast('登录成功')
+            }
+          })
+        }, 2000)
+      } else {
+        toast(res.message || 'error', 'error')
+        return false
+      }
+    })
+  } else {
+    clearInterval(timer)
+  }
 }
+onUnmounted(() => {
+  clearInterval(timer)
+})
 
 const formRef = ref(null)
 const loading = ref(false)
@@ -167,8 +203,12 @@ onBeforeUnmount(() => {
     }
     .login-wechat {
       .ewm {
-        width: 128px;
+        max-width: 160px;
         margin: 0 auto;
+        img {
+          width: 100%;
+          display: block;
+        }
       }
       .toolsip {
         font-size: 12px;

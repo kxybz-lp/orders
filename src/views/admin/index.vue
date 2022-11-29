@@ -75,6 +75,9 @@
             <el-option :value="item.id.toString()" :label="item.name" :disabled="item.status == 2" v-for="item in branchList" :key="item.id"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="微信号" v-if="editId != 0">
+          <el-input v-model="form.openid" />
+        </el-form-item>
         <!-- <el-form-item label="头像" prop="avatar">
           <ChooseImage v-model="form.avatar" />
         </el-form-item> -->
@@ -105,6 +108,7 @@ const { loading, count, dataList, params, getData, handleCurrentChange, handleSw
     pageSize: 10,
     name: '',
     role_id: '',
+    openid: '',
     sort: '',
   },
   onGetListSuccess: (res) => {
@@ -145,6 +149,7 @@ const { drawerTitle, formDrawerRef, formRef, rules, form, editId, handleAdd, han
     password_confirm: '',
     role_id: '',
     branch_id: [],
+    openid: '',
     // avatar: '',
     default: '', //规格值
     status: 1,
@@ -187,7 +192,6 @@ const { drawerTitle, formDrawerRef, formRef, rules, form, editId, handleAdd, han
     ],
   },
   fliterParam: (row) => {
-    console.log(row['branch_id'])
     row['password'] = ''
     // row['branch_id'] = row['branch_id'].split(',').map((o) => parseInt(o))
     for (const key in form) {

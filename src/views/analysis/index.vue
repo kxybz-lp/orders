@@ -343,6 +343,8 @@ const handleTabChange = (val) => {
   params.arrange_time = ''
   params.deal_time = ''
   params.channel_id = ''
+  params.province_id = ''
+  params.city_id = ''
   params.receive_company = ''
   params.scope = 'all'
   dataChannelList.value = []
@@ -456,6 +458,10 @@ const getSearch = () => {
 }
 // 新增常用搜索
 const searchAdd = () => {
+  if (params.tab === 'area' && params.city_id) {
+    toast('常用查询暂不支持城市级别查询', 'warning')
+    return
+  }
   showPrompt('输入查询名称')
     .then((name) => {
       loading.value = true

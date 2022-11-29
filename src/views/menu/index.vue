@@ -12,10 +12,10 @@
             <span :data-id="data.id">{{ data.label }}</span>
           </div>
           <div class="custom-tree-right">
-            <el-switch v-permission="43" :modelValue="data.status" :active-value="1" :inactive-value="0" @change="handleStatusChange($event, data)" />
+            <el-switch v-permission="43" :modelValue="data.status" :active-value="1" :inactive-value="0" @change="handleSwitch($event, data)" />
             <el-button v-permission="42" text type="primary" size="small" @click.stop="handleEdit(data)">修改</el-button>
             <el-button v-permission="41" text type="primary" size="small" @click.stop="addChild(data.id)">增加</el-button>
-            <el-button v-permission="44" text type="primary" size="small" @click="handleDelete(data.id)">删除</el-button>
+            <el-button v-permission="44" text type="primary" size="small" @click.stop="handleDelete(data.id)">删除</el-button>
             <!-- <el-popconfirm title="是否要删除该记录？" confirmButtonText="确认" cancelButtonText="取消" @confirm="handleDelete(data.id)">
                 <template #reference>
                   <el-button text type="primary" size="small">删除</el-button>
@@ -83,7 +83,7 @@ import menu from '@/api/menu'
 import { useInitTable, useInitForm } from '@/hooks/useCommon'
 import { ref } from 'vue'
 const defaultExpandedKeys = ref([])
-const { loading, dataList, handleDelete, getData } = useInitTable({
+const { loading, dataList, handleDelete, handleSwitch, getData } = useInitTable({
   api: menu,
   params: {
     page: 1,

@@ -26,6 +26,7 @@
       <template #dropdown>
         <el-dropdown-menu>
           <el-dropdown-item command="password">修改密码</el-dropdown-item>
+          <el-dropdown-item @click="$router.push('/admin/wechat')">绑定微信</el-dropdown-item>
           <el-dropdown-item command="logout">退出</el-dropdown-item>
         </el-dropdown-menu>
       </template>
@@ -68,6 +69,9 @@ const handleCommand = (command) => {
       break
     case 'password':
       password()
+      break
+    case 'wechat':
+      console.log('wechatj')
       break
   }
 }

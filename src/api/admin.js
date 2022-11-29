@@ -44,6 +44,26 @@ const admin = {
   status(id, params) {
     return post(`/order/admin/status/${id}`, params)
   },
+  // 绑定微信
+  wechat() {
+    return post('/order/admin/wechat')
+  },
+  // 微信绑定检测
+  wechatCheck() {
+    return post('/order/admin/check_bind')
+  },
+  // 微信绑定解除
+  wechatRemove() {
+    return post('/order/admin/remove_wechat')
+  },
+  // 微信登录
+  loginWechat() {
+    return post('/order/account/login_wechat')
+  },
+  // 微信登录
+  loginWechatCheck(params) {
+    return post('/order/account/check_login_wechat', params)
+  },
   // 删除
   delete(id) {
     id = !Array.isArray(id) ? [id] : id

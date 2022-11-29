@@ -10,7 +10,7 @@ const order = {
   },
   // select数据
   getSelect() {
-    return post('/order/order/getSelectData')
+    return get('/order/order/getSelectData')
   },
   // 新增
   create(params) {

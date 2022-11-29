@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-card class="admin-card" shadow="hover">
-      <ListHeader :rule="{ create: 90 }" @add="handleAdd" @sort="handleSortAll" />
+      <ListHeader :rule="{ create: 90, sort: 93 }" @add="handleAdd" @sort="handleSortAll" />
       <el-table :data="dataList" stripe style="width: 100%" :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }" v-loading="loading" row-key="id">
         <el-table-column type="selection" prop="id" width="55"> </el-table-column>
         <el-table-column prop="name" label="名称" width="260">
