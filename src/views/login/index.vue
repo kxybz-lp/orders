@@ -3,16 +3,16 @@
     <div class="login-main">
       <div class="switch">
         <div v-if="isDesktop" class="switch-item" @click="swtichType">
-          <span class="switch-span"></span>
-          <img class="switch-img" src="@/assets/images/desktop.png" alt="密码登录" />
+          <span style="width: 40px; height: 40px; background-color: #fff; position: absolute; left: -20px; bottom: -20px; transform: rotate(135deg); -webkit-transform: rotate(135deg)"></span>
+          <img style="width: 100%" class="switch-img" src="@/assets/images/desktop.png" alt="密码登录" />
         </div>
         <div v-else class="switch-item" @click="swtichType">
-          <span></span>
-          <img src="@/assets/images/ewm.png" alt="扫码登录" />
+          <span style="width: 40px; height: 40px; background-color: #fff; position: absolute; left: -20px; bottom: -20px; transform: rotate(135deg); -webkit-transform: rotate(135deg)"></span>
+          <img style="width: 100%" src="@/assets/images/ewm.png" alt="扫码登录" />
         </div>
       </div>
       <div class="login-nomal" v-if="isDesktop">
-        <div class="title-nomal">星艺装饰订单系统</div>
+        <div style="font-size: 24px; color: #004c59; margin: 10px 0 20px; text-align: center; font-weight: bold">星艺装饰订单系统</div>
         <el-form ref="formRef" :rules="rules" :model="form" class="login-from">
           <el-form-item prop="name">
             <el-input v-model="form.name" placeholder="请输入用户名">
@@ -34,14 +34,14 @@
         </el-form>
       </div>
       <div class="login-wechat" v-else>
-        <div class="title-wechat" style="margin: 0">扫码登录</div>
+        <div style="font-size: 24px; color: #004c59; margin: 0; text-align: center; font-weight: bold">扫码登录</div>
         <div class="ewm">
           <img :src="img" v-if="img" alt="" style="max-width: 200px; display: block; margin: 20px auto 0px" />
           <p style="font-size: 14px; text-aling: center; color: #666; margin: 40px auto 40px" v-else>
             <el-icon><Loading /></el-icon>二维码生成中...
           </p>
         </div>
-        <div class="toolsip">打开「微信」扫一扫登录系统</div>
+        <div style="font-size: 12px; color: #004c59; text-align: center; padding: 10px 0 0 0">打开「微信」扫一扫登录系统</div>
       </div>
     </div>
   </div>
@@ -187,18 +187,6 @@ onBeforeUnmount(() => {
         height: 40px;
         overflow: hidden;
         position: relative;
-        .switch-span {
-          width: 40px;
-          height: 40px;
-          background-color: #fff;
-          position: absolute;
-          left: -20px;
-          bottom: -20px;
-          transform: rotate(135deg);
-        }
-        .switch-img {
-          width: 100%;
-        }
       }
     }
     .login-wechat {
