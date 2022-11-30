@@ -6,6 +6,8 @@ const WindiCSSWebpackPlugin = require('windicss-webpack-plugin')
 module.exports = defineConfig({
   transpileDependencies: true,
   lintOnSave: false,
+  // publicPath: './',
+  productionSourceMap: process.env.NODE_ENV === 'production' ? false : true,
   devServer: {
     port: 4002,
     proxy: {
@@ -13,8 +15,8 @@ module.exports = defineConfig({
         target: 'https://api.xydec.com.cn',
         changeOrigin: true,
         pathRewrite: {
-            '^/api': '' //将URL中的/api替换为空
-        }
+          '^/api': '', //将URL中的/api替换为空
+        },
       },
     },
   },

@@ -224,7 +224,7 @@ const setScope = (val) => {
     case 'month':
       params.range_time = [week30Day, currentDay]
       break
-    case 'current_scope':
+    case 'current_month':
       params.range_time = [monthStartDay, currentDay]
       break
     case 'year':
@@ -331,7 +331,7 @@ const getPieData = () => {
     },
     series: [
       {
-        name: 'Access From',
+        name: '渠道统计',
         type: 'pie',
         radius: '50%',
         data: [],

@@ -3,8 +3,8 @@
     <div class="login-main">
       <div class="switch">
         <div v-if="isDesktop" class="switch-item" @click="swtichType">
-          <span></span>
-          <img src="@/assets/images/desktop.png" alt="密码登录" />
+          <span class="switch-span"></span>
+          <img class="switch-img" src="@/assets/images/desktop.png" alt="密码登录" />
         </div>
         <div v-else class="switch-item" @click="swtichType">
           <span></span>
@@ -12,7 +12,7 @@
         </div>
       </div>
       <div class="login-nomal" v-if="isDesktop">
-        <div class="title">星艺装饰订单系统</div>
+        <div class="title-nomal">星艺装饰订单系统</div>
         <el-form ref="formRef" :rules="rules" :model="form" class="login-from">
           <el-form-item prop="name">
             <el-input v-model="form.name" placeholder="请输入用户名">
@@ -34,7 +34,7 @@
         </el-form>
       </div>
       <div class="login-wechat" v-else>
-        <div class="title" style="margin: 0">扫码登录</div>
+        <div class="title-wechat" style="margin: 0">扫码登录</div>
         <div class="ewm">
           <img :src="img" v-if="img" alt="" style="max-width: 200px; display: block; margin: 20px auto 0px" />
           <p style="font-size: 14px; text-aling: center; color: #666; margin: 40px auto 40px" v-else>
@@ -187,7 +187,7 @@ onBeforeUnmount(() => {
         height: 40px;
         overflow: hidden;
         position: relative;
-        span {
+        .switch-span {
           width: 40px;
           height: 40px;
           background-color: #fff;
@@ -196,7 +196,7 @@ onBeforeUnmount(() => {
           bottom: -20px;
           transform: rotate(135deg);
         }
-        img {
+        .switch-img {
           width: 100%;
         }
       }
@@ -217,7 +217,8 @@ onBeforeUnmount(() => {
         padding: 10px 0 0 0;
       }
     }
-    .title {
+    .title-nomal,
+    .title-wechat {
       font-size: 24px;
       color: #004c59;
       margin: 10px 0 20px;
