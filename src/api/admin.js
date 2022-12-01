@@ -4,15 +4,15 @@
 import { get, post } from '@/utils/http'
 
 const admin = {
+  // 管理员列表
+  getList(params) {
+    return get('/order/admin/index', params)
+  },
   // 商品列表
   getGoodsList(id, params) {
     return get(`/getGoodsList/${id}`, {
       params,
     })
-  },
-  // 商品分类
-  getList() {
-    return get(`/getList`)
   },
   // 新闻详情,演示
   //  articleDetail (id, params) {

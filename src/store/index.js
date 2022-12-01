@@ -48,12 +48,6 @@ export default createStore({
     closeTab(state, val) {
       let index = state.tabsList.findIndex((item) => item.name === val.name)
       state.tabsList.splice(index, 1)
-      if (index === state.tabsList.length) {
-        // if (flag) state.currentRoute = state.tabsList[index - 1].path
-      } else {
-        // if (flag) state.currentRoute = state.tabsList[index].path
-      }
-      console.log(state.currentRoute)
     },
     pushtags(state, val) {
       //如果等于-1说明tabs不存在那么插入，否则什么都不做

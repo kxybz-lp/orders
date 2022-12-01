@@ -22,7 +22,7 @@ const breadcrumbList = ref([])
 const initBreadcrumbList = () => {
   const routes = route.matched
   breadcrumbList.value = routes
-  console.log(routes) //能从跟节点获取到当前页面的所有层级路由
+  //console.log(routes) //能从跟节点获取到当前页面的所有层级路由
   //设置tablist
   let tab = routes[routes.length - 1]
   let currentTab = { name: tab.name, path: tab.path, label: tab.meta.title }

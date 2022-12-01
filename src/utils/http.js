@@ -24,7 +24,7 @@ import base from '@/api/base' // 导入接口域名列表
 
 // 环境的切换
 if (process.env.NODE_ENV == 'development') {
-  axios.defaults.baseURL = ''
+  axios.defaults.baseURL = '/api'
 } else if (process.env.NODE_ENV == 'debug') {
   axios.defaults.baseURL = ''
 } else if (process.env.NODE_ENV == 'production') {

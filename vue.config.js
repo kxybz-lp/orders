@@ -11,9 +11,9 @@ module.exports = defineConfig({
       '/api': {
         target: 'https://api.xydec.com.cn',
         changeOrigin: true,
-        // pathRewrite: {
-        //     '^/api': '' //将URL中的/api替换为空
-        // }
+        pathRewrite: {
+          '^/api': '', //将URL中的/api替换为空
+        },
       },
     },
   },

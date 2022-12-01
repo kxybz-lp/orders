@@ -26,7 +26,7 @@ const routes = [
           {
             path: '/admin/index',
             name: 'Admin',
-            component: () => import(/* webpackChunkName: "admin" */ '../views/Admin.vue'),
+            component: () => import(/* webpackChunkName: "admin" */ '../views/admin/index.vue'),
             meta: { title: '管理员列表', permissions: true },
           },
           {
