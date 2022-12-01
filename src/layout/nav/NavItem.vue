@@ -1,4 +1,3 @@
-
 <template>
   <template v-for="item in menu" :key="item?.id">
     <!-- 如果当前菜单有下级,循环下级 -->
@@ -12,8 +11,7 @@
       </template>
 
       <!-- 递归调用自身 -->
-      <NavItem v-if="item?.children?.length" :menu="item?.children" :index="item?.path.toString()">
-      </NavItem>
+      <NavItem v-if="item?.children?.length" :menu="item?.children" :index="item?.path.toString()"> </NavItem>
     </el-sub-menu>
 
     <!-- 没有下级 -->
@@ -23,7 +21,6 @@
     </el-menu-item>
   </template>
 </template>
-  
 
 <script setup>
 defineProps({

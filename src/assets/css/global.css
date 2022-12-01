@@ -38,19 +38,90 @@ a:hover {
   color: inherit;
   text-decoration: none;
 }
-
+.red {
+  color: #f00;
+  cursor: pointer;
+}
 div:focus {
   outline: none;
 }
 :root {
   --color: #004c59;
+  --el-color-primary: #004c59;
 }
-
+.el-button--primary {
+  --el-button-active-color: #076575;
+  --el-button-hover-bg-color: #076575;
+  --el-button-outline-color: #076575;
+  --el-button-hover-border-color: #076575;
+  --el-button-active-bg-color: #076575;
+  --el-button-disabled-bg-color: #758595;
+  --el-button-disabled-border-color: #758595;
+}
+.el-select,
+.el-cascader {
+  width: 100%;
+}
 .el-menu {
   border: none;
 }
-.el-dropdown-menu__item:hover {
-  color: var(--color) !important;
+.el-pagination {
+  justify-content: center;
+  margin: 20px 0 10px;
+}
+.el-drawer__header {
+  margin-bottom: 10px;
+}
+.el-drawer__body {
+  padding: 15px;
+}
+.el-dialog__body {
+  padding: 15px !important;
+}
+.el-icon.is-loading {
+  color: #fff !important;
+}
+
+.flex {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.flex-v {
+  -webkit-box-orient: vertical;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.flex-1 {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+}
+
+.flex-align-center {
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.flex-pack-center {
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.flex-pack-justify {
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
 }
 .el-button--theme {
   color: #fff;
@@ -129,8 +200,6 @@ div:focus {
 }
 
 .app-container {
-  /* height: 100%;
-  overflow-y: auto; */
   background: #f0f2f5;
   margin: 15px;
 }
@@ -147,4 +216,12 @@ div:focus {
 }
 .app-body {
   padding-bottom: 20px;
+}
+.search-form {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.search-form .el-form-item {
+  margin-right: 10px;
 }

@@ -1,155 +1,245 @@
 <template>
   <div class="app-container">
-    <el-card class="admin-card">
-      <div class="app-header">
-        <div class="app-header-l">
-          <el-button class="el-button--theme" size="small" @click="handleAdd">新增</el-button>
-        </div>
-        <div class="app-header-r">
-          <el-form>
-            <el-row>
-              <el-form-item>
-                <el-select v-model="value" placeholder="所属角色">
-                  <el-option>
-                  </el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item>
-                <el-select v-model="value" placeholder="是否绑定微信">
-                  <el-option value="1" label="已绑定"></el-option>
-                  <el-option value="0" label="未绑定"></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item>
-                <el-input v-model="state.params.name" placeholder="输入用户名查找"></el-input>
-              </el-form-item>
-              <el-form-item>
-                <el-button class="el-button--theme" size="small" @click="handleSearch">搜索
-                </el-button>
-              </el-form-item>
-            </el-row>
-          </el-form>
-        </div>
-      </div>
-      <div class="app-body">
-        <el-table :data="state.dataList" stripe style="width: 100%"
-          :header-cell-style="{ color: '#2c3e50',backgroundColor:'#f2f2f2' }">
-          <el-table-column type="selection" prop="id" width="55">
-          </el-table-column>
-          <el-table-column prop="name" label="登录名">
-          </el-table-column>
-          <el-table-column prop="role_name" label="角色">
-          </el-table-column>
-          <el-table-column prop="branch_name" label="所属公司">
-          </el-table-column>
-          <el-table-column prop="ip" label="最后登录IP">
-          </el-table-column>
-          <el-table-column sortable label="最后登录时间">
-            <template #default="scope">
-              {{$filters.dateFormart(scope.row.last_login_time, 'hour')}}
-            </template>
-          </el-table-column>
-          <el-table-column label="状态">
-            <template #default="scope">
-              <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0"
-                active-color="var(--color)" inactive-color="#B9B9B9"
-                @change="changeSwitch(scope.row)" />
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" width="140">
-            <template #default="scope">
-              <el-button size="small" class="el-button--theme"
-                @click="handleEdit(scope.$index, scope.row)">编辑
-              </el-button>
-              <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">
-                删除
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-          :current-page="state.params.page" :page-size="state.params.pageSize" :background="true"
-          layout="prev, pager, next" :total="state.count" class="fenye">
-        </el-pagination>
-      </div>
+    <el-card class="admin-card" shadow="hover">
+      <ListHeader :rule="{ create: 8 }" @add="handleAdd">
+        <el-form class="search-form" :model="params" ref="searchRef" label-width="0px" size="small">
+          <el-form-item label="">
+            <el-select v-model="params.role_id" placeholder="选择角色" clearable @clear="getData(1)">
+              <el-option :value="item.id" :label="item.name" v-for="item in roleList"
+                :key="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="">
+            <el-input v-model="params.name" placeholder="输入用户名" clearable @clear="getData(1)">
+            </el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="getData(1)">搜索</el-button>
+          </el-form-item>
+        </el-form>
+      </ListHeader>
+      <el-table ref="multipleTableRef" :data="dataList" stripe style="width: 100%"
+        :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }"
+        @sort-change="sortChange" @selection-change="handleSelectionChange" v-loading="loading">
+        <el-table-column type="selection" prop="id" width="55"> </el-table-column>
+        <el-table-column prop="name" label="登录名" min-width="140"> </el-table-column>
+        <el-table-column prop="role_name" label="角色" min-width="140"> </el-table-column>
+        <el-table-column prop="branch_name" label="所属公司" min-width="160"> </el-table-column>
+        <el-table-column prop="ip" label="最后登录IP" min-width="140"> </el-table-column>
+        <el-table-column prop="last_login_time" sortable label="最后登录时间" min-width="140">
+        </el-table-column>
+        <el-table-column label="状态" v-permission="32">
+          <template #default="scope">
+            <el-switch :modelValue="scope.row.status" :disabled="scope.row.id == 777"
+              :active-value="1" :inactive-value="0" :loading="scope.row.statusLoading"
+              @change="handleSwitch($event, scope.row)" />
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="140">
+          <template #default="scope">
+            <el-button v-permission="31" size="small" type="primary" :disabled="scope.row.id == 777"
+              @click="handleEdit(scope.row)">编辑 </el-button>
+            <el-button v-permission="33" size="small" type="danger" :disabled="scope.row.id == 777"
+              @click="handleDelete(scope.row.id)"> 删除 </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination @current-change="handleCurrentChange" :current-page="params.page"
+        :page-size="params.pageSize" :background="true" layout="prev, pager, next" :total="count"
+        class="fenye">
+      </el-pagination>
     </el-card>
+    <FormDrawer :title="'管理员' + drawerTitle" ref="formDrawerRef" @drawerClosed="drawerClosed"
+      @submit="handleSubmit">
+      <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false"
+        size="small">
+        <el-form-item label="登录名" prop="name">
+          <el-input minlength="2" maxlength="20" show-word-limit v-model="form.name"
+            :disabled="editId != 0"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input type="password" show-password v-model="form.password"
+            :placeholder="editId == 0 ? '' : '留空则不修改密码'"></el-input>
+        </el-form-item>
+        <el-form-item v-if="editId == 0" label="确认密码" prop="password_confirm">
+          <el-input type="password" show-password v-model="form.password_confirm"></el-input>
+        </el-form-item>
+        <el-form-item label="角色" prop="role_id">
+          <el-select v-model="form.role_id" placeholder="选择角色">
+            <el-option :value="item.id" :label="item.name" :disabled="item.status == 0"
+              v-for="item in roleList" :key="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="所属公司" prop="branch_id">
+          <el-select clearable multiple filterable v-model="form.branch_id" placeholder="选择公司">
+            <el-option :value="item.id.toString()" :label="item.name" :disabled="item.status == 2"
+              v-for="item in branchList" :key="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="微信号" v-if="editId != 0">
+          <el-input v-model="form.openid" />
+        </el-form-item>
+        <!-- <el-form-item label="头像" prop="avatar">
+          <ChooseImage v-model="form.avatar" />
+        </el-form-item> -->
+        <!-- <el-form-item label="规格值" prop="default">
+          <TagInput v-model="form.default" />
+        </el-form-item> -->
+        <el-form-item label="状态">
+          <el-switch v-model="form.status" :active-value="1" :inactive-value="0" />
+        </el-form-item>
+      </el-form>
+    </FormDrawer>
   </div>
 </template>
-  
-<script setup>
-import { getCurrentInstance, reactive, toRefs } from 'vue'
 
-const state = reactive({
-  dataList: [],
-  count: 0,
+<script setup>
+import { ref } from 'vue'
+import FormDrawer from '@/components/FormDrawer.vue'
+import ListHeader from '@/components/ListHeader.vue'
+// import ChooseImage from '@/components/ChooseImage.vue'
+// import TagInput from '@/components/TagInput.vue'
+import admin from '@/api/admin'
+import { toast } from '@/utils/utils'
+import { useInitTable, useInitForm } from '@/hooks/useCommon'
+const { loading, count, dataList, params, getData, handleCurrentChange, handleSwitch, sortChange, handleDelete, handleSelectionChange } = useInitTable({
+  api: admin,
   params: {
     page: 1,
     pageSize: 10,
     name: '',
     role_id: '',
+    openid: '',
+    sort: '',
   },
-  formOptions: [
-    {
-      label: '',
-      prop: 'role_id',
-      placeholder: '选择所属角色',
-      element: 'el-select',
-      options: [
-        { label: '超级管理员', value: 1 },
-        { label: '分公司管理员', value: 2 },
-      ],
-    },
-    {
-      label: '',
-      prop: 'openid',
-      placeholder: '是否绑定微信',
-      element: 'el-select',
-      options: [
-        { label: '未绑定', value: 0 },
-        { label: '已绑定', value: 1 },
-      ],
-    },
-    {
-      label: '用户名',
-      prop: 'name',
-      placeholder: '输入用户名查找',
-      element: 'el-input',
-    },
-  ],
+  onGetListSuccess: (res) => {
+    count.value = res.result.count
+    dataList.value = res.result.data.map((o) => {
+      // o.last_login_time = dateFormart(o.last_login_time, 'hour')
+      o.statusLoading = false
+      return o
+    })
+  },
 })
 
-const instance = getCurrentInstance()
-const $api = instance.proxy.$api
-const getList = () => {
-  $api.admin.getList(state.params).then((res) => {
-    if (res.code > 0) {
-      state.count = res.result.count
-      state.dataList = res.result.data
-    } else {
-      ElMessage({
-        message: res.message || 'Error',
-        type: 'error',
-        duration: 1000,
-      })
+// 密码验证
+const validatePass = (rule, value, callback) => {
+  if (value === '' && editId.value == 0) {
+    callback(new Error('密码不能为空'))
+  } else {
+    callback()
+  }
+}
+// 确认密码验证
+const validateCheckPass = (rule, value, callback) => {
+  if (value === '') {
+    callback(new Error('确认密码不能为空'))
+  } else {
+    if (value != form.password) {
+      callback(new Error('确认密码与密码不一致'))
     }
-  })
+    callback()
+  }
 }
-//获取数据
-getList()
-// 搜索
-const handleSearch = () => {}
-// 新增
-const handleAdd = () => {}
-//编辑
-//设置状态
-const changeSwitch = () => {}
-//切换分页数
-const handleSizeChange = () => {}
-//切换分页码
-const handleCurrentChange = (page) => {
-  state.params.page = page
-  getList()
+const { drawerTitle, formDrawerRef, formRef, rules, form, editId, handleAdd, handleEdit, handleSubmit, drawerClosed } = useInitForm({
+  api: admin,
+  getData,
+  form: {
+    name: '',
+    password: '',
+    password_confirm: '',
+    role_id: '',
+    branch_id: [],
+    openid: '',
+    // avatar: '',
+    default: '', //规格值
+    status: 1,
+  },
+  rules: {
+    name: [
+      {
+        required: true,
+        message: '登录名不能为空',
+        trigger: 'blur',
+      },
+    ],
+    password: [
+      {
+        validator: validatePass,
+        trigger: 'blur',
+      },
+      { min: 6, max: 20, message: '密码长度6至20位之间', trigger: 'blur' },
+    ],
+    password_confirm: [
+      {
+        validator: validateCheckPass,
+        trigger: 'blur',
+      },
+    ],
+    role_id: [
+      {
+        required: true,
+        message: '请选择角色',
+        trigger: 'blur',
+      },
+    ],
+    branch_id: [
+      {
+        type: 'array',
+        required: true,
+        message: '请选择所属公司',
+        trigger: 'blur',
+      },
+    ],
+  },
+  fliterParam: (row) => {
+    row['password'] = ''
+    // row['branch_id'] = row['branch_id'].split(',').map((o) => parseInt(o))
+    for (const key in form) {
+      form[key] = row[key]
+    }
+  },
+})
+
+// 将字符串日期转时间戳， 2020-09-12 12:11:22
+// let time = (new Date(row.create_time)).getTime()
+// 当前时间戳
+let time_current = new Date().getTime()
+// console.log(time_current)
+// const params_branch = reactive({
+//   page: 1,
+//   pageSize: 10,
+// })
+// 时间戳格式化
+function dateFormart(val, type = 'date') {
+  const dt = new Date(parseInt(val) * 1000) //后台返回的时间戳是以秒单位，js是以毫秒为单位
+  const y = dt.getFullYear()
+  const m = (dt.getMonth() + 1 + '').padStart(2, '0')
+  const d = (dt.getDate() + '').padStart(2, '0')
+  const hh = (dt.getHours() + '').padStart(2, '0')
+  const mm = (dt.getMinutes() + '').padStart(2, '0')
+  const ss = (dt.getSeconds() + '').padStart(2, '0')
+  if (type == 'hour') {
+    return `${y}-${m}-${d} ${hh}:${mm}`
+  } else {
+    return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
+  }
 }
+
+const roleList = ref([])
+const branchList = ref([])
+
+// select数据,合并远程请求
+admin.getSelect().then((res) => {
+  if (res.code > 0) {
+    roleList.value = res.result.role
+    branchList.value = res.result.branch
+  } else {
+    toast(res.message || 'Error', 'error')
+  }
+})
+
+// const instance = getCurrentInstance()
+// const $api = instance.proxy.$api
 </script>
-<style lang='scss' scoped>
-</style>
+<style lang="scss" scoped></style>

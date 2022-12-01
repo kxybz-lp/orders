@@ -5,7 +5,7 @@ Mock.setup({
 })
 
 //使用mockjs模拟数据
-Mock.mock('/api/index/banner', {
+Mock.mock('/index/banner', {
   code: 1,
   msg: 'ok',
   result: {
@@ -17,7 +17,7 @@ Mock.mock('/api/index/banner', {
   },
 })
 
-Mock.mock('/api/index/menu', 'get', {
+Mock.mock('/index/menu', 'get', {
   code: 1,
   msg: 'ok',
   result: [

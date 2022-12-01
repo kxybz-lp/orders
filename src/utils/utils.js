@@ -1,3 +1,54 @@
+export function toast(message, type = 'success', dangerouslyUseHTMLString = true) {
+  ElMessage({
+    message,
+    type,
+    dangerouslyUseHTMLString,
+    duration: 2 * 1000,
+  })
+}
+
+export function showModal(content = '提示内容', type = 'warning', title = '') {
+  return ElMessageBox.confirm(content, title, {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type,
+  })
+}
+
+let loadingInstance
+export function elLoading(message = '数据加载中...') {
+  loadingInstance = ElLoading.service({
+    lock: true,
+    text: message,
+    // background: 'rgba(255, 255, 255, .5)',
+    background: 'rgba(0, 0, 0, .5)',
+  })
+}
+export function closeElLoading() {
+  loadingInstance.close()
+}
+// 弹出输入框
+export function showPrompt(tip, value = '') {
+  return ElMessageBox.prompt(tip, '', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    inputValue: value,
+  })
+}
+
+// 将query对象转成url参数
+export function queryParams(query) {
+  let q = []
+  for (const key in query) {
+    if (query[key]) {
+      q.push(`${key}=${encodeURIComponent(query[key])}`)
+    }
+  }
+  let r = q.join('&')
+  r = r ? '?' + r : ''
+  return r
+}
+
 /**
  * Created by LIPING on 2020/10/31
  */
@@ -27,7 +78,7 @@ export function parseTime(time, cFormat) {
         time = time.replace(new RegExp(/-/gm), '/')
       }
     }
-
+    // 后台返回的时间戳是以秒单位，js是以毫秒为单位,需要* 1000
     if (typeof time === 'number' && time.toString().length === 10) {
       time = time * 1000
     }
@@ -236,6 +287,7 @@ export function getTime(type) {
 }
 
 /**
+ * 防抖
  * @param {Function} func
  * @param {number} wait
  * @param {boolean} immediate
@@ -417,6 +469,44 @@ export const pickerOptionsRangeMonth = {
       },
     },
   ],
+}
+
+//获取当前时间
+export function time_init(file = false) {
+  let date = new Date()
+  let year = date.getFullYear()
+  let month = date.getMonth() + 1
+  let day = date.getDate()
+  let hh = date.getHours()
+  let mm = date.getMinutes()
+  let ss = date.getSeconds()
+  if (month < 10) month = '0' + month
+  if (day < 10) day = '0' + day
+  if (hh < 10) hh = '0' + hh
+  if (ss < 10) ss = '0' + ss
+  if (mm < 10) mm = '0' + mm
+  let rq
+  if (file) {
+    rq = year.toString() + month.toString() + day.toString() + hh.toString() + mm.toString() + ss.toString()
+  } else {
+    rq = year + '-' + month + '-' + day + ' ' + hh + ':' + mm + ':' + ss
+  }
+  return rq
+}
+
+/**
+ * 获取当天日期与指定天数之前或之后的日期
+ * 近7日，fun_date(-7)
+ * @param {*} days
+ * @returns
+ */
+export function fun_date(days) {
+  var date1 = new Date(),
+    time1 = date1.getFullYear() + '-' + (date1.getMonth() + 1) + '-' + date1.getDate() //time1表示当前时间
+  var date2 = new Date(date1)
+  date2.setDate(date1.getDate() + days)
+  var time2 = date2.getFullYear() + '-' + (date2.getMonth() + 1) + '-' + date2.getDate()
+  return [time2, time1]
 }
 
 /**

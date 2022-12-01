@@ -1,23 +1,26 @@
 import { get, post } from '@/utils/http'
 
 const home = {
-  //导航数据
-  getMenu() {
-    return get('/api/index/menu')
+  //面板数据
+  getPanels() {
+    return post('/order/index/panels')
   },
-  // 首页轮播图
-  getBanner() {
-    return get('/api/index/banner')
+  // 前十签单门店
+  getBranch() {
+    return post('/order/index/branch_sign')
   },
-  // 用户信息
-  getUser() {
-    return get('/getUser') //`${base.sq}/getUser`
+  // 柱状图数据
+  getBarData(params) {
+    return post('/order/index/ercharts_bar', params)
   },
-  // post提交
-  login(params) {
-    return post('/accesstoken', qs.stringify(params))
+  // 饼状图数据
+  getPieData() {
+    return post('/order/index/ercharts_pie')
   },
-  // 其他接口…………
+  //公告数据
+  getNotice() {
+    return post('/order/index/notice')
+  },
 }
 
 export default home

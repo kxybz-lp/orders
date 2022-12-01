@@ -8,7 +8,14 @@
         </el-header>
         <el-main>
           <tagsView></tagsView>
-          <router-view />
+          <router-view :key="$route.params.id" v-if="$route.name === 'OrderEdit'" />
+          <router-view v-else #default="{ Component }">
+            <transition name="fade">
+              <keep-alive :max="10">
+                <component :is="Component"></component>
+              </keep-alive>
+            </transition>
+          </router-view>
         </el-main>
       </el-container>
     </el-container>
@@ -19,20 +26,7 @@
 import Nav from '@/layout/nav/index.vue'
 import Header from '@/layout/header/index.vue'
 import tagsView from '@/layout/tags/index.vue'
-import { getCurrentInstance } from 'vue'
-const internalInstance = getCurrentInstance()
 // const $api = internalInstance.proxy.$api
-// console.log($api)
-// ElMessage({
-//   message: '你错拉！！！' || 'Error',
-//   type: 'error',
-//   duration: 5 * 1000,
-// })
-// ElMessageBox.confirm('You have been logged out,  or log in again', 'Confirm logout', {
-//   confirmButtonText: 'Re-Login',
-//   cancelButtonText: 'Cancel',
-//   type: 'warning',
-// }).then(() => {})
 </script>
 
 <style lang="scss" scoped>
@@ -70,6 +64,25 @@ const internalInstance = getCurrentInstance()
   }
   .el-main::-webkit-scrollbar-thumb:hover {
     background-color: #000;
+  }
+  .fade-enter-from {
+    opacity: 0;
+  }
+  .fade-enter-to {
+    opacity: 1;
+  }
+  .fade-leave-from {
+    opacity: 1;
+  }
+  .fade-leave-to {
+    opacity: 0;
+  }
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: all 0.3s;
+  }
+  .fade-enter-active {
+    transition-delay: 0.3s;
   }
 }
 </style>
