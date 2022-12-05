@@ -63,6 +63,7 @@ export function useRepassword() {
             toast('修改密码成功，请重新登录')
             store.dispatch('logout')
             router.push('/login')
+            location.reload()
           } else {
             toast(res.message, 'error')
           }
@@ -92,6 +93,7 @@ export function useLogout() {
         store.dispatch('logout')
         router.push('/login')
         toast('退出登录成功')
+        location.reload()
       })
     })
   }

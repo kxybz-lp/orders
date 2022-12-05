@@ -25,7 +25,7 @@ export function useTabList() {
       tabList.value.push(tab)
     }
     tagsRefsIndex.value = tabList.value.findIndex((t) => t.path == tab.path)
-
+    tagsViewmoveToCurrentTag()
     store.commit('setTabList', tabList.value)
   }
 
@@ -53,15 +53,15 @@ export function useTabList() {
           // 需等tab渲染完成后在滑动
           setTimeout(() => {
             scrolls(tagsWidth)
+            // 移动端点击后菜单后缩进
+            if (store.state.isMobile) {
+              store.commit('switchCollapse')
+            }
           }, 500)
         } else {
           pos = (tagsRefsIndex.value - 1) * 80
           scrolls(pos)
           scrollbarRef.value.update()
-        }
-        // 移动端点击后菜单后缩进
-        if (store.state.isMobile) {
-          store.commit('switchCollapse')
         }
       }
     })
@@ -74,7 +74,7 @@ export function useTabList() {
         label: route.meta.title,
         path: route.path,
       })
-      tagsViewmoveToCurrentTag()
+
       store.commit('setCurrentRoute', route.path)
     },
     { deep: true, immediate: true }

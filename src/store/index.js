@@ -74,7 +74,14 @@ export default createStore({
     logout({ commit }) {
       removeToken()
       commit('setAdminInfo', null)
-      // commit('setMenuList', [])
+      commit('setMenuList', [])
+      commit('setTabList', [
+        {
+          label: '首页',
+          path: '/',
+        },
+      ])
+      commit('setCurrentRoute', '/')
     },
   },
   modules: {},
