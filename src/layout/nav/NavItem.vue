@@ -1,7 +1,8 @@
 <template>
   <template v-for="item in menu" :key="item?.id">
     <!-- 如果当前菜单有下级,循环下级 -->
-    <el-sub-menu v-if="item?.children && item?.children?.length > 0" :index="item?.path.toString()">
+    <el-sub-menu v-if="(item?.children && item?.children?.length > 0)"
+      :index="item?.path.toString()">
       <template #title>
         <el-icon class="menu-icon">
           <!-- 遍历icon -->
@@ -11,7 +12,8 @@
       </template>
 
       <!-- 递归调用自身 -->
-      <NavItem v-if="item?.children?.length" :menu="item?.children" :index="item?.path.toString()"> </NavItem>
+      <NavItem v-if="item?.children?.length" :menu="item?.children" :index="item?.path.toString()">
+      </NavItem>
     </el-sub-menu>
 
     <!-- 没有下级 -->

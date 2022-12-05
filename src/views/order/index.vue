@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-card class="menu-card" shadow="hover">
-      <el-tabs v-model="params.tab" @tab-change="getData(1)">
+      <el-tabs v-model="params.tab" @tab-change="getData(1)" v-permission="85">
         <el-tab-pane :label="item.name" :name="item.key" v-for="item in tabbars" :key="item.key" />
       </el-tabs>
       <transition v-bind="listeners">
@@ -234,11 +234,13 @@
             {{ scope.row.visit.length > 0 ? scope.row.visit[0]['remark'] : '' }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="210" fixed="right">
+        <el-table-column label="操作" :width="$store.state.adminInfo?.branch_id === '1' ? 210 : 140"
+          fixed="right">
           <template #default="scope">
             <el-button v-if="params.tab !== 'recyc'" v-permission="83" size="small" type="success"
               @click="handleDetail(scope.row.id)">详情 </el-button>
-            <el-button v-if="params.tab !== 'recyc'" v-permission="80" size="small" type="primary"
+            <el-button v-if="params.tab !== 'recyc' && $store.state.adminInfo?.branch_id === '1'"
+              v-permission="80" size="small" type="primary"
               @click="$router.push('/order/edit/' + scope.row.id)">编辑 </el-button>
             <el-button v-if="params.tab !== 'recyc' && $store.state.adminInfo?.branch_id !== '1'"
               type="primary" v-permission="80" size="small" @click="handleEdit(scope.row)"> 编辑

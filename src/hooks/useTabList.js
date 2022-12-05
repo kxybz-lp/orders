@@ -59,6 +59,10 @@ export function useTabList() {
           scrolls(pos)
           scrollbarRef.value.update()
         }
+        // 移动端点击后菜单后缩进
+        if (store.state.isMobile) {
+          store.commit('switchCollapse')
+        }
       }
     })
   }

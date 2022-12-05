@@ -113,7 +113,7 @@
       </el-col>
     </el-row>
     <el-row :gutter="15">
-      <el-col :md="24" :lg="14" :offset="0" v-permission="55">
+      <el-col :md="24" :lg="14" :offset="0" v-permission="138">
         <el-card shadow="hover">
           <template #header>
             <div>
@@ -165,6 +165,7 @@ import { CanvasRenderer } from 'echarts/renderers'
 import home from '@/api/home'
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import moment from 'moment'
+import log from '@/api/log'
 
 const panels = ref([])
 const notice = ref([])
@@ -257,11 +258,11 @@ echarts.use([TooltipComponent, GridComponent, BarChart, CanvasRenderer, LegendCo
 let chartBar = null
 let chartPie = null
 onMounted(() => {
-  if (chatBar.value) {
+  if (chatBar.value && chatBar.value.offsetWidth > 0) {
     chartBar = echarts.init(chatBar.value)
     getBarData()
   }
-  if (chatPie.value) {
+  if (chatPie.value && chatPie.value.offsetWidth > 0) {
     chartPie = echarts.init(chatPie.value)
     getPieData()
   }
