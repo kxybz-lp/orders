@@ -629,6 +629,11 @@ const sh_fail = () => {
     .catch((err) => console.log(err))
 }
 </script>
+<script>
+export default {
+  name: 'OrderEdit',
+}
+</script>
 <style lang="scss" scoped>
 :deep(.el-form-item__label) {
   font-weight: 700;

@@ -1,6 +1,6 @@
 <template>
   <div class="layout-common">
-    <el-container :data-tag="$route.name">
+    <el-container>
       <Nav></Nav>
       <el-container>
         <el-header class="header">
@@ -8,12 +8,11 @@
         </el-header>
         <el-main>
           <tagsView></tagsView>
-          <router-view :key="$route.path" v-if="$route.name === 'OrderEdit'" />
-          <!-- <router-view :key="$route.path" v-if="$route.name === 'OrderEdit'"></router-view> -->
+          <!-- <router-view :key="$route.fullPath" v-if="$route.name === 'OrderEdit'"></router-view> -->
           <router-view #default="{ Component }">
             <transition name="fade">
-              <keep-alive :max="10">
-                <component :is="Component">{{$route.name}}</component>
+              <keep-alive :max="10" :exclude="['OrderEdit']">
+                <component :is="Component" :key="$route.fullPath" />
               </keep-alive>
             </transition>
           </router-view>
