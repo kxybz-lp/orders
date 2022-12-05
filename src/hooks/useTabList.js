@@ -1,4 +1,4 @@
-import { computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 
@@ -6,24 +6,61 @@ export function useTabList() {
   const store = useStore()
   const router = useRouter()
   const route = useRoute()
+  const scrollbarRef = ref(null)
+  const noTab = ref(false)
+  const tagsRefs = ref([])
+  const tagsRefsIndex = ref(0)
+
   const tabList = computed(() => store.state.tabList)
   const currentRoute = computed(() => store.state.currentRoute)
-  // const scrollbar = ref(null)
 
-  // const scrolls = (pos) => {
-  //   nextTick(() => {
-  //     console.log(scrollbar.value)
-  //     // scrollbar.value.scrollTo(pos)
-  //   })
-  // }
+  const scrolls = (pos) => {
+    scrollbarRef.value.setScrollLeft(pos)
+  }
 
   // 添加标签导航
   const addTab = (tab) => {
-    let noTab = tabList.value.findIndex((t) => t.path == tab.path) == -1
-    if (noTab) {
+    noTab.value = tabList.value.findIndex((t) => t.path == tab.path) == -1
+    if (noTab.value) {
       tabList.value.push(tab)
     }
+    tagsRefsIndex.value = tabList.value.findIndex((t) => t.path == tab.path)
+
     store.commit('setTabList', tabList.value)
+  }
+
+  const tagsViewmoveToCurrentTag = () => {
+    nextTick(() => {
+      if (tagsRefs.value.length <= 0) return false
+      // 当前tag元素
+      let tagDom = tagsRefs.value[tagsRefsIndex.value]
+      // 当前 tag 总长度
+      let tagLength = tagsRefs.value.length
+      // 最前 tag
+      let tagFirst = tagsRefs.value[0]
+      // 最后 tag
+      let tagLast = tagsRefs.value[tagsRefs.value.length - 1]
+      // 当前滚动条宽度
+      // let tagsWidth = 0
+      // tagsRefs.value.forEach((item, index) => {
+      //   tagsWidth += parseInt(tagsRefs.value[index].$el.offsetWidth)
+      // })
+      let tagsWidth = tagLength * 80
+      let scrollbarWidth = scrollbarRef.value.$el.offsetWidth
+      if (tagsRefsIndex.value > 0 && scrollbarWidth < tagsWidth) {
+        let pos = 0
+        if (noTab.value) {
+          // 需等tab渲染完成后在滑动
+          setTimeout(() => {
+            scrolls(tagsWidth)
+          }, 500)
+        } else {
+          pos = (tagsRefsIndex.value - 1) * 80
+          scrolls(pos)
+          scrollbarRef.value.update()
+        }
+      }
+    })
   }
 
   watch(
@@ -33,6 +70,7 @@ export function useTabList() {
         label: route.meta.title,
         path: route.path,
       })
+      tagsViewmoveToCurrentTag()
       store.commit('setCurrentRoute', route.path)
     },
     { deep: true, immediate: true }
@@ -56,13 +94,10 @@ export function useTabList() {
       router.push(tab[index].path).catch((err) => {})
     }
   }
-  const changeMenu = (tag) => {
+  const changeMenu = (tag, index) => {
     router.push(tag.path).catch((err) => err) //catch解决重复点击报错
-    if (tag.name === 'OrderEdit' || tag.label === '订单更新') {
-      // location.reload()
-    }
-    // store.commit('selectMenu', tag)
   }
+
   const handleCommand = (command) => {
     let tab = tabList.value
     switch (command) {
@@ -90,5 +125,8 @@ export function useTabList() {
     closeTab,
     changeMenu,
     handleCommand,
+    tagsRefs,
+    scrollbarRef,
+    scrolls,
   }
 }

@@ -1,7 +1,11 @@
 <template>
   <div class="header-left">
-    <el-icon @click="$store.commit('switchCollapse')">
+    <el-icon @click="$store.commit('switchCollapse')" v-show="!$store.state.isMobile">
       <expand v-if="$store.state.collapse" />
+      <fold v-else />
+    </el-icon>
+    <el-icon @click="$store.commit('switchCollapse')" v-show="$store.state.isMobile">
+      <expand v-if="!$store.state.collapse" />
       <fold v-else />
     </el-icon>
     <el-tooltip effect="dark" content="刷新" placement="bottom">
@@ -9,7 +13,7 @@
         <Refresh />
       </el-icon>
     </el-tooltip>
-    <BreadCrumbVue></BreadCrumbVue>
+    <BreadCrumbVue v-show="!$store.state.isMobile"></BreadCrumbVue>
   </div>
   <div class="header-right">
     <el-tooltip effect="dark" content="全屏" placement="bottom">

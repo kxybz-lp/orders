@@ -7,7 +7,7 @@
       </el-tabs>
       <el-form :model="params" ref="formRef" label-width="60px" size="small">
         <el-form-item v-if="params.tab === 'channel' || params.tab === 'source'" label="下单时间">
-          <el-button-group>
+          <el-button-group v-show="!$store.state.isMobile">
             <el-button :type="params.scope === 'all' ? 'primary' : ''" @click="setScope('all')">全部
             </el-button>
             <el-button :type="params.scope === 'today' ? 'primary' : ''" @click="setScope('today')">
@@ -28,7 +28,7 @@
             value-format="YYYY-MM-DD" @change="switchTime" size="small" />
         </el-form-item>
         <el-form-item v-if="params.tab === 'area'" label="派单时间">
-          <el-button-group>
+          <el-button-group v-show="!$store.state.isMobile">
             <el-button :type="params.scope === 'all' ? 'primary' : ''" @click="setScope('all')">全部
             </el-button>
             <el-button :type="params.scope === 'today' ? 'primary' : ''" @click="setScope('today')">
@@ -49,7 +49,7 @@
             value-format="YYYY-MM-DD" @change="switchTime" size="small" />
         </el-form-item>
         <el-form-item v-if="params.tab === 'deal'" label="交定时间">
-          <el-button-group>
+          <el-button-group v-show="!$store.state.isMobile">
             <el-button :type="params.scope === 'all' ? 'primary' : ''" @click="setScope('all')">全部
             </el-button>
             <el-button :type="params.scope === 'today' ? 'primary' : ''" @click="setScope('today')">

@@ -45,6 +45,9 @@ a:hover {
 div:focus {
   outline: none;
 }
+.mb15 {
+  margin-bottom: 15px;
+}
 :root {
   --color: #004c59;
   --el-color-primary: #004c59;

@@ -3,7 +3,7 @@
     <el-card class="admin-card" shadow="hover">
       <ListHeader :rule="{ create: 8 }" @add="handleAdd">
         <el-form class="search-form" :model="params" ref="searchRef" label-width="0px" size="small">
-          <el-form-item label="">
+          <el-form-item label="" v-show="!$store.state.isMobile">
             <el-select v-model="params.role_id" placeholder="选择角色" clearable @clear="getData(1)">
               <el-option :value="item.id" :label="item.name" v-for="item in roleList"
                 :key="item.id"></el-option>
@@ -45,7 +45,8 @@
         </el-table-column>
       </el-table>
       <el-pagination @current-change="handleCurrentChange" :current-page="params.page"
-        :page-size="params.pageSize" :background="true" layout="prev, pager, next" :total="count"
+        :page-size="params.pageSize" :background="true"
+        :layout="$store.state.isMobile? 'prev, next' : 'prev, pager, next'" :total="count"
         class="fenye">
       </el-pagination>
     </el-card>

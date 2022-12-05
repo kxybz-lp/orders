@@ -1,28 +1,25 @@
 <template>
   <div class="tablist">
-    <el-icon @click="scroll(0)">
+    <el-icon @click="scrolls(0)">
       <el-icon-arrow-left />
     </el-icon>
     <div class="tabs">
-      <el-scrollbar ref="scrollbar">
+      <el-scrollbar ref="scrollbarRef">
         <div class="tabs-scroll">
-          <el-tag
-            :key="tag.path"
-            type="info"
-            size="small"
-            v-for="(tag, index) in tabList"
-            :closable="tag.path !== '/'"
-            :disable-transitions="false"
-            @close="closeTab(tag, index)"
-            @click="changeMenu(tag)"
-            :effect="currentRoute === tag.path ? 'dark' : 'plain'"
-          >
+          <el-tag :key="tag.path" type="info" size="small" v-for="(tag, index) in tabList"
+            :closable="tag.path !== '/'" :disable-transitions="false" @close="closeTab(tag, index)"
+            @click="changeMenu(tag, index)" :effect="currentRoute === tag.path ? 'dark' : 'plain'"
+            :ref="
+						(el) => {
+							if (el) tagsRefs[index] = el;
+						}
+					">
             {{ tag.label }}
           </el-tag>
         </div>
       </el-scrollbar>
     </div>
-    <el-icon @click="scroll(200)">
+    <el-icon @click="scrolls(2000)">
       <el-icon-arrow-right />
     </el-icon>
     <el-dropdown @command="handleCommand">
@@ -43,12 +40,8 @@
 
 <script setup>
 import { useTabList } from '@/hooks/useTabList'
-import { ref } from 'vue'
-const { currentRoute, tabList, closeTab, changeMenu, handleCommand } = useTabList()
-const scrollbar = ref(null)
-const scroll = (pos) => {
-  scrollbar.value.scrollTo(pos)
-}
+import { onMounted, ref } from 'vue'
+const { currentRoute, tabList, closeTab, changeMenu, handleCommand, scrollbarRef, tagsRefs, scrolls } = useTabList()
 </script>
 
 <style lang="scss" scoped>

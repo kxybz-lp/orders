@@ -1,27 +1,62 @@
 <template>
-  <el-aside :width="$store.state.collapse ? '60px' : '200px'">
-    <el-scrollbar>
-      <div class="logo">
-        <img :src="logo" :width="$store.state.collapse ? '25' : '40'" alt="logo" />
-        <p v-show="!$store.state.collapse">订单系统</p>
-      </div>
-      <el-menu :default-active="currentRoute" background-color="var(--color)" text-color="#fff"
-        active-text-color="#fff" :collapse="$store.state.collapse" :collapse-transition="false"
-        :router="true" :unique-opened="true">
-        <NavItem :menu="menuList"></NavItem>
-      </el-menu>
-    </el-scrollbar>
-  </el-aside>
+  <div v-show="!$store.state.isMobile">
+    <el-aside :width="$store.state.collapse ? '60px' : '220px'">
+      <el-scrollbar>
+        <div class="logo">
+          <img :src="logo" :width="$store.state.collapse ? '25' : '40'" alt="logo" />
+          <p v-show="!$store.state.collapse">订单系统</p>
+        </div>
+        <el-menu :default-active="currentRoute" background-color="var(--color)" text-color="#fff"
+          active-text-color="#fff" :collapse="$store.state.collapse" :collapse-transition="false"
+          :router="true" :unique-opened="true">
+          <NavItem :menu="menuList"></NavItem>
+        </el-menu>
+      </el-scrollbar>
+    </el-aside>
+  </div>
+  <div v-show="$store.state.isMobile">
+    <el-aside :width="$store.state.collapse ? '60px' : '0px'">
+      <el-scrollbar>
+        <div class="logo">
+          <img :src="logo" :width="$store.state.collapse ? '25' : '40'" alt="logo" />
+        </div>
+        <el-menu :default-active="currentRoute" background-color="var(--color)" text-color="#fff"
+          active-text-color="#fff" :collapse="$store.state.collapse" :collapse-transition="false"
+          :router="true" :unique-opened="true">
+          <NavItem :menu="menuList"></NavItem>
+        </el-menu>
+      </el-scrollbar>
+    </el-aside>
+  </div>
 </template>
 
 <script setup>
-import { computed, toRaw } from 'vue'
+import { computed, onBeforeMount, onUnmounted, ref } from 'vue'
 import NavItem from './NavItem.vue'
 import { useStore } from 'vuex'
 const store = useStore()
 const logo = require('@/assets/images/logo_s.png')
 const menuList = computed(() => store.state.menuList)
 const currentRoute = computed(() => store.state.currentRoute)
+
+// 窗口大小改变时(适配移动端)
+const onLayoutResize = () => {
+  const clientWidth = document.body.clientWidth
+  if (clientWidth < 768) {
+    store.commit('switchIsMobile', true)
+  } else {
+    store.commit('switchIsMobile', false)
+  }
+}
+// 页面加载前
+onBeforeMount(() => {
+  onLayoutResize()
+  window.addEventListener('resize', onLayoutResize)
+})
+// 页面卸载时
+onUnmounted(() => {
+  window.removeEventListener('resize', onLayoutResize)
+})
 
 // 递归将多维数据转成一维数组
 // const filterMenu1 = (menuList, arr = []) => {

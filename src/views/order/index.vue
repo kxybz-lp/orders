@@ -145,11 +145,11 @@
         action="/api/order/order/import" @add="handleAdd" @move="handMove" @export="exportExcel"
         @import="importExcel" @download="download">
         <el-form class="search-form" :model="params" ref="searchRef" label-width="0px" size="small">
-          <el-form-item v-show="!showSearch" label="">
+          <el-form-item v-show="!showSearch && !$store.state.isMobile" label="">
             <el-input v-model="params.mobile" placeholder="输入手机号" clearable @clear="getData">
             </el-input>
           </el-form-item>
-          <el-form-item v-show="!showSearch" label="">
+          <el-form-item v-show="(!showSearch && !$store.state.isMobile)" label="">
             <el-select v-model="params.is_audit" multiple placeholder="选择状态" clearable
               @clear="getData(1)">
               <el-option :value="item.id" :label="item.name" v-for="item in audit" :key="item.id">
@@ -157,7 +157,8 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="getData(1)">搜索</el-button>
+            <el-button type="primary" @click="getData(1)" v-show="!$store.state.isMobile">搜索
+            </el-button>
             <el-button v-permission="86" type="primary" text @click="showSearch = !showSearch"
               class="showSearch">
               {{ showSearch ? '收起' : '展开' }}
@@ -254,7 +255,12 @@
       <el-pagination v-model:current-page="params.page" v-model:page-size="params.pageSize"
         :page-sizes="[10, 50, 100, 200]" :background="true"
         layout="total, sizes, prev, pager, next,slot, jumper" :total="count"
-        @current-change="handleCurrentChange" @size-change="handleSizeChange" />
+        @current-change="handleCurrentChange" @size-change="handleSizeChange"
+        v-show="!$store.state.isMobile" />
+      <el-pagination @current-change="handleCurrentChange" :current-page="params.page"
+        :page-size="params.pageSize" :background="true"
+        :layout="$store.state.isMobile? 'prev, next' : 'prev, pager, next'" :total="count"
+        class="fenye" v-show="$store.state.isMobile" />
     </el-card>
     <FormDrawer :title="'订单' + drawerTitle" ref="formDrawerRef" @drawerClosed="drawerClosed"
       @submit="handleSubmit">

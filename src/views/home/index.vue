@@ -23,12 +23,15 @@
           </el-skeleton>
         </el-col>
       </template>
-      <el-col :xs="24" :sm="12" :lg="6" :offset="0" v-for="(item, index) in panels" :key="item.title">
+      <el-col :xs="24" :sm="12" :lg="6" :offset="0" v-for="(item, index) in panels"
+        :key="item.title" :class="$store.state.isMobile ? 'mb15' : ''">
         <el-card shadow="hover" class="border-0">
           <div class="el-card-header">
             <span>{{ item.title }}</span>
             <el-tooltip :content="item.tooltip" placement="top">
-              <el-icon><Warning /></el-icon>
+              <el-icon>
+                <Warning />
+              </el-icon>
             </el-tooltip>
           </div>
           <div class="el-card-body">
@@ -43,8 +46,12 @@
               <i>{{ item.current }}</i>
             </div>
             <div class="c">
-              <el-icon v-if="item.type === 'up'" class="success"><CaretTop /></el-icon>
-              <el-icon v-else class="fail"><CaretBottom /></el-icon>
+              <el-icon v-if="item.type === 'up'" class="success">
+                <CaretTop />
+              </el-icon>
+              <el-icon v-else class="fail">
+                <CaretBottom />
+              </el-icon>
               <span style="padding-left: 5px">{{ item.diff }}</span>
             </div>
           </div>
@@ -57,26 +64,25 @@
           <template #header>
             <div class="statistical-header">
               <div class="type">
-                <span :class="params.type == 'order' ? 'current_type' : ''" @click="setType('order')">订单数</span>
-                <span :class="params.type == 'arrange' ? 'current_type' : ''" @click="setType('arrange')">派单数</span>
-                <span :class="params.type == 'sign' ? 'current_type' : ''" @click="setType('sign')">签单数</span>
+                <span :class="params.type == 'order' ? 'current_type' : ''"
+                  @click="setType('order')">订单数</span>
+                <span :class="params.type == 'arrange' ? 'current_type' : ''"
+                  @click="setType('arrange')">派单数</span>
+                <span :class="params.type == 'sign' ? 'current_type' : ''"
+                  @click="setType('sign')">签单数</span>
               </div>
-              <div class="date">
-                <span :class="params.scope == 'week' ? 'current_scope' : ''" @click="setScope('week')">近7日</span>
-                <span :class="params.scope == 'month' ? 'current_scope' : ''" @click="setScope('month')">近30日</span>
-                <span :class="params.scope == 'current_month' ? 'current_scope' : ''" @click="setScope('current_month')">本月</span>
-                <span :class="params.scope == 'year' ? 'current_scope' : ''" @click="setScope('year')">本年</span>
-                <el-date-picker
-                  v-model="params.range_time"
-                  type="daterange"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  format="YYYY-MM-DD"
-                  value-format="YYYY-MM-DD"
-                  @change="switchRangeTime"
-                  size="default"
-                />
+              <div class="date" v-show="!$store.state.isMobile">
+                <span :class="params.scope == 'week' ? 'current_scope' : ''"
+                  @click="setScope('week')">近7日</span>
+                <span :class="params.scope == 'month' ? 'current_scope' : ''"
+                  @click="setScope('month')">近30日</span>
+                <span :class="params.scope == 'current_month' ? 'current_scope' : ''"
+                  @click="setScope('current_month')">本月</span>
+                <span :class="params.scope == 'year' ? 'current_scope' : ''"
+                  @click="setScope('year')">本年</span>
+                <el-date-picker v-model="params.range_time" type="daterange" range-separator="至"
+                  start-placeholder="开始日期" end-placeholder="结束日期" format="YYYY-MM-DD"
+                  value-format="YYYY-MM-DD" @change="switchRangeTime" size="default" />
               </div>
             </div>
           </template>
@@ -125,7 +131,8 @@
             </div>
           </template>
           <div id="notice">
-            <div class="notice-item" v-for="item in notice" :key="item.id" @click="readNotice(item)">
+            <div class="notice-item" v-for="item in notice" :key="item.id"
+              @click="readNotice(item)">
               <div class="title">{{ item.title }}</div>
               <div class="time">{{ item.create_time }}</div>
             </div>
@@ -135,7 +142,8 @@
     </el-row>
     <el-dialog v-model="dialogVisible" :title="noticeDetail.title" width="40%">
       <div class="main">
-        <div style="font-size: 14px; color: #333; line-height: 24px; margin: 0 0 15px">{{ noticeDetail.content }}</div>
+        <div style="font-size: 14px; color: #333; line-height: 24px; margin: 0 0 15px">
+          {{ noticeDetail.content }}</div>
         <div style="font-size: 14px; color: #666">发布时间:{{ noticeDetail.create_time }}</div>
       </div>
       <template #footer>

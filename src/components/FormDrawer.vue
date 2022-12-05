@@ -1,12 +1,14 @@
 <!-- 全局抽屉组件 -->
 <template>
-  <el-drawer v-model="showDrawer" :title="title" :size="size" :close-on-click-modal="false" :destroy-on-close="destroyOnClose" @closed="drawerClosed">
+  <el-drawer v-model="showDrawer" :title="title" :size="$store.state.isMobile? '100%' : size"
+    :close-on-click-modal="false" :destroy-on-close="destroyOnClose" @closed="drawerClosed">
     <div class="formDrawer">
       <div class="body">
         <slot></slot>
       </div>
       <div class="actions">
-        <el-button size="small" type="primary" color="#004c59" @click="submit" :loading="loading">{{ confirmText }}</el-button>
+        <el-button size="small" type="primary" color="#004c59" @click="submit" :loading="loading">
+          {{ confirmText }}</el-button>
         <el-button size="small" type="default" @click="closeDrawer">取消</el-button>
       </div>
     </div>

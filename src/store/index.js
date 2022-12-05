@@ -6,6 +6,7 @@ import { removeToken } from '@/utils/token'
 export default createStore({
   state: {
     collapse: false,
+    isMobile: false,
     token: '',
     adminInfo: null,
     currentRoute: '/', //当前页面路由
@@ -22,6 +23,9 @@ export default createStore({
   mutations: {
     switchCollapse(state) {
       state.collapse = !state.collapse
+    },
+    switchIsMobile(state, val) {
+      state.isMobile = val
     },
     //设置当前页面路由
     setCurrentRoute(state, val) {
@@ -84,6 +88,7 @@ export default createStore({
           currentRoute: val.currentRoute,
           menuList: val.menuList,
           adminInfo: val.adminInfo,
+          isMobile: val.isMobile,
         }
       },
     }),
