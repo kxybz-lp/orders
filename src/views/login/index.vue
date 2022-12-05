@@ -3,45 +3,62 @@
     <div class="login-main">
       <div class="switch">
         <div v-if="isDesktop" class="switch-item" @click="swtichType">
-          <span style="width: 40px; height: 40px; background-color: #fff; position: absolute; left: -20px; bottom: -20px; transform: rotate(135deg); -webkit-transform: rotate(135deg)"></span>
-          <img style="width: 100%" class="switch-img" src="@/assets/images/desktop.png" alt="密码登录" />
+          <span
+            style="width: 40px; height: 40px; background-color: #fff; position: absolute; left: -20px; bottom: -20px; transform: rotate(135deg); -webkit-transform: rotate(135deg)"></span>
+          <img style="width: 100%" class="switch-img" src="@/assets/images/desktop.png"
+            alt="密码登录" />
         </div>
         <div v-else class="switch-item" @click="swtichType">
-          <span style="width: 40px; height: 40px; background-color: #fff; position: absolute; left: -20px; bottom: -20px; transform: rotate(135deg); -webkit-transform: rotate(135deg)"></span>
+          <span
+            style="width: 40px; height: 40px; background-color: #fff; position: absolute; left: -20px; bottom: -20px; transform: rotate(135deg); -webkit-transform: rotate(135deg)"></span>
           <img style="width: 100%" src="@/assets/images/ewm.png" alt="扫码登录" />
         </div>
       </div>
       <div class="login-nomal" v-if="isDesktop">
-        <div style="font-size: 24px; color: #004c59; margin: 10px 0 20px; text-align: center; font-weight: bold">星艺装饰订单系统</div>
+        <div
+          style="font-size: 24px; color: #004c59; margin: 10px 0 20px; text-align: center; font-weight: bold">
+          星艺装饰订单系统</div>
         <el-form ref="formRef" :rules="rules" :model="form" class="login-from">
           <el-form-item prop="name">
             <el-input v-model="form.name" placeholder="请输入用户名">
               <template #prefix>
-                <el-icon><user-filled /></el-icon>
+                <el-icon>
+                  <user-filled />
+                </el-icon>
               </template>
             </el-input>
           </el-form-item>
           <el-form-item prop="password">
             <el-input type="password" v-model="form.password" placeholder="请输入密码" show-password>
               <template #prefix>
-                <el-icon><lock /></el-icon>
+                <el-icon>
+                  <lock />
+                </el-icon>
               </template>
             </el-input>
           </el-form-item>
           <el-form-item>
-            <el-button style="width: 100%" round color="#004c59" class="submit" type="primary" @click="onSubmit" :loading="loading">登 录</el-button>
+            <el-button style="width: 100%" round color="#004c59" class="submit" type="primary"
+              @click="onSubmit" :loading="loading">登 录</el-button>
           </el-form-item>
         </el-form>
       </div>
       <div class="login-wechat" v-else>
-        <div style="font-size: 24px; color: #004c59; margin: 0; text-align: center; font-weight: bold">扫码登录</div>
+        <div
+          style="font-size: 24px; color: #004c59; margin: 0; text-align: center; font-weight: bold">
+          扫码登录</div>
         <div class="ewm">
-          <img :src="img" v-if="img" alt="" style="max-width: 200px; display: block; margin: 20px auto 0px" />
-          <p style="font-size: 14px; text-aling: center; color: #666; margin: 40px auto 40px" v-else>
-            <el-icon><Loading /></el-icon>二维码生成中...
+          <img :src="img" v-if="img" alt=""
+            style="max-width: 200px; display: block; margin: 20px auto 0px" />
+          <p style="font-size: 14px; text-aling: center; color: #666; margin: 40px auto 40px"
+            v-else>
+            <el-icon>
+              <Loading />
+            </el-icon>二维码生成中...
           </p>
         </div>
-        <div style="font-size: 12px; color: #004c59; text-align: center; padding: 10px 0 0 0">打开「微信」扫一扫登录系统</div>
+        <div style="font-size: 12px; color: #004c59; text-align: center; padding: 10px 0 0 0">
+          打开「微信」扫一扫登录系统</div>
       </div>
     </div>
   </div>
@@ -168,7 +185,7 @@ onBeforeUnmount(() => {
   justify-content: center;
   align-items: center;
   &-main {
-    width: 360px;
+    width: 330px;
     height: 300px;
     overflow: hidden;
     background-color: #fff;
