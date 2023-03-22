@@ -108,6 +108,9 @@ onUnmounted(() => {
       padding-left: 12px;
       font-weight: 600;
       font-size: 20px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
     }
   }
 }

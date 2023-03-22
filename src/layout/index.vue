@@ -1,7 +1,8 @@
 <template>
   <div class="layout-common">
     <el-container>
-      <Nav></Nav>
+      <Nav v-if="!$store.state.isMobile"></Nav>
+      <navm v-if="$store.state.isMobile"></navm>
       <el-container>
         <el-header class="header">
           <Header></Header>
@@ -24,6 +25,7 @@
 
 <script setup>
 import Nav from '@/layout/nav/index.vue'
+import Navm from '@/layout/navm/index.vue'
 import Header from '@/layout/header/index.vue'
 import tagsView from '@/layout/tags/index.vue'
 </script>

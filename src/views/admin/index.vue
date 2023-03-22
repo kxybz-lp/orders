@@ -2,11 +2,18 @@
   <div class="app-container">
     <el-card class="admin-card" shadow="hover">
       <ListHeader :rule="{ create: 8 }" @add="handleAdd">
-        <el-form class="search-form" :model="params" ref="searchRef" label-width="0px" size="small">
+        <el-form class="search-form" :model="params" ref="searchRef" label-width="0px"
+          size="default">
           <el-form-item label="" v-show="!$store.state.isMobile">
             <el-select v-model="params.role_id" placeholder="选择角色" clearable @clear="getData(1)">
               <el-option :value="item.id" :label="item.name" v-for="item in roleList"
                 :key="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="" v-show="!$store.state.isMobile">
+            <el-select v-model="params.openid" placeholder="绑定微信" clearable @clear="getData(1)">
+              <el-option value="1" label="已绑定"></el-option>
+              <el-option value="2" label="未绑定"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="">
@@ -35,6 +42,12 @@
               @change="handleSwitch($event, scope.row)" />
           </template>
         </el-table-column>
+        <el-table-column label="绑定微信" min-width="120">
+          <template #default="scope">
+            <el-tag type="success" v-if="scope.row.openid">已绑定</el-tag>
+            <el-tag type="danger" v-else>未绑定</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="140">
           <template #default="scope">
             <el-button v-permission="31" size="small" type="primary" :disabled="scope.row.id == 777"
@@ -46,14 +59,14 @@
       </el-table>
       <el-pagination @current-change="handleCurrentChange" :current-page="params.page"
         :page-size="params.pageSize" :background="true"
-        :layout="$store.state.isMobile? 'prev, next' : 'prev, pager, next'" :total="count"
-        class="fenye">
+        :layout="$store.state.isMobile? 'total,prev, next' : 'total,prev, pager, next'"
+        :total="count" class="fenye">
       </el-pagination>
     </el-card>
-    <FormDrawer :title="'管理员' + drawerTitle" ref="formDrawerRef" @drawerClosed="drawerClosed"
-      @submit="handleSubmit">
-      <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false"
-        size="small">
+    <FormDialog destroyOnClose :title="'管理员' + dialogTitle" ref="formDialogRef"
+      @dialogClosed="dialogClosed" @submit="handleSubmit">
+      <el-form :model="form" ref="formRef" :rules="rules" label-width="140px" :inline="false"
+        :label-position="$store.state.isMobile ? 'top' : 'right'">
         <el-form-item label="登录名" prop="name">
           <el-input minlength="2" maxlength="20" show-word-limit v-model="form.name"
             :disabled="editId != 0"></el-input>
@@ -90,13 +103,13 @@
           <el-switch v-model="form.status" :active-value="1" :inactive-value="0" />
         </el-form-item>
       </el-form>
-    </FormDrawer>
+    </FormDialog>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import FormDrawer from '@/components/FormDrawer.vue'
+import FormDialog from '@/components/FormDialog.vue'
 import ListHeader from '@/components/ListHeader.vue'
 // import ChooseImage from '@/components/ChooseImage.vue'
 // import TagInput from '@/components/TagInput.vue'
@@ -107,14 +120,14 @@ const { loading, count, dataList, params, getData, handleCurrentChange, handleSw
   api: admin,
   params: {
     page: 1,
-    pageSize: 10,
+    pageSize: 15,
     name: '',
     role_id: '',
     openid: '',
     sort: '',
   },
   onGetListSuccess: (res) => {
-    count.value = res.result.count
+    count.value = res.result.total
     dataList.value = res.result.data.map((o) => {
       // o.last_login_time = dateFormart(o.last_login_time, 'hour')
       o.statusLoading = false
@@ -142,7 +155,7 @@ const validateCheckPass = (rule, value, callback) => {
     callback()
   }
 }
-const { drawerTitle, formDrawerRef, formRef, rules, form, editId, handleAdd, handleEdit, handleSubmit, drawerClosed } = useInitForm({
+const { dialogTitle, formDialogRef, formRef, rules, form, editId, handleAdd, handleEdit, handleSubmit, dialogClosed } = useInitForm({
   api: admin,
   getData,
   form: {
@@ -152,8 +165,6 @@ const { drawerTitle, formDrawerRef, formRef, rules, form, editId, handleAdd, han
     role_id: '',
     branch_id: [],
     openid: '',
-    // avatar: '',
-    default: '', //规格值
     status: 1,
   },
   rules: {
@@ -205,27 +216,7 @@ const { drawerTitle, formDrawerRef, formRef, rules, form, editId, handleAdd, han
 // 将字符串日期转时间戳， 2020-09-12 12:11:22
 // let time = (new Date(row.create_time)).getTime()
 // 当前时间戳
-let time_current = new Date().getTime()
-// console.log(time_current)
-// const params_branch = reactive({
-//   page: 1,
-//   pageSize: 10,
-// })
-// 时间戳格式化
-function dateFormart(val, type = 'date') {
-  const dt = new Date(parseInt(val) * 1000) //后台返回的时间戳是以秒单位，js是以毫秒为单位
-  const y = dt.getFullYear()
-  const m = (dt.getMonth() + 1 + '').padStart(2, '0')
-  const d = (dt.getDate() + '').padStart(2, '0')
-  const hh = (dt.getHours() + '').padStart(2, '0')
-  const mm = (dt.getMinutes() + '').padStart(2, '0')
-  const ss = (dt.getSeconds() + '').padStart(2, '0')
-  if (type == 'hour') {
-    return `${y}-${m}-${d} ${hh}:${mm}`
-  } else {
-    return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
-  }
-}
+// let time_current = new Date().getTime()
 
 const roleList = ref([])
 const branchList = ref([])

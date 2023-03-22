@@ -31,6 +31,8 @@ router.beforeEach(async (to, from, next) => {
     hasNewRoutes = addRoutes(menus)
     hasGetInfo = true
     // console.log(hasNewRoutes)
+    //获取通知消息
+    store.dispatch('getNote')
   }
 
   // 删除临时路由
@@ -52,6 +54,7 @@ router.beforeEach(async (to, from, next) => {
 // 全局后置守卫
 router.afterEach((to, from) => {
   Loading.component?.exposed?.endLoading()
+
   // console.log(router.getRoutes())
   // 新增与更新订单后跳转并刷新
   // if ((from.name === 'OrderEdit' || from.name === 'OrderAdd') && to.name === 'Order') {

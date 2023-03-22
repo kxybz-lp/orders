@@ -12,6 +12,10 @@ const order = {
   getSelect() {
     return get('/order/order/getSelectData')
   },
+  // 订单状态数据
+  getStatus() {
+    return get('/order/order/getStatusData')
+  },
   // 新增
   create(params) {
     return post('/order/order/create', params)
@@ -19,6 +23,10 @@ const order = {
   // 更新
   edit(id, params) {
     return post(`/order/order/edit/${id}`, params)
+  },
+  // 跟进
+  follow(id, params) {
+    return post(`/order/order/follow/${id}`, params)
   },
   // 详情
   read(id) {

@@ -26,11 +26,16 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-pagination @current-change="handleCurrentChange" :current-page="params.page"
+        :hide-on-single-page="true" :page-size="params.pageSize" :background="true"
+        :layout="$store.state.isMobile? 'total,prev, next' : 'total,prev, pager, next'"
+        :total="count" class="fenye">
+      </el-pagination>
     </el-card>
-    <FormDrawer :title="'状态' + drawerTitle" ref="formDrawerRef" @drawerClosed="drawerClosed"
+    <FormDialog destroyOnClose :title="dialogTitle" ref="formDialogRef" @dialogClosed="dialogClosed"
       @submit="handleSubmit">
-      <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false"
-        size="small">
+      <el-form :model="form" ref="formRef" :rules="rules" label-width="140px"
+        :label-position="$store.state.isMobile ? 'top' : 'right'">
         <el-form-item label="名称" prop="name">
           <el-input minlength="2" maxlength="20" show-word-limit v-model="form.name"></el-input>
         </el-form-item>
@@ -41,28 +46,27 @@
           <el-switch v-model="form.status" :active-value="1" :inactive-value="0" />
         </el-form-item>
       </el-form>
-    </FormDrawer>
+    </FormDialog>
   </div>
 </template>
 
 <script setup>
-import FormDrawer from '@/components/FormDrawer.vue'
+import FormDialog from '@/components/FormDialog.vue'
 import ListHeader from '@/components/ListHeader.vue'
 import status from '@/api/status'
 import { useInitTable, useInitForm } from '@/hooks/useCommon'
-const { loading, dataList, getData, handleSwitch, handleSort, handleDelete } = useInitTable({
+const { loading, params, count, dataList, getData, handleCurrentChange, handleSwitch, handleSort, handleDelete } = useInitTable({
   api: status,
   params: {
     page: 1,
-    pageSize: 200,
+    pageSize: 15,
     name: '',
   },
 })
-const { drawerTitle, formDrawerRef, formRef, rules, form, handleAdd, handleEdit, handleSubmit, drawerClosed } = useInitForm({
+const { dialogTitle, formDialogRef, formRef, rules, form, handleAdd, handleEdit, handleSubmit, dialogClosed } = useInitForm({
   api: status,
   getData,
   form: {
-    pid: 0,
     name: '',
     list_order: 100,
     status: 1,

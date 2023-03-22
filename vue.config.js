@@ -28,7 +28,10 @@ module.exports = defineConfig({
       Components({
         resolvers: [ElementPlusResolver()],
       }),
-      new WindiCSSWebpackPlugin(),
+      // new WindiCSSWebpackPlugin(),
     ],
   },
+  // chainWebpack(config) {
+  //   config.entry('main').add('babel-polyfill')
+  // },
 })

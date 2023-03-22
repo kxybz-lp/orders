@@ -7,9 +7,9 @@
         <slot></slot>
       </div>
       <div class="actions">
-        <el-button size="small" type="primary" color="#004c59" @click="submit" :loading="loading">
+        <el-button type="primary" color="#004c59" @click="submit" :loading="loading">
           {{ confirmText }}</el-button>
-        <el-button size="small" type="default" @click="closeDrawer">取消</el-button>
+        <el-button type="default" @click="closeDrawer">取消</el-button>
       </div>
     </div>
   </el-drawer>
@@ -61,6 +61,7 @@ defineExpose({
 .formDrawer {
   width: 100%;
   height: 100%;
+  padding: 15px;
   position: relative;
   display: flex;
   flex-direction: column;

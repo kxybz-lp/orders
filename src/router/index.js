@@ -70,6 +70,16 @@ const routes = [
 export const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+  scrollBehavior(to, from, savedPosition) {
+    // 移动端打开新页面时返回页面顶部
+    // let elMain = document.querySelector('.el-main')
+    // elMain.scrollTop = 0
+    // if (savedPosition) {
+    //   return savedPosition
+    // } else {
+    //   return { top: 0 }
+    // }
+  },
 })
 
 // 临时路由，解决刷新浏览器出现路由不存在的警告

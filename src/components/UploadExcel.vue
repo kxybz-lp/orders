@@ -1,16 +1,9 @@
 <template>
-  <el-upload
-    class="upload-import"
-    :action="action"
-    :headers="{
+  <el-upload class="upload-import" :action="action" :headers="{
       token,
-    }"
-    name="file"
-    :before-upload="uploadBefore"
-    :on-success="uploadSuccess"
-    :on-error="uploadError"
-  >
-    <el-button type="success" size="small">导入</el-button>
+    }" name="file" :before-upload="uploadBefore" :on-success="uploadSuccess"
+    :on-error="uploadError">
+    <el-button type="success" size="default">导入</el-button>
   </el-upload>
 </template>
 <script setup>
@@ -29,13 +22,17 @@ const uploadBefore = () => {
 
 const emit = defineEmits(['success'])
 const uploadSuccess = (response, uploadFile, uploadFiles) => {
-  toast('数据上传成功')
+  if (response.code > 0) {
+    toast('数据上传成功')
+    emit('success', {
+      response,
+      uploadFile,
+      uploadFiles,
+    })
+  } else {
+    toast(response.message, 'error')
+  }
   closeElLoading()
-  emit('success', {
-    response,
-    uploadFile,
-    uploadFiles,
-  })
 }
 
 const uploadError = (error, uploadFile, uploadFiles) => {

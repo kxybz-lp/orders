@@ -2,7 +2,8 @@
   <div class="app-container">
     <el-card class="sms-card" shadow="hover">
       <ListHeader :rule="{ delete: 73 }" @delete="handleMultiDelete">
-        <el-form class="search-form" :model="params" ref="searchRef" label-width="0px" size="small">
+        <el-form class="search-form" :model="params" ref="searchRef" label-width="0px"
+          size="default" v-if="!$store.state.isMobile">
           <el-form-item label="">
             <el-select v-model="params.errcode" placeholder="发送状态" clearable @clear="getData(1)">
               <el-option :value="item.id" :label="item.name" v-for="item in status" :key="item.id">
@@ -33,7 +34,7 @@
         <el-table-column prop="branch_name" label="所属公司" min-width="120"> </el-table-column>
         <el-table-column prop="status" label="状态" min-width="120">
           <template #default="scope">
-            <el-tag size="small" :type="scope.row.errcode == 0 ? 'success' : 'info'">
+            <el-tag size="small" :type="scope.row.errcode == 0 ? 'success' : 'danger'">
               {{ scope.row.errcode == 0 ? '成功' : '失败' }}</el-tag>
           </template>
         </el-table-column>
@@ -49,8 +50,9 @@
         </el-table-column>
       </el-table>
       <el-pagination @current-change="handleCurrentChange" :current-page="params.page"
-        :page-size="params.pageSize" :background="true" layout="prev, pager, next" :total="count"
-        class="fenye">
+        :page-size="params.pageSize" :background="true"
+        :layout="$store.state.isMobile ? 'total,prev, next' : 'total,prev, pager, next'"
+        :total="count" class="fenye">
       </el-pagination>
     </el-card>
   </div>
@@ -65,7 +67,7 @@ const { loading, count, dataList, params, getData, handleCurrentChange, handleDe
   api: message,
   params: {
     page: 1,
-    pageSize: 10,
+    pageSize: 15,
     errcode: '',
     receive: '',
     create_time: '',

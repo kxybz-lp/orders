@@ -2,20 +2,26 @@
   <div class="app-container">
     <el-card class="menu-card" shadow="hover">
       <ListHeader :rule="{ create: 41 }" @add="handleAdd" />
-      <el-tree :data="dataList" :props="{ children: 'children', label: 'label' }" v-loading="loading" node-key="id" :default-expanded-keys="defaultExpandedKeys">
-        <template #default="{ node, data }">
+      <el-tree :data="dataList" :props="{ children: 'children', label: 'label' }"
+        v-loading="loading" node-key="id" :default-expanded-keys="defaultExpandedKeys">
+        <template #default="{ data }">
           <div class="custom-tree-left">
-            <el-tag size="small" :type="data.is_menu ? '' : 'info'">{{ data.is_menu ? '菜单' : '权限' }}</el-tag>
+            <el-tag size="small" :type="data.is_menu ? '' : 'info'">{{ data.is_menu ? '菜单' : '权限' }}
+            </el-tag>
             <el-icon v-if="data.icon" :size="16">
               <component :is="data.icon" />
             </el-icon>
             <span :data-id="data.id">{{ data.label }}</span>
           </div>
           <div class="custom-tree-right">
-            <el-switch v-permission="43" :modelValue="data.status" :active-value="1" :inactive-value="0" @change="handleSwitch($event, data)" />
-            <el-button v-permission="42" text type="primary" size="small" @click.stop="handleEdit(data)">修改</el-button>
-            <el-button v-permission="41" text type="primary" size="small" @click.stop="addChild(data.id)">增加</el-button>
-            <el-button v-permission="44" text type="primary" size="small" @click.stop="handleDelete(data.id)">删除</el-button>
+            <el-switch v-permission="43" :modelValue="data.status" :active-value="1"
+              :inactive-value="0" @change="handleSwitch($event, data)" />
+            <el-button v-permission="42" text type="primary" size="small"
+              @click.stop="handleEdit(data)">修改</el-button>
+            <el-button v-permission="41" text type="primary" size="small"
+              @click.stop="addChild(data.id)">增加</el-button>
+            <el-button v-permission="44" text type="primary" size="small"
+              @click.stop="handleDelete(data.id)">删除</el-button>
             <!-- <el-popconfirm title="是否要删除该记录？" confirmButtonText="确认" cancelButtonText="取消" @confirm="handleDelete(data.id)">
                 <template #reference>
                   <el-button text type="primary" size="small">删除</el-button>
@@ -25,10 +31,14 @@
         </template>
       </el-tree>
     </el-card>
-    <FormDrawer :title="'菜单/规则' + drawerTitle" ref="formDrawerRef" @drawerClosed="drawerClosed" @submit="handleSubmit">
-      <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false" size="small">
+    <FormDialog destroyOnClose :title="dialogTitle" ref="formDialogRef" @dialogClosed="dialogClosed"
+      @submit="handleSubmit">
+      <el-form :model="form" ref="formRef" :rules="rules" label-width="140px"
+        :label-position="$store.state.isMobile ? 'top' : 'right'">
         <el-form-item label="上级菜单" prop="pid">
-          <el-cascader v-model="form.pid" :options="dataList" :props="{ value: 'id', label: 'label', children: 'children', checkStrictly: true, emitPath: false }" placeholder="请选择上级菜单" />
+          <el-cascader v-model="form.pid" :options="dataList"
+            :props="{ value: 'id', label: 'label', children: 'children', checkStrictly: true, emitPath: false }"
+            placeholder="请选择上级菜单" />
         </el-form-item>
         <el-form-item label="菜单/规则" prop="is_menu">
           <el-radio-group v-model="form.is_menu">
@@ -40,7 +50,8 @@
           <el-input minlength="2" maxlength="20" show-word-limit v-model="form.label"></el-input>
         </el-form-item>
         <el-form-item label="Name值" prop="name">
-          <el-input minlength="2" maxlength="20" show-word-limit v-model="form.name" placeholder="首字母大写,如Home"></el-input>
+          <el-input minlength="2" maxlength="20" show-word-limit v-model="form.name"
+            placeholder="首字母大写,如Home"></el-input>
         </el-form-item>
         <el-form-item label="图标" prop="icon" v-if="form.is_menu == 1">
           <IconSelect v-model="form.icon"></IconSelect>
@@ -51,8 +62,10 @@
         <el-form-item label="后端地址">
           <el-input v-model="form.backend_path" placeholder="后端请求地址,如/order/admin/index"></el-input>
         </el-form-item>
-        <el-form-item label="路由组件" prop="component" v-if="(form.is_menu == 1 && form.pid > 0) || form.is_menu == 0">
-          <el-input v-model="form.component" placeholder="前端路由对应组件,如views/home/index.vue"></el-input>
+        <el-form-item label="路由组件" prop="component"
+          v-if="(form.is_menu == 1 && form.pid > 0) || form.is_menu == 0">
+          <el-input v-model="form.component" placeholder="前端路由对应组件,如views/home/index.vue">
+          </el-input>
         </el-form-item>
         <el-form-item label="路由标题" v-if="(form.is_menu == 1 && form.pid > 0) || form.is_menu == 0">
           <el-input v-model="form.meta.title"></el-input>
@@ -66,19 +79,21 @@
           </el-select>
         </el-form-item>
         <el-form-item label="排序号">
-          <el-input v-model="form.sort_no" type="number"></el-input>
+          <el-input v-model="form.sort" type="number"></el-input>
         </el-form-item>
         <el-form-item label="描述" prop="remark">
-          <el-input type="textarea" row="2" v-model="form.remark" minlength="2" maxlength="20" show-word-limit resize="none"></el-input>
+          <el-input type="textarea" row="2" v-model="form.remark" minlength="2" maxlength="20"
+            show-word-limit resize="none"></el-input>
         </el-form-item>
       </el-form>
-    </FormDrawer>
+    </FormDialog>
   </div>
 </template>
 
 <script setup>
 import ListHeader from '@/components/ListHeader.vue'
 import IconSelect from '@/components/IconSelect.vue'
+import FormDialog from '@/components/FormDialog.vue'
 import menu from '@/api/menu'
 import { useInitTable, useInitForm } from '@/hooks/useCommon'
 import { ref } from 'vue'
@@ -90,14 +105,14 @@ const { loading, dataList, handleDelete, handleSwitch, getData } = useInitTable(
     pageSize: 10,
   },
   onGetListSuccess: (res) => {
-    dataList.value = res.result.data
+    dataList.value = res.result
     // 默认展开一级菜单
-    defaultExpandedKeys.value = res.result.data.map((item) => item.id)
+    defaultExpandedKeys.value = res.result.map((item) => item.id)
     // console.log(dataList.value)
   },
 })
 
-const { drawerTitle, formDrawerRef, formRef, rules, form, handleAdd, handleEdit, handleSubmit, drawerClosed } = useInitForm({
+const { dialogTitle, formDialogRef, formRef, rules, form, handleAdd, handleEdit, handleSubmit, dialogClosed } = useInitForm({
   api: menu,
   getData,
   form: {
@@ -113,7 +128,7 @@ const { drawerTitle, formDrawerRef, formRef, rules, form, handleAdd, handleEdit,
     remark: '',
     meta: { title: '' },
     status: 1,
-    sort_no: 100,
+    sort: 100,
   },
   rules: {
     label: [

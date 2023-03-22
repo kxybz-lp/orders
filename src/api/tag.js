@@ -17,12 +17,12 @@ const tag = {
     return post(`/order/tag/edit/${id}`, params)
   },
   // 状态更新
-  status(id, params) {
-    return post(`/order/tag/status/${id}`, params)
+  status(params) {
+    return post('/order/tag/status', params)
   },
   // 排序
   sort(params) {
-    return post('/order/tag/list_order', params)
+    return post('/order/tag/sort', params)
   },
   // 删除
   delete(id) {

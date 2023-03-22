@@ -1,5 +1,6 @@
 import { reactive, ref, computed } from 'vue'
-import { toast, showModal } from '@/utils/utils'
+import { toast, showModal, scrollToTop } from '@/utils/utils'
+import store from '@/store'
 
 // 列表，分页，搜索，删除，修改状态，排序
 export function useInitTable(opt = {}) {
@@ -34,7 +35,7 @@ export function useInitTable(opt = {}) {
           if (opt.onGetListSuccess && typeof opt.onGetListSuccess == 'function') {
             opt.onGetListSuccess(res)
           } else {
-            count.value = res.result.count
+            count.value = res.result.total
             dataList.value = res.result.data
           }
         } else {
@@ -50,6 +51,11 @@ export function useInitTable(opt = {}) {
   //切换分页码
   const handleCurrentChange = (page) => {
     params.page = page
+    // 移动端返回页面顶部
+    if (store.state.isMobile) {
+      let elMain = document.querySelector('.el-main')
+      elMain.scrollTop = 0
+    }
     getData()
   }
   // 切换分页数
@@ -62,7 +68,7 @@ export function useInitTable(opt = {}) {
   const handleSwitch = (val, row) => {
     row.statusLoading = true
     opt.api
-      .status(row.id, { status: val })
+      .status({ id: row.id, status: val })
       .then((res) => {
         if (res.code > 0) {
           toast('数据更新成功')
@@ -78,6 +84,7 @@ export function useInitTable(opt = {}) {
 
   // 表格数据字段排序
   const sortChange = (column, prop, order) => {
+    console.log(column, prop)
     params.page = 1
     if (column.prop == 'order_time_date') column.prop = 'order_time'
     params.sort = column.order == 'descending' ? column.prop + ' desc' : column.prop + ' asc'
@@ -115,7 +122,11 @@ export function useInitTable(opt = {}) {
   const handleSort = () => {
     let sort = []
     dataList.value.map((o) => {
-      sort.push({ id: o.id, list_order: o.list_order })
+      if (o.list_order) {
+        sort.push({ id: o.id, list_order: o.list_order })
+      } else {
+        sort.push({ id: o.id, sort: o.sort })
+      }
     })
     loading.value = true
     opt.api
@@ -207,8 +218,8 @@ export function useInitTable(opt = {}) {
 export function useInitForm(opt = {}) {
   const editId = ref(0)
   const defaultForm = opt.form
-  const drawerTitle = computed(() => (editId.value ? '修改' : '新增'))
-  const formDrawerRef = ref(null)
+  const dialogTitle = computed(() => (editId.value ? '修改' : '新增'))
+  const formDialogRef = ref(null)
   const formRef = ref(null)
   let form = reactive({ ...opt.form })
   const rules = opt.rules || {}
@@ -224,13 +235,13 @@ export function useInitForm(opt = {}) {
   // 新增
   const handleAdd = () => {
     editId.value = 0
-    formDrawerRef.value.openDrawer()
+    formDialogRef.value.openFormDialog()
     resetForm(defaultForm)
   }
   // 编辑，重要内容请求服务器获取item
   const handleEdit = (row) => {
     editId.value = row.id
-    formDrawerRef.value.openDrawer()
+    formDialogRef.value.openFormDialog()
 
     if (opt.fliterParam && typeof opt.fliterParam == 'function') {
       opt.fliterParam(row)
@@ -244,7 +255,7 @@ export function useInitForm(opt = {}) {
     formRef.value.validate((valid) => {
       if (!valid) return
       // console.log(form)
-      formDrawerRef.value.showLoading()
+      formDialogRef.value.showLoading()
       // 提交前的数据处理
       let body = {}
       if (opt.beforeSubmit && typeof opt.beforeSubmit == 'function') {
@@ -253,23 +264,24 @@ export function useInitForm(opt = {}) {
         body = form
       }
       if (!body) {
-        formDrawerRef.value.hideLoading()
+        formDialogRef.value.hideLoading()
         return
       }
+
       if (editId.value) {
         opt.api
           .edit(editId.value, body)
           .then((res) => {
             if (res.code > 0) {
               toast('数据更新成功')
-              formDrawerRef.value.closeDrawer()
+              formDialogRef.value.closeFormDialog()
               opt.getData()
             } else {
               toast(res.message, 'error')
             }
           })
           .finally(() => {
-            formDrawerRef.value.hideLoading()
+            formDialogRef.value.hideLoading()
           })
       } else {
         opt.api
@@ -277,27 +289,27 @@ export function useInitForm(opt = {}) {
           .then((res) => {
             if (res.code > 0) {
               toast('数据新增成功')
-              formDrawerRef.value.closeDrawer()
+              formDialogRef.value.closeFormDialog()
               opt.getData()
             } else {
               toast(res.message, 'error')
             }
           })
           .finally(() => {
-            formDrawerRef.value.hideLoading()
+            formDialogRef.value.hideLoading()
           })
       }
     })
   }
   // 弹窗关闭重置表单，esetFields只对有prop属性的生效
-  const drawerClosed = () => {
+  const dialogClosed = () => {
     if (!formRef.value) return
     formRef.value.resetFields()
   }
 
   return {
-    drawerTitle,
-    formDrawerRef,
+    dialogTitle,
+    formDialogRef,
     formRef,
     form,
     rules,
@@ -305,6 +317,6 @@ export function useInitForm(opt = {}) {
     handleAdd,
     handleEdit,
     handleSubmit,
-    drawerClosed,
+    dialogClosed,
   }
 }

@@ -1,3 +1,4 @@
+import 'babel-polyfill'
 import { createApp } from 'vue'
 import App from './App.vue'
 import { router } from './router'
@@ -11,7 +12,11 @@ for (let iconName in ElIcon) {
 }
 // 权限指令
 import permission from '@/directives/permission'
-app.use(permission)
+// 复制黏贴指令
+import copy from '@/directives/copy'
+// 查看手机号指令
+import mobile from '@/directives/mobile'
+app.use(permission).use(copy).use(mobile)
 // 全局方法
 // app.config.globalProperties.$filters = {
 //   dateFormart(val, type = 'date') {

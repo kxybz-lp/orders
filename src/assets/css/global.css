@@ -52,6 +52,8 @@ div:focus {
   --color: #004c59;
   --el-color-primary: #004c59;
 }
+.el-button {
+}
 .el-button--primary {
   --el-button-active-color: #076575;
   --el-button-hover-bg-color: #076575;
@@ -65,6 +67,9 @@ div:focus {
 .el-cascader {
   width: 100%;
 }
+/* .el-input__wrapper {
+  width: 100% !important;
+} */
 .el-menu {
   border: none;
 }
@@ -76,11 +81,11 @@ div:focus {
   margin-bottom: 10px;
 }
 .el-drawer__body {
-  padding: 15px;
+  padding: 0;
 }
-.el-dialog__body {
+/* .el-dialog__body {
   padding: 15px !important;
-}
+} */
 .el-icon.is-loading {
   color: #fff !important;
 }
@@ -141,11 +146,16 @@ div:focus {
   background-color: #18bc9c;
   border-color: #18bc9c;
 }
-.el-button:focus,
-.el-button:hover {
-  color: #fff;
-  border-color: #316771;
-  background-color: #316771;
+.el-date-table td.current:not(.disabled) .el-date-table-cell__text,
+.el-date-table td.today.end-date .el-date-table-cell__text,
+.el-date-table td.today.start-date .el-date-table-cell__text {
+  color: #fff !important;
+}
+.el-form-item--small .el-form-item__label {
+  font-weight: 700;
+}
+.el-pager li {
+  outline: none !important;
 }
 .el-card {
   box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.05) !important;

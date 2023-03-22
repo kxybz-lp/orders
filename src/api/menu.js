@@ -17,8 +17,8 @@ const menu = {
     return post(`/order/menu/edit/${id}`, params)
   },
   // 状态更新
-  status(id, params) {
-    return post(`/order/menu/status/${id}`, params)
+  status(params) {
+    return post('/order/menu/status', params)
   },
   // 删除
   delete(id) {

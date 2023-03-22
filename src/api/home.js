@@ -6,8 +6,8 @@ const home = {
     return post('/order/index/panels')
   },
   // 前十签单门店
-  getBranch() {
-    return post('/order/index/branch_sign')
+  getBranch(params) {
+    return post('/order/index/branch_sign', params)
   },
   // 柱状图数据
   getBarData(params) {
@@ -20,6 +20,10 @@ const home = {
   //公告数据
   getNotice() {
     return post('/order/index/notice')
+  },
+  // 消息通知
+  getNote() {
+    return post('/order/index/note')
   },
 }
 

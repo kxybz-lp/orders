@@ -16,7 +16,7 @@ if (process.env.NODE_ENV == 'development') {
 } else if (process.env.NODE_ENV == 'production') {
   axios.defaults.baseURL = base.sq
 }
-// 请求超时时间
+// 请求超时时间,如需一次导出大量数据，需调整请求超时时间
 axios.defaults.timeout = 5000
 
 // post请求头
@@ -38,6 +38,12 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   (response) => {
     if (response.status === 200) {
+      if (response.data.code === -1) {
+        toast('登录过期，请重新登录', 'error')
+        store.dispatch('logout').finally(() => {
+          location.reload()
+        })
+      }
       return Promise.resolve(response)
     } else {
       return Promise.reject(response)
@@ -49,13 +55,11 @@ axios.interceptors.response.use(
       switch (error.response.status) {
         case 401:
           toast('登录过期，请重新登录', 'error')
-          store.dispatch('logout').finally(() => {
-            location.reload()
-            // router.replace({
-            //   path: '/login',
-            //   query: { redirect: router.currentRoute.fullPath },
-            // })
-          })
+          localStorage.removeItem('token')
+          location.reload()
+          // store.dispatch('logout').finally(() => {
+          //   location.reload()
+          // })
           break
         // 404请求不存在
         case 404:

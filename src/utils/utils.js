@@ -49,6 +49,20 @@ export function queryParams(query) {
   return r
 }
 
+// 页面回到顶部（滚动效果）
+export function scrollToTop() {
+  let scrollTop = document.documentElement.scrollTop || document.body.scrollTop
+  console.log(scrollTop, 'scrollTop')
+  if (scrollTop > 0) {
+    const timeTop = setInterval(() => {
+      document.documentElement.scrollTop = document.body.scrollTop = scrollTop -= 50 //一次减50往上滑动
+      if (scrollTop <= 0) {
+        clearInterval(timeTop)
+      }
+    }, 10) //定时调用函数使其更顺滑
+  }
+}
+
 /**
  * Created by LIPING on 2020/10/31
  */
@@ -507,6 +521,35 @@ export function fun_date(days) {
   date2.setDate(date1.getDate() + days)
   var time2 = date2.getFullYear() + '-' + (date2.getMonth() + 1) + '-' + date2.getDate()
   return [time2, time1]
+}
+
+/**
+ * 是否微信访问
+ * @returns
+ */
+export function is_weixn() {
+  var ua = navigator.userAgent.toLowerCase()
+  if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+    return true
+  } else {
+    return false
+  }
+}
+
+//获取URL中的参数
+export function get_query_string(name) {
+  var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)')
+  var r = window.location.search.substr(1).match(reg)
+  if (r != null) return unescape(r[2])
+  return null
+}
+
+//将手机号中间四位替换为*
+export function mobile_replace(mobile) {
+  let moble = mobile.toString()
+  let ary = moble.split('')
+  ary.splice(3, 4, '****')
+  return ary.join('')
 }
 
 /**

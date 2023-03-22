@@ -17,12 +17,12 @@ const channel = {
     return post(`/order/channel/edit/${id}`, params)
   },
   // 状态更新
-  status(id, params) {
-    return post(`/order/channel/status/${id}`, params)
+  status(params) {
+    return post('/order/channel/status', params)
   },
   // 排序
   sort(params) {
-    return post('/order/channel/list_order', params)
+    return post('/order/channel/sort', params)
   },
   // 删除
   delete(id) {

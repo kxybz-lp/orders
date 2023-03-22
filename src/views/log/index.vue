@@ -2,7 +2,8 @@
   <div class="app-container">
     <el-card class="log-card" shadow="hover">
       <ListHeader :rule="{ delete: 70 }" @delete="handleMultiDelete">
-        <el-form class="search-form" :model="params" ref="searchRef" label-width="0px" size="small">
+        <el-form class="search-form" :model="params" ref="searchRef" label-width="0px"
+          size="default" v-if="!$store.state.isMobile">
           <el-form-item label="">
             <el-select v-model="params.type" placeholder="操作类型" clearable @clear="getData(1)">
               <el-option :value="item.id" :label="item.name" v-for="item in type" :key="item.id">
@@ -44,8 +45,9 @@
         </el-table-column>
       </el-table>
       <el-pagination @current-change="handleCurrentChange" :current-page="params.page"
-        :page-size="params.pageSize" :background="true" layout="prev, pager, next" :total="count"
-        class="fenye">
+        :page-size="params.pageSize" :background="true"
+        :layout="$store.state.isMobile ? 'total,prev, next' : 'total,prev, pager, next'"
+        :total="count" class="fenye">
       </el-pagination>
     </el-card>
   </div>
@@ -60,7 +62,7 @@ const { loading, count, dataList, params, getData, handleCurrentChange, handleDe
   api: log,
   params: {
     page: 1,
-    pageSize: 10,
+    pageSize: 15,
     name: '',
     type: '',
     create_time: '',

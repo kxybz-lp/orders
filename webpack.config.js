@@ -12,4 +12,5 @@ module.exports = {
       resolvers: [ElementPlusResolver()],
     }),
   ],
+  // entry: ['babel-polyfill', './src/main.js'],
 }

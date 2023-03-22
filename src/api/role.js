@@ -17,8 +17,8 @@ const role = {
     return post(`/order/role/edit/${id}`, params)
   },
   // 状态更新
-  status(id, params) {
-    return post(`/order/role/status/${id}`, params)
+  status(params) {
+    return post('/order/role/status', params)
   },
   // 设置权限
   authorize(params) {

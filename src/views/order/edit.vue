@@ -1,7 +1,8 @@
 <template>
   <div class="app-container" v-loading="loading" element-loading-text="数据读取中...">
     <el-card class="menu-order-add" shadow="hover">
-      <el-form class="order" :model="form" :rules="rules" ref="formRef" label-width="80px">
+      <el-form class="order" :model="form" :rules="rules" ref="formRef" label-width="80px"
+        :label-position="$store.state.isMobile ? 'top' : 'right'">
         <el-tabs v-model="activeTab" @tab-change="handleTabChange">
           <el-tab-pane label="订单信息" name="order">
             <el-form-item label="客户名称" prop="name">
@@ -9,7 +10,7 @@
                 show-word-limit />
             </el-form-item>
             <el-form-item label="联系方式" prop="mobile">
-              <el-input v-model="form.mobile" placeholder="请输入客户电话" />
+              <el-input v-model="form.mobile" readonly placeholder="请输入客户电话" />
             </el-form-item>
             <el-row :gutter="2" style="width: 100%">
               <el-col :md="10" :offset="0">
@@ -28,7 +29,8 @@
             <el-form-item label="下单时间" prop="order_time">
               <el-date-picker style="width: 100%" v-model="form.order_time" type="datetime"
                 placeholder="请选择下单时间" format="YYYY-MM-DD HH:mm:ss"
-                value-format="YYYY-MM-DD HH:mm:ss" :editable="false" clearable />
+                value-format="YYYY-MM-DD HH:mm:ss" :editable="false" :disabled-date="disabledDate"
+                clearable />
             </el-form-item>
             <el-form-item label="推广渠道" prop="channel_id">
               <el-select v-model="form.channel_id" filterable placeholder="请选择或搜索渠道">
@@ -96,7 +98,8 @@
             <el-form-item label="派单时间" prop="arrange_time">
               <el-date-picker style="width: 100%" v-model="form.arrange_time" type="datetime"
                 placeholder="请选择派单时间" format="YYYY-MM-DD HH:mm:ss"
-                value-format="YYYY-MM-DD HH:mm:ss" :editable="false" clearable />
+                value-format="YYYY-MM-DD HH:mm:ss" :editable="false" :disabled-date="disabledDate"
+                clearable />
             </el-form-item>
             <el-form-item label="派单人" prop="arrange_man">
               <el-select v-model="form.arrange_man" placeholder="请选择接派单人">
@@ -107,8 +110,8 @@
             <el-form-item label="接单公司" prop="receive_company">
               <el-select v-model="form.receive_company" filterable placeholder="请选择或搜索接单公司"
                 @change="getDockingMan">
-                <el-option :disabled="item.status === 2" :value="item.id" :label="item.name"
-                  v-for="item in branchList" :key="item.id" />
+                <el-option :disabled="item.status === 2 || item.status === 3" :value="item.id"
+                  :label="item.name" v-for="item in branchList" :key="item.id" />
               </el-select>
             </el-form-item>
             <el-form-item label="接单人" prop="receive_man">
@@ -131,7 +134,8 @@
                 <el-col :md="8" :offset="0">
                   <el-date-picker style="width: 100%" v-model="item.follow_time" type="datetime"
                     placeholder="请选择跟进时间" format="YYYY-MM-DD HH:mm:ss"
-                    value-format="YYYY-MM-DD HH:mm:ss" :editable="false" clearable />
+                    value-format="YYYY-MM-DD HH:mm:ss" :editable="false"
+                    :disabled-date="disabledDate" clearable />
                 </el-col>
                 <el-col :md="15" :offset="0">
                   <el-input v-model="item.follow_note" placeholder="请输入跟进说明" minlength="2"
@@ -160,10 +164,16 @@
                   v-for="item in statusList" :key="item.id" />
               </el-select>
             </el-form-item>
+            <el-form-item label="死单标签" prop="reason_id" v-if="form.status_id==8">
+              <el-select v-model="form.reason_id" placeholder="请选择死单标签">
+                <el-option :value="item.id" :label="item.name" v-for="item in reasonList"
+                  :key="item.id" />
+              </el-select>
+            </el-form-item>
             <el-form-item label="交定时间" prop="deal_time">
               <el-date-picker style="width: 100%" v-model="form.deal_time" type="datetime" readonly
                 placeholder="交定时间" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"
-                :editable="false" clearable />
+                :editable="false" :disabled-date="disabledDate" clearable />
             </el-form-item>
             <el-form-item label="定金金额" prop="order_money">
               <el-input v-model="form.order_money" placeholder="请输入定金金额" />
@@ -171,7 +181,8 @@
             <el-form-item label="签约时间" prop="signing_time">
               <el-date-picker style="width: 100%" v-model="form.signing_time" type="datetime"
                 placeholder="请选择签约时间" format="YYYY-MM-DD HH:mm:ss"
-                value-format="YYYY-MM-DD HH:mm:ss" :editable="false" clearable />
+                value-format="YYYY-MM-DD HH:mm:ss" :disabled-date="disabledDate" :editable="false"
+                clearable />
             </el-form-item>
             <el-form-item label="合同金额" prop="contract_money">
               <el-input v-model="form.contract_money" placeholder="请输入合同金额" />
@@ -247,7 +258,7 @@
   </div>
 </template>
 <script setup>
-import { reactive, ref, computed, watch } from 'vue'
+import { reactive, ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import order from '@/api/order'
@@ -259,6 +270,12 @@ const store = useStore()
 const tabList = store.state.tabList
 const formRef = ref('')
 const loading = ref(false)
+
+onMounted(() => {
+  // 移动端打开新页面时返回页面顶部
+  let elMain = document.querySelector('.el-main')
+  elMain.scrollTop = 0
+})
 
 const form = reactive({
   name: '',
@@ -299,6 +316,7 @@ const form = reactive({
   end_time: '',
   construction_manager: '',
   quality_man: '',
+  reason_id: 0,
   is_visit: 1,
   visit: [{ visit_time: '', remark: '' }],
 })
@@ -362,6 +380,10 @@ const rules = {
   ],
 }
 
+const disabledDate = (time) => {
+  return time.getTime() > Date.now()
+}
+
 const loadData = (id) => {
   loading.value = true
   order
@@ -389,6 +411,7 @@ const loadData = (id) => {
         form.receive_company = form.receive_company === 0 ? '' : form.receive_company
         form.layout_id = form.layout_id === 0 ? '' : form.layout_id
         form.type_id = form.type_id === 0 ? '' : form.type_id
+        form.reason_id = form.reason_id === 0 ? '' : form.reason_id
         form.follows = form.follows.map((item) => {
           return { follow_time: parseTime(item.follow_time), follow_note: item.follow_note }
         })
@@ -484,7 +507,10 @@ const statusChange = (status_id) => {
   if (status_id === 3 || status_id === 4 || status_id === 5 || status_id === 6) {
     if (!form.deal_time) form.deal_time = time_init()
   } else {
-    form.deal_time = ''
+    // form.deal_time = ''
+  }
+  if (status_id != 8) {
+    form.reason_id = ''
   }
 }
 
@@ -505,6 +531,7 @@ const branchList = ref([])
 const statusList = ref([])
 const tagList = ref([])
 const kefuList = ref([])
+const reasonList = ref([])
 
 const source = computed({
   get() {
@@ -550,6 +577,7 @@ order.getSelect().then((res) => {
     layoutList.value = res.result.layout
     branchList.value = res.result.branch
     statusList.value = res.result.status
+    reasonList.value = res.result.reason
     tagList.value = res.result.tag
     tagList.value.push({ id: 100, name: '其他' })
     kefuList.value = res.result.kefu
@@ -562,6 +590,7 @@ order.getSelect().then((res) => {
 // 表单提交
 const submit = () => {
   formRef.value.validate((valid) => {
+    console.log(valid)
     if (!valid) {
       activeTab.value = 'order'
       return false
@@ -582,6 +611,11 @@ const submit = () => {
     // 回访信息数据处理
     form.visit = form.visit.filter((item) => item.visit_time && item.remark)
     form.visit = form.visit.length === 0 ? '' : form.visit
+    // 死单标签处理
+    if (form.status_id == 8 && !form.reason_id) {
+      toast('请选择死单标签', 'error')
+      return false
+    }
     loading.value = true
     order
       .edit(id, form)
@@ -601,6 +635,8 @@ const submit = () => {
           router.replace({ path: '/order/index', query: { reload: true } }).catch((err) => {})
           tabList.splice(index, 1)
           store.commit('setTabList', tabList)
+          //获取通知消息
+          store.dispatch('getNote')
         } else {
           toast(res.message || 'error', 'error')
           return false

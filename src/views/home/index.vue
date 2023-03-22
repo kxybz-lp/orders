@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
-    <el-row v-permission="54" :gutter="20" class="panels">
+    <el-row v-permission="54" :gutter="$store.state.isMobile ? 10 : 20" class="panels">
       <template v-if="panels.length == 0">
-        <el-col :xs="24" :md="12" :lg="6" v-for="i in 4" :key="i">
+        <el-col :xs="12" :md="12" :lg="6" v-for="i in 4" :key="i">
           <el-skeleton style="width: 100%" animated loading>
             <template #template>
               <el-card shadow="hover" class="border-0">
@@ -23,9 +23,8 @@
           </el-skeleton>
         </el-col>
       </template>
-      <el-col :xs="24" :sm="12" :lg="6" :offset="0" v-for="(item, index) in panels"
-        :key="item.title" :class="$store.state.isMobile ? 'mb15' : ''">
-        <el-card shadow="hover" class="border-0">
+      <el-col :xs="12" :sm="12" :lg="6" :offset="0" v-for="(item) in panels" :key="item.title">
+        <el-card shadow="hover" class="border-0" @click="$router.push(item.url)">
           <div class="el-card-header">
             <span>{{ item.title }}</span>
             <el-tooltip :content="item.tooltip" placement="top">
@@ -36,16 +35,37 @@
           </div>
           <div class="el-card-body">
             <div class="number">
-              <CountTo v-if="index != 3" :value="item.number" />
+              <CountTo v-if="item.title != '签单率'" :value="item.number" />
               <span v-else>{{ item.number }}</span>
             </div>
           </div>
           <div class="el-card-footer">
-            <div class="s">
-              <span>当日{{ item.title }}</span>
+            <el-row style="width:100%;justify-content: space-between;padding-top: 10px;">
+              <el-col :xs="24" :sm="10" :lg="10">
+                <div class="s">
+                  <span style="color:#999;">今日</span>
+                  <i>{{ item.current }}</i>
+                </div>
+              </el-col>
+              <el-col :xs="24" :sm="14" :lg="14" :class="$store.state.isMobile ? 'tal' : 'tar'">
+                <div class="c">
+                  <i style="font-size:12px;color:#999;padding-left: 0;">较昨日</i>
+                  <el-icon v-if="item.type === 'up'" class="success">
+                    <CaretTop />
+                  </el-icon>
+                  <el-icon v-else class="fail">
+                    <CaretBottom />
+                  </el-icon>
+                  <span style="padding-left: 5px">{{ item.diff }}</span>
+                </div>
+              </el-col>
+            </el-row>
+            <!-- <div class="s">
+              <span>今日</span>
               <i>{{ item.current }}</i>
             </div>
             <div class="c">
+              <i style="font-size:12px;color:#999;">较昨日</i>
               <el-icon v-if="item.type === 'up'" class="success">
                 <CaretTop />
               </el-icon>
@@ -53,7 +73,7 @@
                 <CaretBottom />
               </el-icon>
               <span style="padding-left: 5px">{{ item.diff }}</span>
-            </div>
+            </div> -->
           </div>
         </el-card>
       </el-col>
@@ -66,7 +86,8 @@
               <div class="type">
                 <span :class="params.type == 'order' ? 'current_type' : ''"
                   @click="setType('order')">订单数</span>
-                <span :class="params.type == 'arrange' ? 'current_type' : ''"
+                <span v-if="$store.state.adminInfo?.branch_id==1"
+                  :class="params.type == 'arrange' ? 'current_type' : ''"
                   @click="setType('arrange')">派单数</span>
                 <span :class="params.type == 'sign' ? 'current_type' : ''"
                   @click="setType('sign')">签单数</span>
@@ -113,7 +134,7 @@
       </el-col>
     </el-row>
     <el-row :gutter="15">
-      <el-col :md="24" :lg="14" :offset="0" v-permission="138">
+      <el-col :md="24" :lg="14" :offset="0" v-permission="138" v-show="!$store.state.isMobile">
         <el-card shadow="hover">
           <template #header>
             <div>
@@ -140,7 +161,8 @@
         </el-card>
       </el-col>
     </el-row>
-    <el-dialog v-model="dialogVisible" :title="noticeDetail.title" width="40%">
+    <el-dialog v-model="dialogVisible" :title="noticeDetail.title"
+      :width="$store.state.isMobile? '90%' : '40%'">
       <div class="main">
         <div style="font-size: 14px; color: #333; line-height: 24px; margin: 0 0 15px">
           {{ noticeDetail.content }}</div>
@@ -165,7 +187,6 @@ import { CanvasRenderer } from 'echarts/renderers'
 import home from '@/api/home'
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import moment from 'moment'
-import log from '@/api/log'
 
 const panels = ref([])
 const notice = ref([])
@@ -198,10 +219,7 @@ params.range_time = [weekDay, currentDay]
 home.getPanels().then((res) => {
   panels.value = res.result
 })
-// 签单门店数据
-home.getBranch().then((res) => {
-  store.value = res.result
-})
+
 // 公告数据
 home.getNotice().then((res) => {
   notice.value = res.result
@@ -245,6 +263,7 @@ const setScope = (val) => {
   }
   params.scope = val
   getBarData()
+  getSign()
 }
 const switchRangeTime = (val) => {
   if (val) {
@@ -253,11 +272,14 @@ const switchRangeTime = (val) => {
     params.scope = 'week'
   }
   getBarData()
+  getSign()
 }
 echarts.use([TooltipComponent, GridComponent, BarChart, CanvasRenderer, LegendComponent, PieChart, LabelLayout])
 let chartBar = null
 let chartPie = null
 onMounted(() => {
+  // 门店签单数据
+  getSign()
   if (chatBar.value && chatBar.value.offsetWidth > 0) {
     chartBar = echarts.init(chatBar.value)
     getBarData()
@@ -366,6 +388,14 @@ const getPieData = () => {
     })
 }
 
+// 签单门店排名数据
+const getSign = () => {
+  let range_time = params.range_time
+  home.getBranch({ range_time }).then((res) => {
+    store.value = res.result
+  })
+}
+
 // 查看公告详情
 const dialogVisible = ref(false)
 const noticeDetail = ref([])
@@ -432,8 +462,18 @@ const readNotice = (item) => {
     }
   }
 }
+.panels .el-card {
+  margin-bottom: 15px !important;
+  cursor: pointer;
+}
+.tar {
+  text-align: right;
+}
+.tal {
+  text-align: left;
+}
 .statistical {
-  margin: 15px 0;
+  margin: 0 0 15px;
   .statistical-header {
     display: flex;
     justify-content: space-between;

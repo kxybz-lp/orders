@@ -38,10 +38,10 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <FormDrawer :title="'渠道/来源' + drawerTitle" ref="formDrawerRef" @drawerClosed="drawerClosed"
+    <FormDialog destroyOnClose :title="dialogTitle" ref="formDialogRef" @dialogClosed="dialogClosed"
       @submit="handleSubmit">
-      <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false"
-        size="small">
+      <el-form :model="form" ref="formRef" :rules="rules" label-width="140px"
+        :label-position="$store.state.isMobile ? 'top' : 'right'">
         <el-form-item label="所属渠道" prop="pid">
           <el-cascader v-model="form.pid" :options="dataList"
             :props="{ value: 'id', label: 'name', children: 'children', checkStrictly: true, emitPath: false }"
@@ -57,15 +57,14 @@
           <el-switch v-model="form.status" :active-value="1" :inactive-value="0" />
         </el-form-item>
       </el-form>
-    </FormDrawer>
+    </FormDialog>
   </div>
 </template>
 
 <script setup>
 import { nextTick, ref } from 'vue'
-import FormDrawer from '@/components/FormDrawer.vue'
 import ListHeader from '@/components/ListHeader.vue'
-// import ChooseImage from '@/components/ChooseImage.vue'
+import FormDialog from '@/components/FormDialog.vue'
 import channel from '@/api/channel'
 import { toast } from '@/utils/utils'
 import { useInitTable, useInitForm } from '@/hooks/useCommon'
@@ -76,12 +75,11 @@ const { loading, dataList, getData, handleSwitch, handleSort, handleDelete } = u
     pageSize: 200,
     name: '',
   },
-  // onGetListSuccess: (res) => {
-  //   count.value = res.result.count
-  //   dataList.value = res.result.data
-  // },
+  onGetListSuccess: (res) => {
+    dataList.value = res.result
+  },
 })
-const { drawerTitle, formDrawerRef, formRef, rules, form, handleAdd, handleEdit, handleSubmit, drawerClosed } = useInitForm({
+const { dialogTitle, formDialogRef, formRef, rules, form, handleAdd, handleEdit, handleSubmit, dialogClosed } = useInitForm({
   api: channel,
   getData,
   form: {

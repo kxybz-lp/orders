@@ -41,8 +41,8 @@ const admin = {
     return post(`/order/admin/edit/${id}`, params)
   },
   // 状态更新
-  status(id, params) {
-    return post(`/order/admin/status/${id}`, params)
+  status(params) {
+    return post('/order/admin/status', params)
   },
   // 绑定微信
   wechat() {
@@ -56,13 +56,21 @@ const admin = {
   wechatRemove() {
     return post('/order/admin/remove_wechat')
   },
-  // 微信登录
+  // 微信扫码登录
   loginWechat() {
     return post('/order/account/login_wechat')
   },
   // 微信登录
+  loginWechatMc(params) {
+    return post('/order/account/login_wechat_mc', params)
+  },
+  // 微信登录检测
   loginWechatCheck(params) {
     return post('/order/account/check_login_wechat', params)
+  },
+  // 消息通知
+  getNote() {
+    return post('/order/index/note')
   },
   // 删除
   delete(id) {

@@ -1,136 +1,290 @@
 <template>
   <div class="app-container">
-    <el-card class="menu-card" shadow="hover">
+    <el-card class="order-card" shadow="hover">
       <el-tabs v-model="params.tab" @tab-change="getData(1)" v-permission="85">
         <el-tab-pane :label="item.name" :name="item.key" v-for="item in tabbars" :key="item.key" />
       </el-tabs>
       <transition v-bind="listeners">
-        <el-form class="search-more" :model="params" ref="searchMoreRef" label-width="80px"
-          size="small" v-show="showSearch">
-          <el-row :gutter="0">
-            <el-col :md="6" :offset="0">
-              <el-form-item label="下单时间">
-                <el-date-picker style="width: 45%" v-model="params.order_time"
-                  value-format="YYYY-MM-DD HH:mm:ss" :editable="false" type="datetimerange"
-                  range-separator="至" clearable start-placeholder="开始时间" end-placeholder="结束时间" />
-              </el-form-item>
-            </el-col>
-            <el-col :md="6" :offset="0">
-              <el-form-item label="推广渠道">
-                <el-select v-model="params.channel_id" placeholder="选择或搜索渠道" filterable clearable
-                  multiple @clear="getData(1)">
-                  <el-option :value="item.id" :label="item.name" v-for="item in channel"
-                    :key="item.id"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :md="6" :offset="0">
-              <el-form-item label="客户来源">
-                <el-select v-model="params.source_id" placeholder="选择或搜索来源" filterable clearable
-                  multiple @clear="getData(1)">
-                  <el-option-group v-for="group in source" :key="group.label" :label="group.label">
-                    <el-option :value="item.id" :label="item.name" v-for="item in group.options"
+        <el-form class="search-more" :model="params" ref="searchMoreRef" label-width="68px"
+          v-show="showSearch" :label-position="$store.state.isMobile ? 'top' : 'left'">
+          <template v-if="$store.state.adminInfo?.branch_id === '1'">
+            <el-row :gutter="20">
+              <el-col :md="6" :offset="0">
+                <el-form-item label="下单时间">
+                  <template v-if="!$store.state.isMobile">
+                    <el-date-picker style="width: 45%" v-model="params.order_time"
+                      value-format="YYYY-MM-DD HH:mm:ss" :editable="false" type="datetimerange"
+                      range-separator="至" clearable start-placeholder="开始时间"
+                      end-placeholder="结束时间" />
+                  </template>
+                  <template v-else>
+                    <el-date-picker style="width: 100%;margin-bottom: 10px;"
+                      v-model="params.order_time_start" type="datetime" placeholder="开始时间"
+                      format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"
+                      :editable="false" clearable />
+                    <el-date-picker style="width: 100%" v-model="params.order_time_end"
+                      type="datetime" placeholder="结束时间" format="YYYY-MM-DD HH:mm:ss"
+                      value-format="YYYY-MM-DD HH:mm:ss" :editable="false" clearable />
+                  </template>
+                </el-form-item>
+              </el-col>
+              <el-col :md="6" :offset="0">
+                <el-form-item label="推广渠道">
+                  <el-select v-model="params.channel_id" placeholder="选择或搜索渠道" clearable multiple
+                    @clear="getData(1)">
+                    <el-option :value="item.id" :label="item.name" v-for="item in channel"
                       :key="item.id"></el-option>
-                  </el-option-group>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :md="6" :offset="0">
-              <el-form-item label="手机号">
-                <el-input v-model="params.mobile" placeholder="输入客户电话" clearable
-                  @clear="getData(1)"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row :gutter="2">
-            <el-col :md="6" :offset="0">
-              <el-form-item label="所在省">
-                <el-select v-model="params.province_id" filterable placeholder="选择或搜索省" clearable
-                  @clear="getData(1)">
-                  <el-option :value="item.id" :label="item.areaname" v-for="item in province"
-                    :key="item.id"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :md="6" :offset="0">
-              <el-form-item label="所在市">
-                <el-select v-model="params.city_id" placeholder="选择或搜索城市" filterable clearable
-                  @clear="getData(1)">
-                  <el-option :value="item.id" :label="item.areaname" v-for="item in city"
-                    :key="item.id"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :md="6" :offset="0">
-              <el-form-item label="接单公司">
-                <el-select v-model="params.receive_company" placeholder="选择或搜索公司" clearable multiple
-                  filterable @clear="getData(1)">
-                  <el-option :value="item.id" :label="item.name" v-for="item in branch"
-                    :key="item.id"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :md="6" :offset="0">
-              <el-form-item label="订单状态">
-                <el-select v-model="params.status_id" multiple placeholder="选择状态" clearable
-                  @clear="getData(1)">
-                  <el-option :value="item.id" :label="item.name" v-for="item in status"
-                    :key="item.id"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row :gutter="2">
-            <el-col :md="6" :offset="0">
-              <el-form-item label="派单时间">
-                <el-date-picker style="width: 45%" v-model="params.arrange_time"
-                  value-format="YYYY-MM-DD HH:mm:ss" :editable="false" type="datetimerange"
-                  range-separator="至" clearable start-placeholder="开始时间" end-placeholder="结束时间" />
-              </el-form-item>
-            </el-col>
-            <el-col :md="6" :offset="0">
-              <el-form-item label="交定时间">
-                <el-date-picker style="width: 45%" v-model="params.deal_time"
-                  value-format="YYYY-MM-DD HH:mm:ss" :editable="false" type="datetimerange"
-                  range-separator="至" clearable start-placeholder="开始时间" end-placeholder="结束时间" />
-              </el-form-item>
-            </el-col>
-            <el-col :md="6" :offset="0">
-              <el-form-item label="无效标签">
-                <el-select v-model="params.invalid_tag" placeholder="选择标签" clearable multiple
-                  @clear="getData(1)">
-                  <el-option :value="item.name" :label="item.name" v-for="item in tag"
-                    :key="item.id"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :md="6" :offset="0">
-              <el-form-item label="审核状态">
-                <el-select v-model="params.is_audit" multiple placeholder="选择状态" clearable
-                  @clear="getData(1)">
-                  <el-option :value="item.id" :label="item.name" v-for="item in audit"
-                    :key="item.id"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row :gutter="2">
-            <el-col :md="6" :offset="0">
-              <el-form-item label="客户回访">
-                <el-select v-model="params.is_visit" placeholder="请选择" clearable multiple
-                  @clear="getData(1)">
-                  <el-option :value="item.id" :label="item.name" v-for="item in visit"
-                    :key="item.id"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :md="6" :offset="0">
-              <el-form-item label="客户名称">
-                <el-input v-model="params.name" placeholder="输入客户名称" clearable @clear="getData(1)">
-                </el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :md="6" :offset="0">
+                <el-form-item label="客户来源">
+                  <el-select v-model="params.source_id" placeholder="选择或搜索来源" clearable multiple
+                    @clear="getData(1)">
+                    <el-option-group v-for="group in source" :key="group.label"
+                      :label="group.label">
+                      <el-option :value="item.id" :label="item.name" v-for="item in group.options"
+                        :key="item.id"></el-option>
+                    </el-option-group>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :md="6" :offset="0">
+                <el-form-item label="手机号">
+                  <el-input v-model="params.mobile" placeholder="输入客户电话" clearable
+                    @clear="getData(1)"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :md="6" :offset="0">
+                <el-form-item label="派单时间">
+                  <template v-if="!$store.state.isMobile">
+                    <el-date-picker style="width: 45%" v-model="params.arrange_time"
+                      value-format="YYYY-MM-DD HH:mm:ss" :editable="false" type="datetimerange"
+                      range-separator="至" clearable start-placeholder="开始时间"
+                      end-placeholder="结束时间" />
+                  </template>
+                  <template v-else>
+                    <el-date-picker style="width: 100%;margin-bottom: 10px;"
+                      v-model="params.arrange_time_start" type="datetime" placeholder="开始时间"
+                      format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"
+                      :editable="false" clearable />
+                    <el-date-picker style="width: 100%" v-model="params.arrange_time_end"
+                      type="datetime" placeholder="结束时间" format="YYYY-MM-DD HH:mm:ss"
+                      value-format="YYYY-MM-DD HH:mm:ss" :editable="false" clearable />
+                  </template>
+                </el-form-item>
+              </el-col>
+              <el-col :md="6" :offset="0">
+                <el-form-item label="所在省">
+                  <el-select v-model="params.province_id" filterable placeholder="选择或搜索省" clearable
+                    @clear="getData(1)">
+                    <el-option :value="item.id" :label="item.areaname" v-for="item in province"
+                      :key="item.id"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :md="6" :offset="0">
+                <el-form-item label="所在市">
+                  <el-select v-model="params.city_id" placeholder="选择或搜索城市" filterable clearable
+                    @clear="getData(1)">
+                    <el-option :value="item.id" :label="item.areaname" v-for="item in city"
+                      :key="item.id"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :md="6" :offset="0">
+                <el-form-item label="接单公司">
+                  <el-select v-model="params.receive_company" placeholder="选择或搜索公司" clearable
+                    multiple filterable @clear="getData(1)">
+                    <el-option :value="item.id" :label="item.name" v-for="item in branch"
+                      :key="item.id"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :md="6" :offset="0">
+                <el-form-item label="交定时间">
+                  <template v-if="!$store.state.isMobile">
+                    <el-date-picker style="width: 45%" v-model="params.deal_time"
+                      value-format="YYYY-MM-DD HH:mm:ss" :editable="false" type="datetimerange"
+                      range-separator="至" clearable start-placeholder="开始时间"
+                      end-placeholder="结束时间" />
+                  </template>
+                  <template v-else>
+                    <el-date-picker style="width: 100%;margin-bottom: 10px;"
+                      v-model="params.deal_time_start" type="datetime" placeholder="开始时间"
+                      format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"
+                      :editable="false" clearable />
+                    <el-date-picker style="width: 100%" v-model="params.deal_time_end"
+                      type="datetime" placeholder="结束时间" format="YYYY-MM-DD HH:mm:ss"
+                      value-format="YYYY-MM-DD HH:mm:ss" :editable="false" clearable />
+                  </template>
+                </el-form-item>
+              </el-col>
+              <el-col :md="6" :offset="0">
+                <el-form-item label="订单状态">
+                  <el-select v-model="params.status_id" multiple placeholder="选择状态" clearable
+                    @clear="getData(1)">
+                    <el-option :value="item.id" :label="item.name" v-for="item in status"
+                      :key="item.id"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :md="6" :offset="0">
+                <el-form-item label="审核状态">
+                  <el-select v-model="params.is_audit" multiple placeholder="选择状态" clearable
+                    @clear="getData(1)">
+                    <el-option :value="item.id" :label="item.name" v-for="item in audit"
+                      :key="item.id"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :md="6" :offset="0">
+                <el-form-item label="无效标签">
+                  <el-select v-model="params.invalid_tag" placeholder="选择标签" clearable multiple
+                    @clear="getData(1)">
+                    <el-option :value="item.name" :label="item.name" v-for="item in tag"
+                      :key="item.id"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :md="6" :offset="0">
+                <el-form-item label="一级区域">
+                  <el-select v-model="params.region_id" placeholder="选择一级区域" clearable
+                    @clear="getData(1)">
+                    <el-option :value="item.id" :label="item.name" v-for="item in regionList"
+                      :key="item.id"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :md="6" :offset="0">
+                <el-form-item label="客户回访">
+                  <el-select v-model="params.is_visit" placeholder="请选择" clearable multiple
+                    @clear="getData(1)">
+                    <el-option :value="item.id" :label="item.name" v-for="item in visit"
+                      :key="item.id"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :md="6" :offset="0">
+                <el-form-item label="客户名称">
+                  <el-input v-model="params.name" placeholder="输入客户名称" clearable
+                    @clear="getData(1)">
+                  </el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </template>
+          <template v-else>
+            <el-row :gutter="20">
+              <el-col :md="6" :offset="0">
+                <el-form-item label="客户名称">
+                  <el-input v-model="params.name" placeholder="输入客户名称" clearable
+                    @clear="getData(1)">
+                  </el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :md="6" :offset="0">
+                <el-form-item label="手机号">
+                  <el-input v-model="params.mobile" placeholder="输入客户电话" clearable
+                    @clear="getData(1)"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :md="6" :offset="0">
+                <el-form-item label="下单时间">
+                  <template v-if="!$store.state.isMobile">
+
+                    <el-date-picker style="width: 45%" v-model="params.order_time"
+                      value-format="YYYY-MM-DD HH:mm:ss" :editable="false" type="datetimerange"
+                      range-separator="至" clearable start-placeholder="开始时间"
+                      end-placeholder="结束时间" />
+                  </template>
+                  <template v-else>
+                    <el-date-picker style="width: 100%;margin-bottom: 10px;"
+                      v-model="params.order_time_start" type="datetime" placeholder="开始时间"
+                      format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"
+                      :editable="false" clearable />
+                    <el-date-picker style="width: 100%" v-model="params.order_time_end"
+                      type="datetime" placeholder="结束时间" format="YYYY-MM-DD HH:mm:ss"
+                      value-format="YYYY-MM-DD HH:mm:ss" :editable="false" clearable />
+                  </template>
+                </el-form-item>
+              </el-col>
+              <el-col :md="6" :offset="0">
+                <el-form-item label="派单时间">
+                  <template v-if="!$store.state.isMobile">
+
+                    <el-date-picker style="width: 45%" v-model="params.arrange_time"
+                      value-format="YYYY-MM-DD HH:mm:ss" :editable="false" type="datetimerange"
+                      range-separator="至" clearable start-placeholder="开始时间"
+                      end-placeholder="结束时间" />
+                  </template>
+                  <template v-else>
+                    <el-date-picker style="width: 100%;margin-bottom: 10px;"
+                      v-model="params.arrange_time_start" type="datetime" placeholder="开始时间"
+                      format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"
+                      :editable="false" clearable />
+                    <el-date-picker style="width: 100%" v-model="params.arrange_time_end"
+                      type="datetime" placeholder="结束时间" format="YYYY-MM-DD HH:mm:ss"
+                      value-format="YYYY-MM-DD HH:mm:ss" :editable="false" clearable />
+                  </template>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :md="6" :offset="0">
+                <el-form-item label="交定时间">
+                  <template v-if="!$store.state.isMobile">
+                    <el-date-picker style="width: 45%" v-model="params.deal_time"
+                      value-format="YYYY-MM-DD HH:mm:ss" :editable="false" type="datetimerange"
+                      range-separator="至" clearable start-placeholder="开始时间"
+                      end-placeholder="结束时间" />
+                  </template>
+                  <template v-else>
+                    <el-date-picker style="width: 100%;margin-bottom: 10px;"
+                      v-model="params.deal_time_start" type="datetime" placeholder="开始时间"
+                      format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"
+                      :editable="false" clearable />
+                    <el-date-picker style="width: 100%" v-model="params.deal_time_end"
+                      type="datetime" placeholder="结束时间" format="YYYY-MM-DD HH:mm:ss"
+                      value-format="YYYY-MM-DD HH:mm:ss" :editable="false" clearable />
+                  </template>
+                </el-form-item>
+              </el-col>
+              <el-col :md="6" :offset="0">
+                <el-form-item label="审核状态">
+                  <el-select v-model="params.is_audit" multiple placeholder="选择状态" clearable
+                    @clear="getData(1)">
+                    <el-option :value="item.id" :label="item.name" v-for="item in audit"
+                      :key="item.id"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :md="6" :offset="0">
+                <el-form-item label="订单状态">
+                  <el-select v-model="params.status_id" multiple placeholder="选择状态" clearable
+                    @clear="getData(1)">
+                    <el-option :value="item.id" :label="item.name" v-for="item in status"
+                      :key="item.id"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :md="6" :offset="0">
+                <el-form-item label="接单公司">
+                  <el-select v-model="params.receive_company" placeholder="选择或搜索公司" clearable
+                    multiple filterable @clear="getData(1)">
+                    <el-option :value="item.id" :label="item.name" v-for="item in branch"
+                      :key="item.id"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </template>
           <el-row :gutter="2">
             <el-col :span="24" :offset="0">
               <el-form-item label="">
@@ -142,203 +296,229 @@
         </el-form>
       </transition>
       <ListHeader :rule="{ create: 79, move: 84, export: 81, import: 82, download: 82 }"
-        action="/api/order/order/import" @add="handleAdd" @move="handMove" @export="exportExcel"
+        action="https://api.xydec.com.cn/order/order/import" @move="handMove" @export="exportExcel"
         @import="importExcel" @download="download">
-        <el-form class="search-form" :model="params" ref="searchRef" label-width="0px" size="small">
+        <el-form class="search-form" :model="params" ref="searchRef" label-width="0px"
+          size="default">
           <el-form-item v-show="!showSearch && !$store.state.isMobile" label="">
             <el-input v-model="params.mobile" placeholder="输入手机号" clearable @clear="getData">
             </el-input>
           </el-form-item>
-          <el-form-item v-show="(!showSearch && !$store.state.isMobile)" label="">
+          <!-- <el-form-item v-show="(!showSearch && !$store.state.isMobile)" label="">
             <el-select v-model="params.is_audit" multiple placeholder="选择状态" clearable
               @clear="getData(1)">
               <el-option :value="item.id" :label="item.name" v-for="item in audit" :key="item.id">
               </el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item>
-            <el-button type="primary" @click="getData(1)" v-show="!$store.state.isMobile">搜索
+            <el-button type="primary" @click="getData(1)"
+              v-show="!showSearch && !$store.state.isMobile">搜索
             </el-button>
-            <el-button v-permission="86" type="primary" text @click="showSearch = !showSearch"
+            <el-button v-permission="86" type="primary" text @click="handleShowSearch"
               class="showSearch">
-              {{ showSearch ? '收起' : '展开' }}
+              {{ showSearch ? '收起' : '展开搜索' }}
               <el-icon>
                 <ArrowUp v-if="showSearch" />
                 <ArrowDown v-else />
               </el-icon>
             </el-button>
+            <el-dropdown style="margin-left: 10px;" :max-height="500" :hide-on-click="false"
+              v-if="!$store.state.isMobile">
+              <el-button type="primary" text>
+                筛选列<el-icon class=" el-icon--right"><arrow-down /></el-icon>
+              </el-button>
+              <template #dropdown>
+                <div class="fliter_wrap">
+                  <div class="fliter_item" v-for="(item, index) in columns" :key="item.label"
+                    v-show="item.prop != 'id' || item.prop != 'operation'"><el-checkbox
+                      v-model="item.show" :label="item.label" size="default"
+                      @change="fliterChange($event,index)"
+                      :disabled="(item.prop == 'id' || item.prop == 'operation') ? true : false" />
+                  </div>
+                </div>
+                <!-- <el-dropdown-menu>
+                  <el-dropdown-item v-for="item in columns" :key="item.label"><el-checkbox
+                      v-model="item.show" :label="item.label" size="default" /></el-dropdown-item>
+                </el-dropdown-menu> -->
+              </template>
+            </el-dropdown>
           </el-form-item>
         </el-form>
       </ListHeader>
-      <el-table ref="multipleTableRef" :data="dataList" stripe style="width: 100%"
-        :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }"
-        @sort-change="sortChange" @selection-change="handleSelectionChange" v-loading="loading"
-        tooltip-effect="light">
-        <el-table-column type="selection" prop="id" width="55" />
-        <el-table-column v-if="$store.state.adminInfo?.branch_id === '1'" prop="channel_name"
-          label="渠道" width="100" />
-        <el-table-column prop="order_time" :formatter="dateFormatter" sortable label="下单日期"
-          width="120" />
-        <el-table-column prop="order_time" :formatter="timeFormatter" label="下单时间" width="100" />
-        <el-table-column v-if="$store.state.adminInfo?.branch_id === '1'" prop="source_name"
-          label="来源" width="130" />
-        <el-table-column prop="name" label="姓名" width="120" />
-        <el-table-column label="电话" width="140">
-          <template #default="scope">
-            <span @click="searchMobile(scope.row.mobile)"
-              :class="scope.row.mobile_repeats > 1 ? 'red' : ''">{{ scope.row.mobile }}</span>
+      <template v-if="!$store.state.isMobile">
+        <el-table ref="multipleTableRef" :data="dataList" stripe style="width: 100%"
+          :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }"
+          @sort-change="sortChange" @selection-change="handleSelectionChange" v-loading="loading"
+          tooltip-effect="light">
+          <template v-for="(item) in columns">
+            <el-table-column :key="item.id" :prop="item.prop" :label="item.label"
+              :min-width="item.minWidth" :type="item.type" :sortable="item.sortable"
+              :fixed="item.fixed" :class-name="item.isDrag" align="left" show-overflow-tooltip
+              v-if="item.show">
+              <template #default="scope">
+                <div v-if="item.prop == 'is_audit'">
+                  <el-tag type="danger" style="color: #fb6a3a" v-if="scope.row.is_audit === 1">待跟进
+                  </el-tag>
+                  <el-tag type="warning" v-else-if="scope.row.is_audit === 2">待审核</el-tag>
+                  <div @click="failReason(scope.row.fail_reason)"
+                    v-else-if="scope.row.is_audit === 3">
+                    <el-tag style="cursor: pointer;" type="danger">审核未通过
+                    </el-tag>
+                    <p style="cursor: pointer;font-size: 12px;color: #999;">点击查看原因</p>
+                  </div>
+                  <el-tag type="success" v-else-if="scope.row.is_audit === 4">审核通过</el-tag>
+                </div>
+                <div v-else-if="item.prop == 'mobile'">
+                  <div style="cursor: pointer;">
+                    <span :key="scope.row.id" @click.stop="searchMobile(scope.row.mobile)"
+                      v-mobile="scope.row.mobile"
+                      :class="scope.row.mobile_repeats > 1 ? 'red' : ''">{{ scope.row.mobile }}</span>
+                    <el-tooltip effect="light" content="复制手机号" placement="top-start">
+                      <el-icon style="margin-left:5px;" v-copy.stop="scope.row.mobile"
+                        :key="scope.row.id">
+                        <CopyDocument />
+                      </el-icon>
+                    </el-tooltip>
+                  </div>
+                </div>
+                <div v-else-if="item.prop == 'area'">
+                  {{ scope.row.province_name }}{{ scope.row.city_name }}
+                </div>
+                <div v-else-if="item.prop == 'is_making'">
+                  <el-tag type="info" v-if="scope.row.is_making === 0">未获知
+                  </el-tag>
+                  <el-tag type="warning" v-else-if="scope.row.is_making === 1">未交房</el-tag>
+                  <el-tag type="success" v-else-if="scope.row.is_making === 2">已交房</el-tag>
+                </div>
+                <div v-else-if="item.prop == 'is_amount'">
+                  <el-tag type="info" v-if="scope.row.is_amount === 0">未获知
+                  </el-tag>
+                  <el-tag type="warning" v-else-if="scope.row.is_amount === 1">未量房</el-tag>
+                  <el-tag type="success" v-else-if="scope.row.is_amount === 2">已量房</el-tag>
+                </div>
+                <div v-else-if="item.prop == 'follow_note'">
+                  {{ scope.row.follows.length > 0 ? scope.row.follows[0]['follow_note'] : '' }}
+                </div>
+                <div v-else-if="item.prop == 'is_visit'">
+                  <el-tag type="info" v-if="scope.row.is_visit === 1">待回访
+                  </el-tag>
+                  <el-tag type="warning" v-else-if="scope.row.is_visit === 2">无需回访</el-tag>
+                  <el-tag type="success" v-else-if="scope.row.is_visit === 3">已回访</el-tag>
+                </div>
+                <div v-else-if="item.prop == 'visit_remark'">
+                  {{ scope.row.visit.length > 0 ? scope.row.visit[0]['remark'] : '' }}
+                </div>
+                <div v-else-if="item.prop == 'operation'">
+                  <el-button v-if="params.tab !== 'recyc'" v-permission="83" size="small"
+                    type="success" @click="handleDetail(scope.row.id)">详情 </el-button>
+                  <el-button
+                    v-if="params.tab !== 'recyc' && $store.state.adminInfo?.branch_id === '1'"
+                    v-permission="80" size="small" type="primary"
+                    @click="$router.push('/order/edit/' + scope.row.id)">编辑 </el-button>
+                  <el-button
+                    v-if="params.tab !== 'recyc' && $store.state.adminInfo?.branch_id !== '1'"
+                    type="primary" v-permission="80" size="small" @click="handleFollow(scope.row)"
+                    :loading="scope.row.followLoading"> 编辑
+                  </el-button>
+                  <el-button v-if="params.tab !== 'recyc'" v-permission="87" size="small"
+                    type="danger" @click="handleDelete(scope.row.id)"> 删除 </el-button>
+                  <el-button v-if="params.tab == 'recyc'" v-permission="88" size="small"
+                    type="success" @click="handleResave(scope.row.id)">恢复 </el-button>
+                  <el-button v-if="params.tab == 'recyc'" v-permission="128" size="small"
+                    type="danger" @click="handleDel(scope.row.id)"> 彻底删除 </el-button>
+                </div>
+              </template>
+            </el-table-column>
           </template>
-        </el-table-column>
-        <el-table-column label="审核状态" width="120">
-          <template #default="scope">
-            <el-tag type="danger" style="color: #fb6a3a" v-if="scope.row.is_audit === 1">待跟进
-            </el-tag>
-            <el-tag type="warning" v-else-if="scope.row.is_audit === 2">待审核</el-tag>
-            <el-tag @click="failReason(scope.row.fail_reason)" style="cursor: pointer" type="danger"
-              v-else-if="scope.row.is_audit === 3">审核未通过</el-tag>
-            <el-tag type="success" v-else-if="scope.row.is_audit === 4">审核通过</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="area" :formatter="areaFormatter" show-overflow-tooltip label="区域"
-          width="140" />
-        <el-table-column prop="address" show-overflow-tooltip label="详细地址" width="140" />
-        <el-table-column prop="size" label="面积" width="120" />
-        <el-table-column prop="arrange_time" sortable label="派单时间" width="150" />
-        <el-table-column prop="branch_name" show-overflow-tooltip label="接单公司" width="140" />
-        <el-table-column prop="status_name" label="订单状态" width="140" />
-        <el-table-column prop="deal_time" sortable label="反馈交定时间" width="150" />
-        <el-table-column prop="follow_time" sortable label="最新跟进时间" width="160" />
-        <el-table-column show-overflow-tooltip label="最新跟进进展" width="180">
-          <template #default="scope">
-            {{ scope.row.follows.length > 0 ? scope.row.follows[0]['follow_note'] : '' }}
-          </template>
-        </el-table-column>
-        <el-table-column v-if="$store.state.adminInfo?.branch_id === '1'" label="无效标签" width="160">
-          <template #default="scope">
-            <span style="color: #ff5722">{{ scope.row.invalid_tag }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column v-if="$store.state.adminInfo?.branch_id === '1'" prop="is_visit"
-          label="客户回访" width="160">
-          <template #default="scope">
-            <el-tag type="warning" v-if="scope.row.is_visit === 1">待回访</el-tag>
-            <el-tag v-else-if="scope.row.is_visit === 2">无需回访</el-tag>
-            <el-tag type="success" v-else-if="scope.row.is_visit === 3">已回访</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column v-if="$store.state.adminInfo?.branch_id === '1'" prop="visit_time" sortable
-          label="最近回访时间" width="150" />
-        <el-table-column v-if="$store.state.adminInfo?.branch_id === '1'" prop="v_remark"
-          label="最近回访说明" show-overflow-tooltip width="160">
-          <template #default="scope">
-            {{ scope.row.visit.length > 0 ? scope.row.visit[0]['remark'] : '' }}
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" :width="$store.state.adminInfo?.branch_id === '1' ? 210 : 140"
-          fixed="right">
-          <template #default="scope">
+        </el-table>
+      </template>
+      <template v-else>
+        <div class="order-item" v-for="item in dataList" :key="item.id">
+          <div class="hot-badge"
+            style="background: #fef0f0;color: #f56c6c;border: 1px solid #fde2e2;"
+            v-if="item.status_name === '未获知'">{{item.status_name}}</div>
+          <div class="hot-badge" style="color:#e6a23c;background: #fdf6ec;border: 1px solid #f3d19e"
+            v-else-if="item.status_name === '持续跟进'">{{item.status_name}}
+          </div>
+          <div class="hot-badge" style="color:#67c23a;background: #f0f9eb;border: 1px solid #e1f3d8"
+            v-else-if="item.status_name === '已交定'">{{item.status_name}}</div>
+          <div class="hot-badge" style="color:#67c23a;background: #f0f9eb;border: 1px solid #b3e19d"
+            v-else-if="item.status_name === '已签合同'">{{item.status_name}}
+          </div>
+          <div class="hot-badge" style="color:#67c23a;background: #f0f9eb;border: 1px solid #b3e19d"
+            v-else-if="item.status_name === '施工中'">{{item.status_name}}</div>
+          <div class="hot-badge" style="color:#67c23a;background: #f0f9eb;border: 1px solid #b3e19d"
+            v-else-if="item.status_name === '完工结算'">{{item.status_name}}</div>
+          <div class="hot-badge" style="color:#409eff;background: #ecf5ff;border: 1px solid #d9ecff"
+            v-else-if="item.status_name === '撞单'">{{item.status_name}}</div>
+          <div class="hot-badge"
+            style="background: #f4f4f5;color: #909399;border: 1px solid #e9e9eb;"
+            v-else-if="item.status_name === '死单'">
+            {{item.status_name}}</div>
+          <div class="hot-badge" style="color:#409eff;background: #ecf5ff;border: 1px solid #d9ecff"
+            v-else-if="item.status_name === '退订'">{{item.status_name}}</div>
+          <el-descriptions :column="1">
+            <el-descriptions-item label="下单时间">{{ item.order_time_mobile }}</el-descriptions-item>
+            <el-descriptions-item label="客户名称">{{ item.name }}</el-descriptions-item>
+            <el-descriptions-item label="客户电话"><span
+                v-mobile="item.mobile">{{ item.mobile }}</span><el-tag style="margin-left:5px;"
+                type="info" v-copy="item.mobile">复制手机号</el-tag></el-descriptions-item>
+            <el-descriptions-item label="客户地址">
+              {{ item.province_name }}{{ item.city_name }}{{ item.address }}
+            </el-descriptions-item>
+            <el-descriptions-item label="审核状态">
+              <el-tag v-if="item.is_audit === 1">待跟进</el-tag>
+              <el-tag type="warning" v-if="item.is_audit === 2">待审核</el-tag>
+              <el-tag type="danger" v-else-if="item.is_audit === 3">审核未通过</el-tag>
+              <el-tag type="success" v-else-if="item.is_audit === 4">审核通过</el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="失败原因"
+              v-if="item.is_audit === 3">{{item.fail_reason}}</el-descriptions-item>
+            <el-descriptions-item v-if="item.follows.length > 0"
+              label="跟进信息："></el-descriptions-item>
+            <el-descriptions-item v-if="item.follows.length > 0">
+              <el-descriptions style="margin-left: 0px;margin-top: -20px;" :column="1" border>
+                <!-- <template v-for="item in item.follows" :key="item.id"> -->
+                <el-descriptions-item label="跟进时间">{{ parseTime(item.follows[0].follow_time) }}
+                </el-descriptions-item>
+                <el-descriptions-item
+                  label="跟进说明">{{ item.follows[0].follow_note }}</el-descriptions-item>
+                <!-- </template> -->
+              </el-descriptions>
+            </el-descriptions-item>
+          </el-descriptions>
+          <div class="buttons-mobile">
             <el-button v-if="params.tab !== 'recyc'" v-permission="83" size="small" type="success"
-              @click="handleDetail(scope.row.id)">详情 </el-button>
+              @click="handleDetail(item.id)">详情 </el-button>
             <el-button v-if="params.tab !== 'recyc' && $store.state.adminInfo?.branch_id === '1'"
               v-permission="80" size="small" type="primary"
-              @click="$router.push('/order/edit/' + scope.row.id)">编辑 </el-button>
+              @click="$router.push('/order/edit/' + item.id)">编辑 </el-button>
             <el-button v-if="params.tab !== 'recyc' && $store.state.adminInfo?.branch_id !== '1'"
-              type="primary" v-permission="80" size="small" @click="handleEdit(scope.row)"> 编辑
+              type="primary" v-permission="80" size="small" @click="handleFollow(item)"
+              :loading="item.followLoading"> 编辑
             </el-button>
             <el-button v-if="params.tab !== 'recyc'" v-permission="87" size="small" type="danger"
-              @click="handleDelete(scope.row.id)"> 删除 </el-button>
+              @click="handleDelete(item.id)"> 删除 </el-button>
             <el-button v-if="params.tab == 'recyc'" v-permission="88" size="small" type="success"
-              @click="handleResave(scope.row.id)">恢复 </el-button>
+              @click="handleResave(item.id)">恢复 </el-button>
             <el-button v-if="params.tab == 'recyc'" v-permission="128" size="small" type="danger"
-              @click="handleDel(scope.row.id)"> 彻底删除 </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+              @click="handleDel(item.id)"> 彻底删除 </el-button>
+          </div>
+          <el-divider border-style="dotted" />
+        </div>
+      </template>
       <el-pagination v-model:current-page="params.page" v-model:page-size="params.pageSize"
-        :page-sizes="[10, 50, 100, 200]" :background="true"
+        :page-sizes="[10, 15, 50, 100, 200, 1000]" :background="true"
         layout="total, sizes, prev, pager, next,slot, jumper" :total="count"
         @current-change="handleCurrentChange" @size-change="handleSizeChange"
         v-show="!$store.state.isMobile" />
       <el-pagination @current-change="handleCurrentChange" :current-page="params.page"
-        :page-size="params.pageSize" :background="true"
-        :layout="$store.state.isMobile? 'prev, next' : 'prev, pager, next'" :total="count"
+        :page-size="params.pageSize" :background="true" :layout="'total, prev, next'" :total="count"
         class="fenye" v-show="$store.state.isMobile" />
     </el-card>
-    <FormDrawer :title="'订单' + drawerTitle" ref="formDrawerRef" @drawerClosed="drawerClosed"
-      @submit="handleSubmit">
-      <el-form :model="form" ref="formRef" label-width="80px" :inline="false" size="small">
-        <el-form-item label="客户姓名">
-          <el-input minlength="2" maxlength="20" show-word-limit v-model="form.name" />
-        </el-form-item>
-        <el-form-item label="具体地址">
-          <el-input v-model="form.address" />
-        </el-form-item>
-        <el-form-item label="跟进设计师">
-          <el-input v-model="form.designer" />
-        </el-form-item>
-        <el-form-item label="跟进信息">
-          <el-row :gutter="2" v-for="(item, index) in form.follows" :key="item.key"
-            style="width: 100%">
-            <el-col :md="8" :offset="0">
-              <el-date-picker style="width: 100%" v-model="item.follow_time" type="datetime"
-                placeholder="请选择跟进时间" format="YYYY-MM-DD HH:mm:ss"
-                value-format="YYYY-MM-DD HH:mm:ss" :editable="false" clearable />
-            </el-col>
-            <el-col :md="15" :offset="0">
-              <el-input v-model="item.follow_note" placeholder="请输入跟进说明" minlength="2"
-                maxlength="100" show-word-limit />
-            </el-col>
-            <el-col :span="1" :offset="0">
-              <el-icon v-if="index == 0" @click="addFollow" size="24">
-                <Plus />
-              </el-icon>
-              <el-icon v-else @click="minusFollow(index)" size="24">
-                <Minus />
-              </el-icon>
-            </el-col>
-          </el-row>
-        </el-form-item>
-        <el-form-item label="订单状态">
-          <el-select v-model="form.status_id" placeholder="请选择订单状态" @change="statusChange">
-            <el-option :disabled="item.status === 0" :value="item.id" :label="item.name"
-              v-for="item in statusList" :key="item.id" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="交定时间">
-          <el-date-picker style="width: 100%" v-model="form.deal_time" type="datetime" readonly
-            placeholder="交定时间" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"
-            :editable="false" clearable />
-        </el-form-item>
-        <el-form-item label="定金金额">
-          <el-input v-model="form.order_money" />
-        </el-form-item>
-        <el-form-item label="签约时间">
-          <el-date-picker style="width: 100%" v-model="form.signing_time" type="datetime"
-            placeholder="请选择签约时间" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"
-            :editable="false" clearable />
-        </el-form-item>
-        <el-form-item label="合同金额">
-          <el-input v-model="form.contract_money" />
-        </el-form-item>
-        <el-form-item label="开工时间">
-          <el-date-picker style="width: 100%" v-model="form.start_time" type="datetime"
-            placeholder="请选择开工时间" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"
-            :editable="false" clearable />
-        </el-form-item>
-        <el-form-item label="完工时间">
-          <el-date-picker style="width: 100%" v-model="form.end_time" type="datetime"
-            placeholder="请选择完工时间" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"
-            :editable="false" clearable />
-        </el-form-item>
-        <el-form-item label="施工经理">
-          <el-input v-model="form.construction_manager" />
-        </el-form-item>
-        <el-form-item label="质检">
-          <el-input v-model="form.quality_man" />
-        </el-form-item>
-      </el-form>
-    </FormDrawer>
-    <detail ref="detailRef" :detail="details" />
+    <follow ref="followRef" @closeFollow="closeFollow" />
+    <detail ref="detailRef" :detail="details" @follow="handleFollow" />
     <el-dialog v-model="dialogVisible" title="审核未通过原因" width="40%">
       <div class="main">
         <div style="font-size: 14px; color: #333; line-height: 24px; margin: 0 0 15px">{{ reason }}
@@ -391,13 +571,32 @@
 </template>
 <script setup>
 import ListHeader from '@/components/ListHeader.vue'
-import FormDrawer from '@/components/FormDrawer.vue'
-import detail from './detail.vue'
-import { computed, reactive, ref, watch } from 'vue'
+import detail from './compontens/detail.vue'
+import follow from './compontens/follow.vue'
+import { computed, reactive, ref, watch, onMounted } from 'vue'
 import order from '@/api/order'
-import { toast, parseTime, time_init, elLoading, closeElLoading } from '@/utils/utils'
-import { useInitTable, useInitForm } from '@/hooks/useCommon'
+import { toast, parseTime, elLoading, closeElLoading } from '@/utils/utils'
+import { useInitTable } from '@/hooks/useCommon'
 import { useRoute } from 'vue-router'
+import { useStore } from 'vuex'
+import Sortable from 'sortablejs'
+import draggable from 'vuedraggable'
+
+const store = useStore()
+const route = useRoute()
+let is__audit = null
+let is__sign = null
+let is__arrange = null
+if (route.query.is_audit) {
+  is__audit = route.query.is_audit
+}
+if (route.query.is_sign) {
+  is__sign = route.query.is_sign
+}
+if (route.query.is_arrange) {
+  is__arrange = route.query.is_arrange
+}
+
 const {
   loading,
   count,
@@ -417,10 +616,14 @@ const {
   api: order,
   params: {
     page: 1,
-    pageSize: 10,
+    pageSize: 15,
     name: '',
     mobile: '',
+    region_id: '',
     receive_company: null,
+    order_time: '',
+    order_time_start: '',
+    order_time_end: '',
     order_time: '',
     province_id: '',
     city_id: '',
@@ -428,101 +631,208 @@ const {
     source_id: null,
     status_id: null,
     arrange_time: '',
+    arrange_time_start: '',
+    arrange_time_end: '',
     deal_time: '',
+    deal_time_start: '',
+    deal_time_end: '',
     invalid_tag: null,
-    is_audit: null,
+    is_audit: is__audit,
     is_visit: null,
+    is_arrange: is__arrange,
+    is_sign: is__sign,
     tab: 'all',
   },
   onGetListSuccess: (res) => {
-    count.value = res.result.count
+    count.value = res.result.total
     dataList.value = res.result.data.map((o) => {
+      o.followLoading = false
+      let order_time = o.order_time
+      o.order_time = parseTime(order_time, '{y}-{m}-{d}')
+      o.order_time_hi = parseTime(order_time, '{h}:{i}')
+      o.order_time_mobile = parseTime(order_time, '{y}-{m}-{d} {h}:{i}')
       o.arrange_time = parseTime(o.arrange_time, '{y}-{m}-{d} {h}:{i}')
       o.deal_time = parseTime(o.deal_time, '{y}-{m}-{d} {h}:{i}')
       o.follow_time = parseTime(parseInt(o.follow_time), '{y}-{m}-{d} {h}:{i}')
       o.visit_time = parseTime(parseInt(o.visit_time), '{y}-{m}-{d} {h}:{i}')
+      o.signing_time = parseTime(parseInt(o.signing_time), '{y}-{m}-{d} {h}:{i}')
+      o.start_time = parseTime(parseInt(o.start_time), '{y}-{m}-{d} {h}:{i}')
+      o.end_time = parseTime(parseInt(o.end_time), '{y}-{m}-{d} {h}:{i}')
+      o.order_money = o.order_money == 0 ? '' : o.order_money
+      o.contract_money = o.contract_money == 0 ? '' : o.contract_money
       return o
     })
   },
 })
-const { drawerTitle, editId, formDrawerRef, formRef, form, handleAdd, handleEdit, handleSubmit, drawerClosed } = useInitForm({
-  api: order,
-  getData,
-  form: {
-    name: '',
-    mobile: '',
-    province_id: '',
-    city_id: '',
-    area_id: '',
-    address: '',
-    type_id: '',
-    layout_id: '',
-    is_making: 0,
-    size: '',
-    demand: '',
-    other: '',
-    order_time: '',
-    channel_id: '',
-    source_id: '',
-    invalid_tag: '',
-    remark: '',
-    ip: '',
-    receive_company: '',
-    receive_man: '',
-    arrange_time: '',
-    arrange_man: '',
-    start_time: '',
-    end_time: '',
-    is_audit: 1,
-    fail_reason: '',
-    designer: '',
-    follows: [{ follow_time: '', follow_note: '' }],
-    is_amount: 0,
-    status_id: 1,
-    deal_time: '',
-    order_money: 0,
-    signing_time: '',
-    contract_money: '',
-    start_time: '',
-    end_time: '',
-    construction_manager: '',
-    quality_man: '',
-    is_visit: 1,
-  },
-  fliterParam: (row) => {
-    if (channelList.value.length === 0) {
-      getSelectData()
-    }
-    loadData(editId.value)
-  },
-  beforeSubmit: (from) => {
-    let flag = false
-    // 跟进信息数据处理
-    if (form.follows.length > 1) {
-      form.follows = form.follows.filter((item) => item.follow_time && item.follow_note)
-    }
-    form.follows.forEach((item) => {
-      if (item.follow_time === '') {
-        toast('请填写跟进时间', 'error')
-        return
-      }
-      if (item.follow_note === '') {
-        toast('请填写跟进说明', 'error')
-        return
-      }
-      if (item.follow_time && item.follow_note) flag = true
+if (route.query.is_audit) {
+  params.is_audit = [parseInt(route.query.is_audit)]
+}
+if (route.query.is_sign) {
+  params.tab = 'sign'
+}
+if (route.query.is_arrange) {
+  params.tab = 'arrange'
+}
+
+// 搜索展示收起
+const handleShowSearch = () => {
+  showSearch.value = !showSearch.value
+  if (!showSearch.value) {
+    // 返回页面顶部
+    let elMain = document.querySelector('.el-main')
+    elMain.scrollTop = 0
+  }
+}
+
+// 动态列
+let showColumns = []
+// 所有展示的表头信息
+const columns = ref([])
+
+const columnDrop = () => {
+  let oldLabel
+  let newLabel
+  let oldIndex
+  let newIndex
+  let count = 0
+  let tableColumn = []
+  const theadTr = document.querySelector('.el-table__header-wrapper tr')
+  if (theadTr) {
+    Sortable.create(theadTr, {
+      draggable: '.drag',
+      animation: 200,
+      delay: 0,
+      ghostClass: 'ghost',
+      filter: '.el-table-column--selection,.el-table-fixed-column--right',
+      onStart(event) {
+        // console.log(columns.value)
+      },
+      onEnd(event) {
+        if (columns.value[event.newIndex].isDrag != undefined) {
+          // 改变两个列的id属性之后,表格的数据才进行跟新.因为v-for的key使用的是id值
+          //当拖拽排序与显示隐藏一起使用会因为索引错误导致bug,主要原因是因为拖拽的是显示的列，而重排的是全部的列，同时event.oldIndex和event.newIndex是显示列拖拽的column的index  这个地方用splice方法重排所有的column的index  排序的时候就出现乱排、不排的现象
+          //解决办法获得拖拽列的两个列的label  然后遍历全部的列  要是label相等的就返回全部列其中两个相等label列的下标  然后重排这两个列就行
+          // let oldItem = columns.value.splice(event.oldIndex, 1)[0]
+          // columns.value.splice(event.newIndex, 0, oldItem)
+          // columns.value[event.oldIndex].id = parseTime(new Date(), '{y}{m}{d}{h}{i}{s}') + '1'
+          // columns.value[event.newIndex].id = parseTime(new Date(), '{y}{m}{d}{h}{i}{s}') + '2'
+
+          tableColumn = columns.value.filter((item) => item.show)
+
+          oldLabel = tableColumn[event.oldIndex].label
+          newLabel = tableColumn[event.newIndex].label
+          for (let i = 0; i < columns.value.length; i++) {
+            if (columns.value[i].label != undefined && columns.value[i].label == newLabel) newIndex = i
+          }
+          for (let i = 0; i < columns.value.length; i++) {
+            if (columns.value[i].label != undefined && columns.value[i].label == oldLabel) oldIndex = i
+          }
+          let oldItem = columns.value.splice(oldIndex, 1)[0]
+          columns.value.splice(newIndex, 0, oldItem)
+          columns.value.forEach((item) => {
+            if (item.label == newLabel || item.label == oldLabel) {
+              item.id = parseTime(new Date(), '{y}{m}{d}{h}{i}{s}') + ++count
+            }
+          })
+
+          localStorage.setItem('order_columns', JSON.stringify(columns.value))
+        }
+      },
+      // onUpdate: function (evt) {
+      //   console.log(evt)
+      //   var index = evt.oldIndex
+      // },
     })
-    if (form.status_id == 3 || form.status_id == 4 || form.status_id == 5 || form.status_id == 6) {
-      if (form.order_money == 0) {
-        toast('请填写订单金额', 'error')
-        return false
-      }
+  }
+}
+
+const fliterChange = (val, index) => {}
+onMounted(() => {
+  // oldList.value = JSON.parse(JSON.stringify(columns.value)).filter((item) => item.show && !item.hide) //数据深拷贝
+  if (localStorage.getItem('order_columns')) {
+    columns.value = JSON.parse(localStorage.getItem('order_columns'))
+  } else {
+    if (store.state.adminInfo.branch_id == 1) {
+      columns.value = [
+        { id: 1, prop: 'id', label: 'ID', type: 'selection', sortable: false, minWidth: 55, show: true },
+        { id: 2, prop: 'channel_name', label: '渠道', sortable: false, minWidth: 100, isDrag: 'drag', show: true },
+        { id: 3, prop: 'order_time', label: '下单日期', sortable: true, minWidth: 120, isDrag: 'drag', show: true },
+        { id: 4, prop: 'order_time_hi', label: '下单时间', sortable: false, minWidth: 100, isDrag: 'drag', show: true },
+        { id: 5, prop: 'source_name', label: '来源', scope: 'scope', sortable: false, minWidth: 130, isDrag: 'drag', show: true },
+        { id: 6, prop: 'name', label: '姓名', sortable: false, minWidth: 110, isDrag: 'drag', show: true },
+        { id: 7, prop: 'mobile', label: '电话', sortable: false, minWidth: 140, isDrag: 'drag', show: true },
+        { id: 8, prop: 'is_audit', label: '审核状态', sortable: false, minWidth: 120, isDrag: 'drag', show: true },
+        { id: 9, prop: 'area', label: '区域', sortable: false, minWidth: 150, isDrag: 'drag', show: true },
+        { id: 10, prop: 'address', label: '详细地址', sortable: false, minWidth: 180, isDrag: 'drag', show: true },
+        { id: 14, prop: 'size', label: '面积', sortable: false, minWidth: 120, isDrag: 'drag', show: true },
+        { id: 15, prop: 'demand', label: '装修需求', isDrag: 'drag', sortable: false, minWidth: 140, show: true },
+        { id: 16, prop: 'other', label: '其他', isDrag: 'drag', sortable: false, minWidth: 140, show: true },
+        { id: 17, prop: 'arrange_time', label: '派单时间', sortable: true, minWidth: 150, isDrag: 'drag', show: true },
+        { id: 18, prop: 'branch_name', label: '接单公司', sortable: false, minWidth: 140, isDrag: 'drag', show: true },
+        { id: 20, prop: 'status_name', label: '订单状态', sortable: false, minWidth: 120, isDrag: 'drag', show: true },
+        { id: 22, prop: 'deal_time', label: '反馈交定时间', sortable: true, minWidth: 150, isDrag: 'drag', show: true },
+        { id: 24, prop: 'order_money', label: '定金金额', sortable: false, minWidth: 120, isDrag: 'drag', show: true },
+        { id: 32, prop: 'follow_time', label: '最新跟进时间', sortable: true, minWidth: 140, isDrag: 'drag', show: true },
+        { id: 33, prop: 'follow_note', label: '最新跟进进展', sortable: false, minWidth: 180, isDrag: 'drag', show: true },
+        { id: 34, prop: 'invalid_tag', label: '无效标签', sortable: false, minWidth: 160, isDrag: 'drag', show: true },
+        { id: 35, prop: 'is_visit', label: '客户回访', sortable: false, minWidth: 160, isDrag: 'drag', show: true },
+        { id: 36, prop: 'visit_time', label: '最近回访时间', sortable: true, minWidth: 150, isDrag: 'drag', show: true },
+        { id: 37, prop: 'visit_remark', label: '最近回访说明', sortable: false, minWidth: 160, isDrag: 'drag', show: true },
+        { id: 11, prop: 'type_name', label: '房屋类型', sortable: false, minWidth: 100, isDrag: 'drag', show: false },
+        { id: 12, prop: 'is_making', label: '是否交房', sortable: false, minWidth: 100, isDrag: 'drag', show: false },
+        { id: 13, prop: 'layout_name', label: '房屋户型', sortable: false, minWidth: 100, isDrag: 'drag', show: false },
+        { id: 19, prop: 'receive_man', label: '接单人', sortable: false, minWidth: 100, isDrag: 'drag', show: false },
+        { id: 21, prop: 'reason_name', label: '死单原因', sortable: false, minWidth: 140, isDrag: 'drag', show: false },
+        { id: 23, prop: 'designer', label: '设计师', sortable: false, minWidth: 120, isDrag: 'drag', show: false },
+        { id: 25, prop: 'signing_time', label: '签约时间', sortable: false, minWidth: 140, isDrag: 'drag', show: false },
+        { id: 26, prop: 'contract_money', label: '合同金额', sortable: false, minWidth: 120, isDrag: 'drag', show: false },
+        { id: 27, prop: 'start_time', label: '开工时间', sortable: false, minWidth: 140, isDrag: 'drag', show: false },
+        { id: 28, prop: 'end_time', label: '完工时间', sortable: false, minWidth: 140, isDrag: 'drag', show: false },
+        { id: 29, prop: 'construction_manager', label: '施工经理', sortable: false, minWidth: 120, isDrag: 'drag', show: false },
+        { id: 30, prop: 'quality_man', label: '质监', sortable: false, minWidth: 120, isDrag: 'drag', show: false },
+        { id: 31, prop: 'is_amount', label: '是否量房', sortable: false, minWidth: 100, isDrag: 'drag', show: false },
+        { id: 38, prop: 'user_name', label: '录入者', sortable: false, minWidth: 120, isDrag: 'drag', show: false },
+        { id: 39, prop: 'create_time', label: '录入时间', sortable: false, minWidth: 160, isDrag: 'drag', show: false },
+        { id: 40, prop: 'operation', label: '操作', minWidth: 210, fixed: 'right', show: true },
+      ]
+    } else {
+      columns.value = [
+        { id: 1, prop: 'id', label: 'ID', type: 'selection', sortable: false, minWidth: 55, show: true },
+        { id: 3, prop: 'order_time', label: '下单日期', sortable: true, minWidth: 120, isDrag: 'drag', show: true },
+        { id: 4, prop: 'order_time_hi', label: '下单时间', sortable: false, minWidth: 100, isDrag: 'drag', show: true },
+        { id: 6, prop: 'name', label: '姓名', sortable: false, minWidth: 110, isDrag: 'drag', show: true },
+        { id: 7, prop: 'mobile', label: '电话', sortable: false, minWidth: 140, isDrag: 'drag', show: true },
+        { id: 8, prop: 'is_audit', label: '审核状态', sortable: false, minWidth: 120, isDrag: 'drag', show: true },
+        { id: 9, prop: 'area', label: '区域', sortable: false, minWidth: 150, isDrag: 'drag', show: true },
+        { id: 10, prop: 'address', label: '详细地址', sortable: false, minWidth: 180, isDrag: 'drag', show: true },
+        { id: 14, prop: 'size', label: '面积', sortable: false, minWidth: 120, isDrag: 'drag', show: true },
+        { id: 15, prop: 'demand', label: '装修需求', sortable: false, minWidth: 140, isDrag: 'drag', show: true },
+        { id: 17, prop: 'arrange_time', label: '派单时间', sortable: true, minWidth: 150, isDrag: 'drag', show: true },
+        { id: 18, prop: 'branch_name', label: '接单公司', sortable: false, minWidth: 140, isDrag: 'drag', show: true },
+        { id: 20, prop: 'status_name', label: '订单状态', sortable: false, minWidth: 120, isDrag: 'drag', show: true },
+        { id: 22, prop: 'deal_time', label: '反馈交定时间', sortable: true, minWidth: 150, isDrag: 'drag', show: true },
+        { id: 24, prop: 'order_money', label: '定金金额', sortable: false, minWidth: 120, isDrag: 'drag', show: true },
+        { id: 32, prop: 'follow_time', label: '最新跟进时间', sortable: true, minWidth: 140, isDrag: 'drag', show: true },
+        { id: 33, prop: 'follow_note', label: '最新跟进进展', sortable: false, minWidth: 180, isDrag: 'drag', show: true },
+        { id: 11, prop: 'type_name', label: '房屋类型', sortable: false, minWidth: 100, isDrag: 'drag', show: false },
+        { id: 12, prop: 'is_making', label: '是否交房', sortable: false, minWidth: 100, isDrag: 'drag', show: false },
+        { id: 13, prop: 'layout_name', label: '房屋户型', sortable: false, minWidth: 100, isDrag: 'drag', show: false },
+        { id: 19, prop: 'receive_man', label: '接单人', sortable: false, minWidth: 100, isDrag: 'drag', show: false },
+        { id: 23, prop: 'designer', label: '设计师', sortable: false, minWidth: 120, isDrag: 'drag', show: false },
+        { id: 25, prop: 'signing_time', label: '签约时间', sortable: false, minWidth: 140, isDrag: 'drag', show: false },
+        { id: 26, prop: 'contract_money', label: '合同金额', sortable: false, minWidth: 120, isDrag: 'drag', show: false },
+        { id: 27, prop: 'start_time', label: '开工时间', sortable: false, minWidth: 140, isDrag: 'drag', show: false },
+        { id: 28, prop: 'end_time', label: '完工时间', sortable: false, minWidth: 140, show: false },
+        { id: 29, prop: 'construction_manager', label: '施工经理', sortable: false, minWidth: 120, isDrag: 'drag', show: false },
+        { id: 30, prop: 'quality_man', label: '质监', sortable: false, minWidth: 120, isDrag: 'drag', show: false },
+        { id: 31, prop: 'is_amount', label: '是否量房', sortable: false, minWidth: 100, isDrag: 'drag', show: false },
+        { id: 40, prop: 'operation', label: '操作', minWidth: 150, fixed: 'right', show: true },
+      ]
     }
-    // 分公司更新--审核
-    form.is_audit = 2
-    if (flag) return form
-  },
+  }
+  columnDrop()
 })
+// 加载详情
 const loadData = (id) => {
   loading.value = true
   order
@@ -550,6 +860,8 @@ const loadData = (id) => {
         form.receive_company = form.receive_company === 0 ? '' : form.receive_company
         form.layout_id = form.layout_id === 0 ? '' : form.layout_id
         form.type_id = form.type_id === 0 ? '' : form.type_id
+        form.order_money = form.order_money == 0 ? '' : form.order_money
+        form.contract_money = form.contract_money == 0 ? '' : form.contract_money
         form.follows = form.follows.map((item) => {
           return { follow_time: parseTime(item.follow_time), follow_note: item.follow_note }
         })
@@ -570,12 +882,6 @@ const loadData = (id) => {
     .finally(() => {
       loading.value = false
     })
-}
-const addFollow = () => {
-  form.follows.push({ follow_time: '', follow_note: '' })
-}
-const minusFollow = (index) => {
-  form.follows.splice(index, 1)
 }
 
 // 移动
@@ -677,14 +983,6 @@ const download = () => {
   location.href = '/template.xlsx'
 }
 
-// 交定时间
-const statusChange = (status_id) => {
-  if (status_id === 3 || status_id === 4 || status_id === 5 || status_id === 6) {
-    if (!form.deal_time) form.deal_time = time_init()
-  } else {
-    form.deal_time = ''
-  }
-}
 const dateFormatter = (row, column) => {
   return parseTime(row.order_time, '{y}-{m}-{d}')
 }
@@ -693,6 +991,13 @@ const timeFormatter = (row, column) => {
 }
 const areaFormatter = (row, column) => {
   return row.province_name + row.city_name
+}
+// 审核状态过滤
+const filterAudit = (value, row, column) => {
+  const property = column['property']
+  return row.is_audit == value
+  // params.is_audit = 2
+  // getData(1)
 }
 
 const dialogVisible = ref(false)
@@ -703,13 +1008,12 @@ const failReason = (val) => {
   dialogVisible.value = true
 }
 
-const route = useRoute()
 watch(
   route,
   () => {
     if (route.query.reload) {
-      getData()
-      // route.query.page ? getData(1) : getData()
+      // getData()
+      route.query.page ? getData(1) : getData()
     }
   },
   { deep: true, immediate: true }
@@ -756,6 +1060,7 @@ const areaList = ref([])
 const province = ref([])
 const branchList = ref([])
 const statusList = ref([])
+const regionList = ref([])
 const status = ref([])
 const tag = ref([])
 const branch = ref([])
@@ -833,17 +1138,13 @@ const getSelectData = () => {
       tag.value = res.result.tag
       tag.value.push({ id: 100, name: '其他' })
       statusList.value = res.result.status
+      regionList.value = res.result.region
     } else {
       toast(res.message || 'Error', 'error')
     }
   })
 }
 
-// watch(showSearch, (newVal) => {
-//   if (newVal && channelList.value.length === 0) {
-//     getSelectData()
-//   }
-// })
 getSelectData()
 
 // 表单重置
@@ -851,18 +1152,25 @@ const resetFrom = () => {
   if (!searchMoreRef.value) return
   // searchMoreRef.value.resetFields()
   params.page = 1
-  params.pageSize = 10
+  params.pageSize = 15
   params.name = ''
   params.mobile = ''
   params.receive_company = null
+  params.region_id = ''
   params.order_time = ''
+  params.order_time_start = ''
+  params.order_time_end = ''
   params.province_id = ''
   params.city_id = ''
   params.channel_id = null
   params.source_id = null
   params.status_id = null
   params.arrange_time = ''
+  params.arrange_time_start = ''
+  params.arrange_time_end = ''
   params.deal_time = ''
+  params.deal_time_start = ''
+  params.deal_time_end = ''
   params.invalid_tag = null
   params.is_audit = null
   params.is_visit = null
@@ -898,6 +1206,8 @@ const handleDetail = (id) => {
     .then((res) => {
       if (res.code > 0) {
         res.result.arrange_time = parseTime(res.result.arrange_time)
+        res.result.order_money = res.result.order_money == 0 ? '' : res.result.order_money
+        res.result.contract_money = res.result.contract_money == 0 ? '' : res.result.contract_money
         details.value = res.result
         detailRef.value.openDrawer()
       } else {
@@ -933,10 +1243,71 @@ const listeners = {
     el.style.height = null // 过渡离开之后，将高度恢复为null
   },
 }
+
+const followRef = ref('')
+const handleFollow = (row) => {
+  row.followLoading = true
+  followRef.value.openFollowDrawer(row.id)
+}
+
+const closeFollow = (val) => {
+  dataList.value.map((item) => (item.followLoading = false))
+  if (val) {
+    getData()
+  }
+}
+
+const followSubmit = () => {
+  // 分公司更新--审核
+  form.is_audit = 2
+  if (form.status_id == 1) {
+    toast('请修改订单状态', 'error')
+    return false
+  }
+  if (form.status_id == 3 || form.status_id == 4 || form.status_id == 5 || form.status_id == 6) {
+    if (form.order_money == 0) {
+      toast('请填写订单金额', 'error')
+      return false
+    }
+  }
+  // 跟进信息数据处理
+  let follow = form.follows.filter((item) => item.follow_time && item.follow_note)
+  // 后台会自动删除空数组，导致报错
+  if (follow.length === 0) {
+    toast('请填写跟进信息', 'error')
+    return false
+  }
+
+  form.follows = follow
+
+  followRef.value.showLoading()
+  order
+    .follow(orderId.value, form)
+    .then((res) => {
+      if (res.code > 0) {
+        toast('数据更新成功')
+        followRef.value.CloseFollowDrawer()
+        for (const key in form) {
+          form[key] = ''
+        }
+        form.follows = [{ follow_time: '', follow_note: '' }]
+        form.status_id = 1
+        getData()
+        //获取通知消息
+        store.dispatch('getNote')
+      } else {
+        toast(res.message || 'error', 'error')
+        return false
+      }
+    })
+    .finally(() => {
+      loading.value = false
+    })
+}
 </script>
 <style lang="scss" scoped>
 .search-more {
-  padding: 20px 20px 20px 0;
+  padding: 20px;
   margin-bottom: 20px;
   border: 1px solid #eee;
   overflow: hidden;
@@ -951,5 +1322,45 @@ const listeners = {
 }
 :deep(.el-input__wrapper) {
   width: 100%;
+}
+.order-item {
+  position: relative;
+}
+.hot-badge {
+  position: absolute;
+  right: 10px;
+  top: 0;
+  font-size: 12px;
+  background: #f56c6c;
+  color: #fff;
+  width: 80px;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  border-radius: 22px;
+  transform: rotate(19deg);
+}
+.buttons-mobile {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+:deep(.el-descriptions__label.el-descriptions__cell.is-bordered-label) {
+  font-weight: normal !important;
+  width: 100px !important;
+}
+.fliter_wrap {
+  padding: 10px;
+  width: 280px;
+  overflow: hidden;
+}
+.fliter_wrap .fliter_item {
+  width: 130px;
+  float: left;
+}
+.el-table td.el-table__cell div {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 </style>

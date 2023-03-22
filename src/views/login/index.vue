@@ -64,11 +64,11 @@
   </div>
 </template>
 <script setup>
-import { ref, reactive, onMounted, onBeforeUnmount, onUnmounted } from 'vue'
+import { ref, reactive, onMounted, onBeforeUnmount, onUnmounted, onDeactivated } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { setToken } from '@/utils/token'
-import { toast } from '@/utils/utils'
+import { get_query_string, is_weixn, toast } from '@/utils/utils'
 import admin from '@/api/admin'
 
 const store = useStore()
@@ -96,43 +96,65 @@ const rules = {
 }
 
 const session_id = ref('')
+const code = ref('')
 const img = ref('')
 let timer = null
 let isDesktop = ref(true)
-const swtichType = () => {
-  isDesktop.value = !isDesktop.value
-  // 微信登录
-  if (!isDesktop.value) {
-    admin.loginWechat().then((res) => {
-      if (res.code > 0) {
-        session_id.value = res.result.session_id
-        img.value = res.result.img
 
-        timer = setInterval(() => {
-          admin.loginWechatCheck({ session_id: session_id.value }).then((res) => {
-            if (res.code > 0) {
-              const { token } = res.result
-              //存储token
-              setToken(token)
-              clearInterval(timer)
-              router.push({ path: '/' })
-              toast('登录成功')
-            }
-          })
-        }, 2000)
+const swtichType = () => {
+  // 微信登录
+  if (is_weixn() && code.value) {
+    // toast('微信登录', 'warning')
+    admin.loginWechatMc({ code: code.value }).then((res) => {
+      if (res.code > 0) {
+        const { token } = res.result
+        //存储token
+        setToken(token)
+        router.push({ path: '/' })
+        toast('登录成功')
       } else {
         toast(res.message || 'error', 'error')
         return false
       }
     })
   } else {
-    clearInterval(timer)
+    isDesktop.value = !isDesktop.value
+    if (!isDesktop.value) {
+      admin.loginWechat().then((res) => {
+        if (res.code > 0) {
+          session_id.value = res.result.session_id
+          img.value = res.result.img
+
+          timer = setInterval(() => {
+            admin.loginWechatCheck({ session_id: session_id.value }).then((res) => {
+              if (res.code > 0) {
+                const { token } = res.result
+                //存储token
+                setToken(token)
+                clearInterval(timer)
+                router.push({ path: '/' })
+                toast('登录成功')
+              }
+            })
+          }, 2000)
+        } else {
+          toast(res.message || 'error', 'error')
+          return false
+        }
+      })
+    } else {
+      clearInterval(timer)
+    }
   }
 }
 onUnmounted(() => {
   clearInterval(timer)
 })
+onDeactivated(() => {
+  clearInterval(timer)
+})
 
+const isMobile = ref(false)
 const formRef = ref(null)
 const loading = ref(false)
 const onSubmit = () => {
@@ -157,7 +179,6 @@ const onSubmit = () => {
         }
       })
       .finally(() => {
-        console.log('finally')
         loading.value = false
       })
   })
@@ -171,6 +192,22 @@ function onKeyUp(e) {
 // 添加键盘监听
 onMounted(() => {
   document.addEventListener('keyup', onKeyUp)
+  // 判断是否是移动端
+  const clientWidth = document.body.clientWidth
+  if (clientWidth < 768) {
+    isMobile.value = true
+  } else {
+    isMobile.value = false
+  }
+  //移动端微信登录
+  code.value = get_query_string('code')
+  if (is_weixn()) {
+    if (code.value == null || code.value === '' || code.value === false) {
+      const local = window.location.href
+      window.location.href =
+        'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx848fa2e3c9160c71&redirect_uri=' + encodeURIComponent(local) + '&response_type=code&scope=snsapi_base&state=1#wechat_redirect'
+    }
+  }
 })
 // 移除键盘监听
 onBeforeUnmount(() => {

@@ -6,7 +6,7 @@
     <div class="tabs">
       <el-scrollbar ref="scrollbarRef">
         <div class="tabs-scroll">
-          <el-tag :key="tag.path" type="info" size="small" v-for="(tag, index) in tabList"
+          <el-tag :key="tag.path" type="info" size="default" v-for="(tag, index) in tabList"
             :closable="tag.path !== '/'" :disable-transitions="false" @close="closeTab(tag, index)"
             @click="changeMenu(tag, index)" :effect="currentRoute === tag.path ? 'dark' : 'plain'"
             :ref="
@@ -48,8 +48,8 @@ const { currentRoute, tabList, closeTab, changeMenu, handleCommand, scrollbarRef
 .tablist {
   display: flex;
   align-items: center;
-  height: 25px;
-  line-height: 25px;
+  height: 30px;
+  line-height: 30px;
   background-color: #fff;
   overflow: hidden;
   .tabs {
@@ -66,12 +66,13 @@ const { currentRoute, tabList, closeTab, changeMenu, handleCommand, scrollbarRef
 }
 .tablist .el-icon {
   width: 30px;
+  font-size: 18px;
   cursor: pointer;
 }
 .el-tag {
   border-radius: 0;
   cursor: pointer;
-  min-width: 80px;
+  min-width: 92px;
   text-align: center;
   background: #fff;
 }
@@ -91,7 +92,8 @@ const { currentRoute, tabList, closeTab, changeMenu, handleCommand, scrollbarRef
 .el-tag--medium {
   line-height: 28px;
 }
-.el-tag--small {
-  height: 23px;
+.el-tag--default {
+  height: 26px;
+  font-size: 13px;
 }
 </style>

@@ -9,7 +9,7 @@
         </el-table-column>
         <el-table-column label="排序号" min-width="160">
           <template #default="scope">
-            <el-input style="width: 60%" type="number" v-model="scope.row.list_order" min="0" />
+            <el-input style="width: 60%" type="number" v-model="scope.row.sort" min="0" />
           </template>
         </el-table-column>
         <el-table-column label="状态" min-width="120" v-permission="124">
@@ -29,16 +29,21 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-pagination @current-change="handleCurrentChange" :current-page="params.page"
+        :page-size="params.pageSize" :background="true" :hide-on-single-page="true"
+        :layout="$store.state.isMobile? 'total,prev, next' : 'total,prev, pager, next'"
+        :total="count" class="fenye">
+      </el-pagination>
     </el-card>
-    <FormDrawer :title="'公告' + drawerTitle" ref="formDrawerRef" @drawerClosed="drawerClosed"
-      @submit="handleSubmit">
-      <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false"
-        size="small">
+    <FormDialog destroyOnClose :title="'公告' + dialogTitle" ref="formDialogRef"
+      @dialogClosed="dialogClosed" @submit="handleSubmit">
+      <el-form :model="form" ref="formRef" :rules="rules" label-width="140px"
+        :label-position="$store.state.isMobile ? 'top' : 'right'">
         <el-form-item label="标题" prop="title">
           <el-input minlength="2" maxlength="50" show-word-limit v-model="form.title"></el-input>
         </el-form-item>
         <el-form-item label="排序号">
-          <el-input v-model="form.list_order" type="number"></el-input>
+          <el-input v-model="form.sort" type="number"></el-input>
         </el-form-item>
         <el-form-item label="状态">
           <el-switch v-model="form.status" :active-value="1" :inactive-value="0" />
@@ -47,31 +52,32 @@
           <el-input type="textarea" :rows="10" resize="none" v-model="form.content"></el-input>
         </el-form-item>
       </el-form>
-    </FormDrawer>
+    </FormDialog>
   </div>
 </template>
 
 <script setup>
-import FormDrawer from '@/components/FormDrawer.vue'
+import FormDialog from '@/components/FormDialog.vue'
 import ListHeader from '@/components/ListHeader.vue'
 import notice from '@/api/notice'
 import { useInitTable, useInitForm } from '@/hooks/useCommon'
+import log from '@/api/log'
 
-const { loading, dataList, getData, handleSwitch, handleSort, handleDelete } = useInitTable({
+const { loading, params, dataList, count, getData, handleCurrentChange, handleSwitch, handleSort, handleDelete } = useInitTable({
   api: notice,
   params: {
     page: 1,
-    pageSize: 10,
+    pageSize: 15,
     title: '',
   },
 })
 
-const { drawerTitle, formDrawerRef, formRef, rules, form, handleAdd, handleEdit, handleSubmit, drawerClosed } = useInitForm({
+const { dialogTitle, formDialogRef, formRef, rules, form, handleAdd, handleEdit, handleSubmit, dialogClosed } = useInitForm({
   api: notice,
   getData,
   form: {
     title: '',
-    list_order: 100,
+    sort: 100,
     status: 1,
     content: '',
   },

@@ -3,11 +3,14 @@
     <el-card class="admin-card" shadow="hover">
       <div v-if="is_subscribe == 0" class="wechat_login">
         <img :src="img" alt="" style="max-width: 200px; display: block; margin: 20px auto 0px" />
-        <p style="font-size: 12px; color: #666; text-align: center; padding-bottom: 50px">打开微信扫一扫，关注星艺公众号</p>
+        <p style="font-size: 12px; color: #666; text-align: center; padding-bottom: 50px">
+          打开微信扫一扫，关注星艺公众号</p>
       </div>
       <div class="" v-else>
         <div class="wechat_info">
-          <el-icon :size="16"><CircleCheck /></el-icon>
+          <el-icon :size="16">
+            <CircleCheck />
+          </el-icon>
           <span>您已经成功绑定微信号！！！</span>
         </div>
         <el-button type="danger" size="small" @click="bind_remove">解除绑定</el-button>
@@ -18,7 +21,7 @@
 <script setup>
 import admin from '@/api/admin'
 import { showModal, toast } from '@/utils/utils'
-import { onUnmounted, ref } from 'vue'
+import { onUnmounted, onDeactivated, ref } from 'vue'
 
 // 方便清除轮询
 let timer = null
@@ -77,7 +80,11 @@ setTimeout(() => {
     }, 2000)
   }
 }, 3000)
-
+// 组件切换时清除定时器
+onDeactivated(() => {
+  clearInterval(timer)
+})
+// 组件卸载时清除定时器
 onUnmounted(() => {
   clearInterval(timer)
 })
