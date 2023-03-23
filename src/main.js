@@ -1,6 +1,4 @@
-// import '@babel/polyfill'
-// import 'core-js/stable'
-// import 'regenerator-runtime/runtime'
+import '@babel/polyfill'
 import { createApp } from 'vue'
 import App from './App.vue'
 import { router } from './router'
@@ -9,6 +7,7 @@ import store from './store'
 import '@/assets/css/global.css'
 import * as ElIcon from '@element-plus/icons-vue'
 const app = createApp(App)
+
 for (let iconName in ElIcon) {
   app.component(iconName, ElIcon[iconName])
 }
