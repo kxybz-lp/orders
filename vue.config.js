@@ -8,6 +8,7 @@ module.exports = defineConfig({
   lintOnSave: false,
   // publicPath: './',
   productionSourceMap: process.env.NODE_ENV === 'production' ? false : true,
+  transpileDependencies: ['vuex-persist'],
   devServer: {
     port: 4002,
     proxy: {
