@@ -851,7 +851,11 @@ const getData = (param) => {
             return { province_name: item.province_name, city_name: item.city_name || '', order_number: item.order_number, arrange_number: item.arrange_number, docking_number: item.docking_number }
           })
         } else if (param.tab === 'deal') {
-          dataDealList.value = res.result.filter((item) => item.arrange_number > 0 || item.docking_number > 0)
+          if (store.state.adminInfo.branch_id == 1) {
+            dataDealList.value = res.result.filter((item) => item.arrange_number > 0 || item.docking_number > 0)
+          } else {
+            dataDealList.value = res.result
+          }
         } else if (param.tab === 'state') {
           dataStateList.value = res.result.filter((item) => item.order_number > 0 || item.arrange_number > 0 || item.docking_number > 0)
         }
