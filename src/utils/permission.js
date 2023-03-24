@@ -44,8 +44,8 @@ router.beforeEach(async (to, from, next) => {
   let title = (to.meta.title ? to.meta.title + '-' : '') + '订单管理系统'
   document.title = title
 
-  // 页面加载进度条
-  Loading.component?.exposed?.startLoading()
+  // 页面加载进度条,Loading.component?.exposed?
+  Loading.component.exposed.startLoading()
 
   // 解决刷新页面404问题
   hasNewRoutes ? next(to.fullPath) : next()
@@ -53,7 +53,7 @@ router.beforeEach(async (to, from, next) => {
 
 // 全局后置守卫
 router.afterEach((to, from) => {
-  Loading.component?.exposed?.endLoading()
+  Loading.component.exposed.endLoading()
 
   // console.log(router.getRoutes())
   // 新增与更新订单后跳转并刷新

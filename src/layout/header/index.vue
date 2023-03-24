@@ -68,7 +68,7 @@
     </el-tooltip>
     <el-dropdown @command="handleCommand">
       <span class="el-dropdown-link">
-        {{ $store.state.adminInfo?.name }}
+        {{ $store.state.adminInfo.name }}
         <el-icon class="el-icon--right">
           <arrow-down />
         </el-icon>

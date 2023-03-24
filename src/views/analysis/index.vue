@@ -186,7 +186,7 @@
           </el-select>
         </el-form-item>
         <el-form-item
-          v-if="(params.tab === 'area' || params.tab === 'deal') && $store.state.adminInfo?.branch_id === '1'"
+          v-if="(params.tab === 'area' || params.tab === 'deal') && $store.state.adminInfo.branch_id === '1'"
           label="所在省">
           <el-select v-model="params.province_id" filterable multiple placeholder="选择或搜索省"
             clearable>
@@ -195,7 +195,7 @@
           </el-select>
         </el-form-item>
         <el-form-item
-          v-if="(params.tab === 'area' || params.tab === 'deal') && $store.state.adminInfo?.branch_id === '1'"
+          v-if="(params.tab === 'area' || params.tab === 'deal') && $store.state.adminInfo.branch_id === '1'"
           label="所在市">
           <el-select v-model="params.city_id" placeholder="选择或搜索市" filterable multiple clearable>
             <el-option-group v-for="group in city" :key="group.label" :label="group.label">
@@ -204,7 +204,7 @@
             </el-option-group>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="(params.tab === 'deal') && $store.state.adminInfo?.branch_id === '1'"
+        <el-form-item v-if="(params.tab === 'deal') && $store.state.adminInfo.branch_id === '1'"
           label="一级区域">
           <el-select v-model="params.region_id" filterable multiple placeholder="选择一级区域" clearable>
             <el-option :value="item.id" :label="item.name" v-for="item in regionList"
@@ -356,7 +356,7 @@ const params = reactive({
   scope: 'all',
 })
 
-if (store.state.adminInfo?.branch_id != 1) {
+if (store.state.adminInfo.branch_id != 1) {
   params.tab = 'deal'
 }
 // tabs

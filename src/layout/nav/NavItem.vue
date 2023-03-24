@@ -1,25 +1,24 @@
 <template>
-  <template v-for="item in menu" :key="item?.id">
+  <template v-for="item in menu" :key="item.id">
     <!-- 如果当前菜单有下级,循环下级 -->
-    <el-sub-menu v-if="(item?.children && item?.children?.length > 0)"
-      :index="item?.path.toString()">
+    <el-sub-menu v-if="(item.children && item.children.length > 0)" :index="item.path.toString()">
       <template #title>
         <el-icon class="menu-icon">
           <!-- 遍历icon -->
-          <component :is="item?.icon"></component>
+          <component :is="item.icon"></component>
         </el-icon>
-        <span>{{ item?.label }}</span>
+        <span>{{ item.label }}</span>
       </template>
 
       <!-- 递归调用自身 -->
-      <NavItem v-if="item?.children?.length" :menu="item?.children" :index="item?.path.toString()">
+      <NavItem v-if="item.children.length" :menu="item.children" :index="item.path.toString()">
       </NavItem>
     </el-sub-menu>
 
     <!-- 没有下级 -->
-    <el-menu-item v-else :index="item?.path.toString()">
-      <component :is="item?.icon" class="menu-icon"></component>
-      <template #title>{{ item?.label }}</template>
+    <el-menu-item v-else :index="item.path.toString()">
+      <component :is="item.icon" class="menu-icon"></component>
+      <template #title>{{ item.label }}</template>
     </el-menu-item>
   </template>
 </template>

@@ -86,7 +86,7 @@
               <div class="type">
                 <span :class="params.type == 'order' ? 'current_type' : ''"
                   @click="setType('order')">订单数</span>
-                <span v-if="$store.state.adminInfo?.branch_id==1"
+                <span v-if="$store.state.adminInfo.branch_id==1"
                   :class="params.type == 'arrange' ? 'current_type' : ''"
                   @click="setType('arrange')">派单数</span>
                 <span :class="params.type == 'sign' ? 'current_type' : ''"

@@ -45,7 +45,7 @@
               <el-icon v-if="index == 0" @click="addFollow" :size="20" style="padding-top: 5px;">
                 <CirclePlusFilled />
               </el-icon>
-              <el-icon v-if="index != 0 && $store.state.adminInfo?.branch_id === '1'"
+              <el-icon v-if="index != 0 && $store.state.adminInfo.branch_id === '1'"
                 @click="minusFollow(index)" :size="20">
                 <Minus />
               </el-icon>

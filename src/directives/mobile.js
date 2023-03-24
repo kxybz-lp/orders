@@ -3,10 +3,13 @@ import store from '@/store'
 import { mobile_replace } from '@/utils/utils'
 function hasMobilePermission(value, el = false) {
   if (value) {
-    let hasAuth = store.state.adminInfo?.auths.includes(151)
-    if (el && !hasAuth) {
-      // let mobile = el.innerText  //点击分页没有刷新
-      el.innerText = mobile_replace(value)
+    let hasAuth = false
+    if (store.state.adminInfo) {
+      hasAuth = store.state.adminInfo.auths.includes(151)
+      if (el && !hasAuth) {
+        // let mobile = el.innerText  //点击分页没有刷新
+        el.innerText = mobile_replace(value)
+      }
     }
     return hasAuth
   } else {

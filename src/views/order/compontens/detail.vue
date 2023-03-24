@@ -4,13 +4,13 @@
     <template #header="{ }">
       <div class="detail-header">
         <h4>订单详情</h4>
-        <div class="button" v-if="$store.state.adminInfo?.branch_id === '1'" v-permission="80"
+        <div class="button" v-if="$store.state.adminInfo.branch_id === '1'" v-permission="80"
           @click="$router.push('/order/edit/' + detail.id)">
           <el-icon :size="20">
             <Edit />
           </el-icon>
         </div>
-        <div class="button" v-if="$store.state.adminInfo?.branch_id !== '1'" v-permission="80"
+        <div class="button" v-if="$store.state.adminInfo.branch_id !== '1'" v-permission="80"
           @click="follow(detail)">
           <el-icon :size="20">
             <Edit />

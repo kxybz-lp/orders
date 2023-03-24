@@ -7,7 +7,7 @@
       <transition v-bind="listeners">
         <el-form class="search-more" :model="params" ref="searchMoreRef" label-width="68px"
           v-show="showSearch" :label-position="$store.state.isMobile ? 'top' : 'left'">
-          <template v-if="$store.state.adminInfo?.branch_id === '1'">
+          <template v-if="$store.state.adminInfo.branch_id === '1'">
             <el-row :gutter="20">
               <el-col :md="6" :offset="0">
                 <el-form-item label="下单时间">
@@ -413,11 +413,11 @@
                   <el-button v-if="params.tab !== 'recyc'" v-permission="83" size="small"
                     type="success" @click="handleDetail(scope.row.id)">详情 </el-button>
                   <el-button
-                    v-if="params.tab !== 'recyc' && $store.state.adminInfo?.branch_id === '1'"
+                    v-if="params.tab !== 'recyc' && $store.state.adminInfo.branch_id === '1'"
                     v-permission="80" size="small" type="primary"
                     @click="$router.push('/order/edit/' + scope.row.id)">编辑 </el-button>
                   <el-button
-                    v-if="params.tab !== 'recyc' && $store.state.adminInfo?.branch_id !== '1'"
+                    v-if="params.tab !== 'recyc' && $store.state.adminInfo.branch_id !== '1'"
                     type="primary" v-permission="80" size="small" @click="handleFollow(scope.row)"
                     :loading="scope.row.followLoading"> 编辑
                   </el-button>
@@ -491,10 +491,10 @@
           <div class="buttons-mobile">
             <el-button v-if="params.tab !== 'recyc'" v-permission="83" size="small" type="success"
               @click="handleDetail(item.id)">详情 </el-button>
-            <el-button v-if="params.tab !== 'recyc' && $store.state.adminInfo?.branch_id === '1'"
+            <el-button v-if="params.tab !== 'recyc' && $store.state.adminInfo.branch_id === '1'"
               v-permission="80" size="small" type="primary"
               @click="$router.push('/order/edit/' + item.id)">编辑 </el-button>
-            <el-button v-if="params.tab !== 'recyc' && $store.state.adminInfo?.branch_id !== '1'"
+            <el-button v-if="params.tab !== 'recyc' && $store.state.adminInfo.branch_id !== '1'"
               type="primary" v-permission="80" size="small" @click="handleFollow(item)"
               :loading="item.followLoading"> 编辑
             </el-button>
