@@ -653,6 +653,11 @@ const submit = () => {
 
 // 审核通过
 const sh_success = () => {
+  // 死单标签处理
+  if (form.status_id == 8 && !form.reason_id) {
+    toast('请选择死单标签', 'error')
+    return false
+  }
   form.is_audit = 4
   form.fail_reason = ''
   submit()
