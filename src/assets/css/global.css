@@ -52,7 +52,8 @@ div:focus {
   --color: #004c59;
   --el-color-primary: #004c59;
 }
-.el-button {
+.el-button--default {
+  height: 30px;
 }
 .el-button--primary {
   --el-button-active-color: #076575;

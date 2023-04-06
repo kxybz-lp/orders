@@ -135,7 +135,7 @@
                   <el-date-picker style="width: 100%" v-model="item.follow_time" type="datetime"
                     placeholder="请选择跟进时间" format="YYYY-MM-DD HH:mm:ss"
                     value-format="YYYY-MM-DD HH:mm:ss" :editable="false"
-                    :disabled-date="disabledDate" clearable />
+                    :disabled-date="disabledDate" readonly clearable />
                 </el-col>
                 <el-col :md="15" :offset="0">
                   <el-input v-model="item.follow_note" placeholder="请输入跟进说明" minlength="2"
@@ -171,9 +171,10 @@
               </el-select>
             </el-form-item>
             <el-form-item label="交定时间" prop="deal_time">
-              <el-date-picker style="width: 100%" v-model="form.deal_time" type="datetime" readonly
-                placeholder="交定时间" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"
-                :editable="false" :disabled-date="disabledDate" clearable />
+              <el-date-picker style="width: 100%" v-model="form.deal_time" type="datetime"
+                :readonly="$store.state.adminInfo.role_id!=3" placeholder="交定时间"
+                format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" :editable="false"
+                :disabled-date="disabledDate" clearable />
             </el-form-item>
             <el-form-item label="定金金额" prop="order_money">
               <el-input v-model="form.order_money" placeholder="请输入定金金额" />
@@ -412,10 +413,12 @@ const loadData = (id) => {
         form.layout_id = form.layout_id === 0 ? '' : form.layout_id
         form.type_id = form.type_id === 0 ? '' : form.type_id
         form.reason_id = form.reason_id === 0 ? '' : form.reason_id
+        form.order_money = form.order_money == 0 ? '' : form.order_money
+        form.contract_money = form.contract_money == 0 ? '' : form.contract_money
         form.follows = form.follows.map((item) => {
           return { follow_time: parseTime(item.follow_time), follow_note: item.follow_note }
         })
-        form.follows.push({ follow_time: '', follow_note: '' })
+        form.follows.push({ follow_time: time_init(), follow_note: '' })
         form.visit = form.visit.map((item) => {
           return { visit_time: parseTime(item.visit_time), remark: item.remark }
         })
@@ -496,7 +499,7 @@ const invalidTagChange = (val) => {
 }
 // 跟进信息
 const addFollow = () => {
-  form.follows.push({ follow_time: '', follow_note: '' })
+  form.follows.push({ follow_time: time_init(), follow_note: '' })
 }
 const minusFollow = (index) => {
   form.follows.splice(index, 1)

@@ -171,7 +171,9 @@
             @change="hanldeStateTimeChange" />
         </el-form-item>
         <el-form-item v-if="params.tab === 'channel' || params.tab === 'source'" label="渠道">
-          <el-select v-model="params.channel_id" placeholder="选择或搜索渠道" clearable multiple>
+          <el-select v-model="params.channel_id" placeholder="选择或搜索渠道" clearable multiple
+            :collapse-tags="$store.state.isMobile" :max-collapse-tags="3" collapse-tags-tooltip>
+            <el-option label='全选' :value='0' @click='selectAllChannel'></el-option>
             <el-option :value="item.id" :label="item.name" v-for="item in channel" :key="item.id">
             </el-option>
           </el-select>
@@ -188,8 +190,9 @@
         <el-form-item
           v-if="(params.tab === 'area' || params.tab === 'deal') && $store.state.adminInfo.branch_id === '1'"
           label="所在省">
-          <el-select v-model="params.province_id" filterable multiple placeholder="选择或搜索省"
-            clearable>
+          <el-select v-model="params.province_id" filterable multiple
+            :collapse-tags="$store.state.isMobile" :max-collapse-tags="3" collapse-tags-tooltip
+            placeholder="选择或搜索省" clearable @change="areaChange">
             <el-option :value="item.id" :label="item.areaname" v-for="item in province"
               :key="item.id"></el-option>
           </el-select>
@@ -197,7 +200,9 @@
         <el-form-item
           v-if="(params.tab === 'area' || params.tab === 'deal') && $store.state.adminInfo.branch_id === '1'"
           label="所在市">
-          <el-select v-model="params.city_id" placeholder="选择或搜索市" filterable multiple clearable>
+          <el-select v-model="params.city_id" placeholder="选择或搜索市" filterable multiple
+            :collapse-tags="$store.state.isMobile" :max-collapse-tags="3" collapse-tags-tooltip
+            clearable @change="areaChange">
             <el-option-group v-for="group in city" :key="group.label" :label="group.label">
               <el-option :value="item.id" :label="item.areaname" v-for="item in group.options"
                 :key="item.id"></el-option>
@@ -206,14 +211,19 @@
         </el-form-item>
         <el-form-item v-if="(params.tab === 'deal') && $store.state.adminInfo.branch_id === '1'"
           label="一级区域">
-          <el-select v-model="params.region_id" filterable multiple placeholder="选择一级区域" clearable>
+          <el-select v-model="params.region_id" filterable multiple placeholder="选择一级区域"
+            :collapse-tags="$store.state.isMobile" :max-collapse-tags="3" @change="regionChange"
+            collapse-tags-tooltip clearable>
+            <el-option label='全选' :value='0' @click='selectAllRegion'></el-option>
             <el-option :value="item.id" :label="item.name" v-for="item in regionList"
               :key="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item v-if="params.tab === 'deal'" label="接单公司">
           <el-select v-model="params.receive_company" placeholder="选择或搜索公司" clearable multiple
-            filterable>
+            collapse-tags :max-collapse-tags="3" collapse-tags-tooltip filterable
+            @change="branchChange">
+            <el-option label='全选' :value='0' @click='selectAllBranch'></el-option>
             <el-option :value="item.id" :label="item.name" v-for="item in branch" :key="item.id">
             </el-option>
           </el-select>
@@ -248,7 +258,7 @@
         <!-- 渠道报表 -->
         <el-table id="channelTable" v-if="dataChannelList.length > 0" :data="dataChannelList" border
           stripe show-summary :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }">
-          <el-table-column prop="channel_name" label="渠道" />
+          <el-table-column prop="channel_name" label="渠道" min-width="90" />
           <el-table-column prop="order_number" label="下单数" />
           <el-table-column prop="arrange_number" label="派单数" />
           <el-table-column prop="docking_number" label="签单数" />
@@ -270,27 +280,58 @@
         <!-- 签单报表 -->
         <el-table id="dealTable" v-if="dataDealList.length > 0" :data="dataDealList" border stripe
           :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }">
-          <el-table-column prop="branch_name" label="公司" />
-          <el-table-column prop="arrange_number" :sortable="$store.state.isMobile ? false : true"
-            label="派单数" />
-          <el-table-column prop="docking_number" :sortable="$store.state.isMobile ? false : true"
-            label="签单数" />
-          <el-table-column prop="per" :sortable="$store.state.isMobile ? false : true" label="签单率">
+          <el-table-column type="expand" v-if="$store.state.adminInfo.branch_id==1">
+            <template #default="props">
+              <div style="padding: 10px 20px;">
+                <el-descriptions :column="1" title="签单详情">
+                  <el-descriptions-item v-for="item in props.row.docking_detail"
+                    :key="item.channel_id"
+                    :label="item.channel_name">{{ item.deal_num }}</el-descriptions-item>
+                </el-descriptions>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="branch_name" label="公司" min-width="120" />
+          <el-table-column prop="arrange_number"
+            :sortable="$store.state.adminInfo.branch_id==1 ? true : false" label="派单数"
+            min-width="100" />
+          <el-table-column prop="docking_number"
+            :sortable="$store.state.adminInfo.branch_id==1 ? true : false" label="签单数"
+            min-width="100" />
+          <el-table-column prop="per" :sortable="$store.state.adminInfo.branch_id==1 ? true : false"
+            label="签单率" min-width="100">
             <template #default="scope">
               {{ scope.row.per }}%
             </template>
           </el-table-column>
+          <el-table-column prop="feedback_per"
+            :sortable="$store.state.adminInfo.branch_id==1 ? true : false" label="反馈率"
+            min-width="100">
+            <template #default="scope">
+              {{ scope.row.feedback_per }}%
+            </template>
+          </el-table-column>
         </el-table>
+        <!-- 虚拟表格 -->
+        <!-- <div style="height: 400px">
+          <el-auto-resizer>
+            <template #default="{ height, width }">
+              <el-table-v2 v-if="dataDealList.length > 0" :columns="columns" :data="dataDealList"
+                :width="width" :height="height" border stripe fixed
+                :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }" />
+            </template>
+          </el-auto-resizer>
+        </div> -->
         <!-- 统计报表 -->
         <!-- 签单报表 -->
         <el-table id="stateTable" v-if="dataStateList.length > 0" :data="dataStateList" border
           stripe :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }">
-          <el-table-column prop="project_name" label="项目" />
-          <el-table-column prop="order_number" label="下单数" />
-          <el-table-column prop="arrange_number" label="派单数" />
-          <el-table-column prop="arrange_per" label="派单率" />
-          <el-table-column prop="docking_number" label="签单数" />
-          <el-table-column prop="docking_per" label="签单率" />
+          <el-table-column prop="project_name" min-width="100" label="项目" />
+          <el-table-column prop="order_number" min-width="100" label="下单数" />
+          <el-table-column prop="arrange_number" min-width="100" label="派单数" />
+          <el-table-column prop="arrange_per" min-width="100" label="派单率" />
+          <el-table-column prop="docking_number" min-width="100" label="签单数" />
+          <el-table-column prop="docking_per" min-width="100" label="签单率" />
         </el-table>
       </div>
     </el-card>
@@ -387,6 +428,55 @@ const tabbars = [
   },
 ]
 
+// 渠道全选
+const selectAllChannel = (e) => {
+  let channel_ids = channel.value.map((item) => item.id)
+  if (params.channel_id.includes(0) && params.channel_id.length - 1 < channel.value.length) {
+    params.channel_id = channel_ids
+  } else {
+    params.channel_id = ''
+  }
+}
+
+const areaChange = (val) => {
+  params.region_id = ''
+}
+const regionChange = (val) => {
+  params.province_id = ''
+  params.city_id = ''
+  params.receive_company = ''
+  dataDealList.value = []
+
+  if (val.length > 0 && !val.includes(0)) {
+    branch.value = branchList.value.filter((o) => params.region_id.includes(o.region_id))
+  } else {
+    branch.value = branchList.value
+  }
+}
+const branchChange = (val) => {
+  dataDealList.value = []
+}
+// 一级区域全选
+const selectAllRegion = (e) => {
+  let region_ids = regionList.value.map((item) => item.id)
+  if (params.region_id.includes(0) && params.region_id.length - 1 < regionList.value.length) {
+    params.region_id = region_ids
+  } else {
+    params.region_id = ''
+  }
+}
+
+// 公司全选
+const selectAllBranch = (e) => {
+  let companys = branch.value.map((item) => item.id)
+  console.log(companys)
+  if (params.receive_company.includes(0) && params.receive_company.length - 1 < branch.value.length) {
+    params.receive_company = companys
+  } else {
+    params.receive_company = ''
+  }
+}
+
 // 渠道报表数据
 const dataChannelList = ref([])
 const dataSourceList = ref([])
@@ -394,6 +484,12 @@ const dataAreaList = ref([])
 const dataDealList = ref([])
 const dataStateList = ref([])
 const dataSearchList = ref([])
+// const columns = ref([
+//   { key: 'branch_name', title: '公司', dataKey: 'branch_name', width: 150 },
+//   { key: 'arrange_number', title: '派单数', dataKey: 'arrange_number', width: 150 },
+//   { key: 'docking_number', title: '签单数', dataKey: 'docking_number', width: 150 },
+//   { key: 'per', title: '签单率', dataKey: 'per', width: 150 },
+// ])
 const tagId = ref(0)
 
 const pos = ref(0)
@@ -683,6 +779,11 @@ const setScope = (val) => {
       break
   }
   params.scope = val
+  dataChannelList.value = []
+  dataSourceList.value = []
+  dataAreaList.value = []
+  dataDealList.value = []
+  dataStateList.value = []
   // getBarData()
 }
 
@@ -694,6 +795,11 @@ const switchTime = (val) => {
     params.scope = 'all'
   }
   params.mix_time = params.mix_time_start = params.mix_time_end = ''
+  dataChannelList.value = []
+  dataSourceList.value = []
+  dataAreaList.value = []
+  dataDealList.value = []
+  dataStateList.value = []
   // getBarData()
 }
 
@@ -704,6 +810,11 @@ const switchMixTime = (val) => {
     params.scope = 'allMix'
   }
   params.order_time = params.order_time_start = params.order_time_end = ''
+  dataChannelList.value = []
+  dataSourceList.value = []
+  dataAreaList.value = []
+  dataDealList.value = []
+  dataStateList.value = []
   // getBarData()
 }
 
@@ -796,41 +907,49 @@ const onSubmit = () => {
   getData(params)
 }
 
+const exports = (filename) => {
+  return new Promise((resolve, reject) => {
+    elLoading('数据导出中...')
+    /* 从表生成工作簿对象 */
+    let dom
+    if (dataChannelList.value.length > 0) {
+      dom = document.querySelector('#channelTable')
+    } else if (dataSourceList.value.length > 0) {
+      dom = document.querySelector('#sourceTable')
+    } else if (dataAreaList.value.length > 0) {
+      dom = document.querySelector('#areaTable')
+    } else if (dataDealList.value.length > 0) {
+      dom = document.querySelector('#dealTable')
+    } else if (dataStateList.value.length > 0) {
+      dom = document.querySelector('#stateTable')
+    }
+    var wb = XLSX.utils.table_to_book(dom)
+    /* 获取二进制字符串作为输出 */
+    var wbout = XLSX.write(wb, {
+      bookType: 'xlsx',
+      bookSST: true,
+      type: 'array',
+    })
+    try {
+      FileSaver.saveAs(
+        new Blob([wbout], { type: 'application/octet-stream' }),
+        //设置导出文件名称
+        filename
+      )
+    } catch (e) {
+      if (typeof console !== 'undefined') toast(e.wbout, 'error')
+    }
+    resolve()
+    return wbout
+  })
+}
+
 // 导出报表
 const handExport = () => {
-  elLoading('数据导出中...')
   let filename = time_init(true) + '-' + createUniqueString() + '.xlsx'
-  /* 从表生成工作簿对象 */
-  let dom
-  if (dataChannelList.value.length > 0) {
-    dom = document.querySelector('#channelTable')
-  } else if (dataSourceList.value.length > 0) {
-    dom = document.querySelector('#sourceTable')
-  } else if (dataAreaList.value.length > 0) {
-    dom = document.querySelector('#areaTable')
-  } else if (dataDealList.value.length > 0) {
-    dom = document.querySelector('#dealTable')
-  } else if (dataStateList.value.length > 0) {
-    dom = document.querySelector('#stateTable')
-  }
-  var wb = XLSX.utils.table_to_book(dom)
-  /* 获取二进制字符串作为输出 */
-  var wbout = XLSX.write(wb, {
-    bookType: 'xlsx',
-    bookSST: true,
-    type: 'array',
+  exports(filename).then((res) => {
+    closeElLoading()
   })
-  try {
-    FileSaver.saveAs(
-      new Blob([wbout], { type: 'application/octet-stream' }),
-      //设置导出文件名称
-      filename
-    )
-  } catch (e) {
-    if (typeof console !== 'undefined') toast(e.wbout, 'error')
-  }
-  closeElLoading()
-  return wbout
 }
 
 // 获取查询数据
@@ -851,11 +970,12 @@ const getData = (param) => {
             return { province_name: item.province_name, city_name: item.city_name || '', order_number: item.order_number, arrange_number: item.arrange_number, docking_number: item.docking_number }
           })
         } else if (param.tab === 'deal') {
-          if (store.state.adminInfo.branch_id == 1) {
-            dataDealList.value = res.result.filter((item) => item.arrange_number > 0 || item.docking_number > 0)
-          } else {
-            dataDealList.value = res.result
-          }
+          dataDealList.value = res.result
+          // if (store.state.adminInfo.branch_id == 1) {
+          //   dataDealList.value = res.result.filter((item) => item.arrange_number > 0 || item.docking_number > 0)
+          // } else {
+          //   dataDealList.value = res.result
+          // }
         } else if (param.tab === 'state') {
           dataStateList.value = res.result.filter((item) => item.order_number > 0 || item.arrange_number > 0 || item.docking_number > 0)
         }
@@ -947,6 +1067,8 @@ watch([() => params.province_id, () => params.city_id], (newValue, oldValue) => 
   dataAreaList.value = []
   pos.value = 0
   spanArr.value = []
+  dataDealList.value = []
+  params.receive_company = ''
   if (newValue[1]) {
     AreaTableHeader.value = [
       {
@@ -992,13 +1114,19 @@ watch([() => params.province_id, () => params.city_id], (newValue, oldValue) => 
   }
   // params.receive_company = ''
   if (newValue[1][0]) {
+    console.log(1)
     branch.value = branchList.value.filter((o) => params.city_id.includes(o.city_id))
   } else if (newValue[0][0]) {
+    console.log(2)
     console.log(params.province_id)
     // branch.value = branchList.value.filter((o) => o.province_id === newValue[0][0])
     branch.value = branchList.value.filter((o) => params.province_id.includes(o.province_id))
   } else {
-    branch.value = branchList.value
+    if (params.region_id.length > 0) {
+      branch.value = branchList.value.filter((o) => params.region_id.includes(o.region_id))
+    } else {
+      branch.value = branchList.value
+    }
   }
 })
 

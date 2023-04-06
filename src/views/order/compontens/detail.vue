@@ -23,13 +23,15 @@
         <el-tabs v-model="detailTab">
           <el-tab-pane label="订单信息" name="detail_order">
             <el-descriptions :column="1">
-              <el-descriptions-item label="审核状态">
+              <el-descriptions-item label="审核状态：">
                 <el-tag type="danger" style="color: #fb6a3a" v-if="detail.is_audit === 1">待跟进
                 </el-tag>
                 <el-tag type="warning" v-else-if="detail.is_audit === 2">待审核</el-tag>
                 <el-tag type="danger" v-else-if="detail.is_audit === 3">审核未通过</el-tag>
                 <el-tag type="success" v-else-if="detail.is_audit === 4">审核通过</el-tag>
               </el-descriptions-item>
+              <el-descriptions-item label="审核失败原因：" v-if="detail.is_audit == 3">
+                {{ detail.fail_reason }} </el-descriptions-item>
               <el-descriptions-item label="客户名称：">{{ detail.name }} </el-descriptions-item>
               <el-descriptions-item label="联系方式："><span
                   v-mobile="detail.mobile">{{ detail.mobile }}</span><el-tag v-if="!$store.state.isMobile
@@ -95,7 +97,7 @@
                 <el-tag type="success" v-else-if="detail.is_amount === 2">已量房</el-tag>
               </el-descriptions-item>
               <el-descriptions-item label="订单状态：">{{ detail.status_name }}</el-descriptions-item>
-              <el-descriptions-item label="死单标签：" v-if="detail.status_id == 8">
+              <el-descriptions-item label="死单原因：" v-if="detail.status_id == 8">
                 {{ detail.reason_name }} </el-descriptions-item>
               <el-descriptions-item label="反馈交定时间:">{{ parseTime(detail.deal_time) }}
               </el-descriptions-item>

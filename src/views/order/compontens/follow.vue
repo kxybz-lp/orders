@@ -4,6 +4,9 @@
     <el-scrollbar>
       <el-form :model="form" ref="formFollowRef" label-width="80px"
         :label-position="$store.state.isMobile ? 'top' : 'right'" style="padding: 15px;">
+        <div v-if="form.is_audit == 3" style="margin-bottom: 10px;color: #f56c6c;"><span
+            style="font-weight:700;font-size: 14px;">审核失败原因：{{form.fail_reason}}</span>
+        </div>
         <el-form-item label="客户姓名">
           <el-input minlength="2" maxlength="20" show-word-limit v-model="form.name" />
         </el-form-item>
@@ -27,21 +30,19 @@
         </el-form-item>
         <el-form-item label="跟进信息" class="red">
           <el-row :gutter="2" v-for="(item, index) in form.follows" :key="item.key"
-            style="width: 100%">
+            style="width: 100%;margin-bottom: 8px;">
             <el-col :md="8" :offset="0">
               <el-date-picker style="width: 100%" v-model="item.follow_time" type="datetime"
                 placeholder="请选择跟进时间" format="YYYY-MM-DD HH:mm:ss"
-                value-format="YYYY-MM-DD HH:mm:ss" :editable="false" clearable
-                :readonly="item.follow_time ? true : false" :disabled-date="disabledDate" />
+                value-format="YYYY-MM-DD HH:mm:ss" :editable="false" clearable readonly
+                :disabled-date="disabledDate" />
             </el-col>
-            <el-col :md="15" :offset="0">
-              <!-- <el-input v-model="item.follow_note" placeholder="请输入跟进说明"
-                :readonly="item.follow_note ? true : false" minlength="2" maxlength="100"
-                show-word-limit /> -->
-              <el-input v-model="item.follow_note" placeholder="请输入跟进说明" minlength="2"
-                maxlength="100" show-word-limit />
+            <el-col :md="16" :offset="0" :class="$store.state.isMobile ? 'mt5' : ''">
+              <el-input v-model="item.follow_note" type="textarea"
+                :rows="$store.state.isMobile ? 3 : 1" :readonly="item.readonly"
+                placeholder="请输入跟进说明" minlength="2" maxlength="100" show-word-limit />
             </el-col>
-            <el-col :span="1" :offset="0">
+            <!-- <el-col :span="1" :offset="0">
               <el-icon v-if="index == 0" @click="addFollow" :size="20" style="padding-top: 5px;">
                 <CirclePlusFilled />
               </el-icon>
@@ -49,8 +50,10 @@
                 @click="minusFollow(index)" :size="20">
                 <Minus />
               </el-icon>
-            </el-col>
+            </el-col> -->
           </el-row>
+          <el-button type="warning" size="small" style="margin: 10px 0 0 0;"
+            @click="addFollow">添加跟进信息</el-button>
         </el-form-item>
         <el-form-item label="订单状态" class="red">
           <el-select v-model="form.status_id" placeholder="请选择订单状态" @change="statusChange">
@@ -60,7 +63,7 @@
         </el-form-item>
         <el-form-item label="交定时间">
           <el-date-picker style="width: 100%" v-model="form.deal_time" type="datetime" readonly
-            placeholder="交定时间" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"
+            placeholder="自动获取反馈交定时间" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"
             :editable="false" clearable />
         </el-form-item>
         <el-form-item label="定金金额">
@@ -96,7 +99,7 @@
       <span class="drawer-footer">
         <el-button @click="CloseFollowDrawer">取消</el-button>
         <el-button style="margin-left:15px;" type="primary" @click="submit" :loading="loading">
-          确定
+          提交
         </el-button>
       </span>
     </template>
@@ -113,6 +116,8 @@ const store = useStore()
 const form = reactive({
   name: '',
   mobile: '',
+  is_audit: null,
+  fail_reason: '',
   address: '',
   size: '',
   designer: '',
@@ -171,7 +176,7 @@ const statusChange = (status_id) => {
 }
 
 const addFollow = () => {
-  form.follows.push({ follow_time: '', follow_note: '' })
+  form.follows.push({ follow_time: time_init(), follow_note: '', readonly: false })
 }
 const minusFollow = (index) => {
   form.follows.splice(index, 1)
@@ -200,9 +205,9 @@ const openFollowDrawer = (order_id) => {
       form.start_time = parseTime(form.start_time)
       form.end_time = parseTime(form.end_time)
       form.follows = form.follows.map((item) => {
-        return { follow_time: parseTime(item.follow_time), follow_note: item.follow_note }
+        return { follow_time: parseTime(item.follow_time), follow_note: item.follow_note, readonly: true }
       })
-      form.follows.push({ follow_time: '', follow_note: '' })
+      form.follows.push({ follow_time: time_init(), follow_note: '' })
       form.order_money = form.order_money == 0 ? '' : form.order_money
       form.contract_money = form.contract_money == 0 ? '' : form.contract_money
       showFollowDrawer.value = true
@@ -237,6 +242,10 @@ const submit = () => {
       return false
     }
   }
+  if (form.status_id == 7 && !form.deal_time) {
+    toast('未交定订单无法修改订单状态为退定金', 'error')
+    return false
+  }
   // 跟进信息数据处理
   let follow = form.follows.filter((item) => item.follow_time && item.follow_note)
   // 后台会自动删除空数组，导致报错
@@ -244,8 +253,8 @@ const submit = () => {
     toast('请填写跟进信息', 'error')
     return false
   }
-
   form.follows = follow
+
   loading.value = true
   order
     .follow(orderId.value, form)
@@ -292,6 +301,9 @@ defineExpose({
 }
 .red :deep(.el-form-item__label) {
   color: #f56c6c;
+}
+.mt5 {
+  margin-top: 5px;
 }
 // .el-drawer__footer {
 //   padding-top: 20px;

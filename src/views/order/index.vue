@@ -31,7 +31,7 @@
               <el-col :md="6" :offset="0">
                 <el-form-item label="推广渠道">
                   <el-select v-model="params.channel_id" placeholder="选择或搜索渠道" clearable multiple
-                    @clear="getData(1)">
+                    collapse-tags :max-collapse-tags="3" collapse-tags-tooltip @clear="getData(1)">
                     <el-option :value="item.id" :label="item.name" v-for="item in channel"
                       :key="item.id"></el-option>
                   </el-select>
@@ -40,7 +40,7 @@
               <el-col :md="6" :offset="0">
                 <el-form-item label="客户来源">
                   <el-select v-model="params.source_id" placeholder="选择或搜索来源" clearable multiple
-                    @clear="getData(1)">
+                    collapse-tags :max-collapse-tags="3" collapse-tags-tooltip @clear="getData(1)">
                     <el-option-group v-for="group in source" :key="group.label"
                       :label="group.label">
                       <el-option :value="item.id" :label="item.name" v-for="item in group.options"
@@ -97,7 +97,8 @@
               <el-col :md="6" :offset="0">
                 <el-form-item label="接单公司">
                   <el-select v-model="params.receive_company" placeholder="选择或搜索公司" clearable
-                    multiple filterable @clear="getData(1)">
+                    multiple collapse-tags :max-collapse-tags="3" collapse-tags-tooltip filterable
+                    @clear="getData(1)">
                     <el-option :value="item.id" :label="item.name" v-for="item in branch"
                       :key="item.id"></el-option>
                   </el-select>
@@ -126,7 +127,8 @@
               </el-col>
               <el-col :md="6" :offset="0">
                 <el-form-item label="订单状态">
-                  <el-select v-model="params.status_id" multiple placeholder="选择状态" clearable
+                  <el-select v-model="params.status_id" multiple collapse-tags
+                    :max-collapse-tags="3" collapse-tags-tooltip placeholder="选择状态" clearable
                     @clear="getData(1)">
                     <el-option :value="item.id" :label="item.name" v-for="item in status"
                       :key="item.id"></el-option>
@@ -135,8 +137,8 @@
               </el-col>
               <el-col :md="6" :offset="0">
                 <el-form-item label="审核状态">
-                  <el-select v-model="params.is_audit" multiple placeholder="选择状态" clearable
-                    @clear="getData(1)">
+                  <el-select v-model="params.is_audit" multiple collapse-tags :max-collapse-tags="3"
+                    collapse-tags-tooltip placeholder="选择状态" clearable @clear="getData(1)">
                     <el-option :value="item.id" :label="item.name" v-for="item in audit"
                       :key="item.id"></el-option>
                   </el-select>
@@ -145,7 +147,7 @@
               <el-col :md="6" :offset="0">
                 <el-form-item label="无效标签">
                   <el-select v-model="params.invalid_tag" placeholder="选择标签" clearable multiple
-                    @clear="getData(1)">
+                    collapse-tags :max-collapse-tags="3" collapse-tags-tooltip @clear="getData(1)">
                     <el-option :value="item.name" :label="item.name" v-for="item in tag"
                       :key="item.id"></el-option>
                   </el-select>
@@ -165,7 +167,7 @@
               <el-col :md="6" :offset="0">
                 <el-form-item label="客户回访">
                   <el-select v-model="params.is_visit" placeholder="请选择" clearable multiple
-                    @clear="getData(1)">
+                    collapse-tags :max-collapse-tags="3" collapse-tags-tooltip @clear="getData(1)">
                     <el-option :value="item.id" :label="item.name" v-for="item in visit"
                       :key="item.id"></el-option>
                   </el-select>
@@ -489,16 +491,16 @@
             </el-descriptions-item>
           </el-descriptions>
           <div class="buttons-mobile">
-            <el-button v-if="params.tab !== 'recyc'" v-permission="83" size="small" type="success"
+            <el-button v-if="params.tab !== 'recyc'" v-permission="83" size="default" type="success"
               @click="handleDetail(item.id)">详情 </el-button>
             <el-button v-if="params.tab !== 'recyc' && $store.state.adminInfo.branch_id === '1'"
-              v-permission="80" size="small" type="primary"
+              v-permission="80" size="default" type="primary"
               @click="$router.push('/order/edit/' + item.id)">编辑 </el-button>
             <el-button v-if="params.tab !== 'recyc' && $store.state.adminInfo.branch_id !== '1'"
-              type="primary" v-permission="80" size="small" @click="handleFollow(item)"
+              type="primary" v-permission="80" size="default" @click="handleFollow(item)"
               :loading="item.followLoading"> 编辑
             </el-button>
-            <el-button v-if="params.tab !== 'recyc'" v-permission="87" size="small" type="danger"
+            <el-button v-if="params.tab !== 'recyc'" v-permission="87" size="default" type="danger"
               @click="handleDelete(item.id)"> 删除 </el-button>
             <el-button v-if="params.tab == 'recyc'" v-permission="88" size="small" type="success"
               @click="handleResave(item.id)">恢复 </el-button>
@@ -1281,6 +1283,7 @@ const followSubmit = () => {
   form.follows = follow
 
   followRef.value.showLoading()
+
   order
     .follow(orderId.value, form)
     .then((res) => {

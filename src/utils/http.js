@@ -17,7 +17,7 @@ if (process.env.NODE_ENV == 'development') {
   axios.defaults.baseURL = base.sq
 }
 // 请求超时时间,如需一次导出大量数据，需调整请求超时时间
-axios.defaults.timeout = 5000
+axios.defaults.timeout = 100000
 
 // post请求头
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8'
