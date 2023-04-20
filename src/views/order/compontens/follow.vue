@@ -232,6 +232,7 @@ const CloseFollowDrawer = () => {
 const submit = () => {
   // 分公司更新--审核
   form.is_audit = 2
+  form.size = parseInt(form.size)
   if (form.status_id == 1) {
     toast('请修改订单状态', 'error')
     return false
@@ -246,6 +247,11 @@ const submit = () => {
     toast('未交定订单无法修改订单状态为退定金', 'error')
     return false
   }
+  if (isNaN(form.size)) {
+    toast('房屋面积必须是数字', 'error')
+    return false
+  }
+
   // 跟进信息数据处理
   let follow = form.follows.filter((item) => item.follow_time && item.follow_note)
   // 后台会自动删除空数组，导致报错

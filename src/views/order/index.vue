@@ -156,6 +156,25 @@
             </el-row>
             <el-row :gutter="20">
               <el-col :md="6" :offset="0">
+                <el-form-item label="录入时间">
+                  <template v-if="!$store.state.isMobile">
+                    <el-date-picker style="width: 45%" v-model="params.create_time"
+                      value-format="YYYY-MM-DD HH:mm:ss" :editable="false" type="datetimerange"
+                      range-separator="至" clearable start-placeholder="开始时间"
+                      end-placeholder="结束时间" />
+                  </template>
+                  <template v-else>
+                    <el-date-picker style="width: 100%;margin-bottom: 10px;"
+                      v-model="params.create_time_start" type="datetime" placeholder="开始时间"
+                      format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"
+                      :editable="false" clearable />
+                    <el-date-picker style="width: 100%" v-model="params.create_time_end"
+                      type="datetime" placeholder="结束时间" format="YYYY-MM-DD HH:mm:ss"
+                      value-format="YYYY-MM-DD HH:mm:ss" :editable="false" clearable />
+                  </template>
+                </el-form-item>
+              </el-col>
+              <el-col :md="6" :offset="0">
                 <el-form-item label="一级区域">
                   <el-select v-model="params.region_id" placeholder="选择一级区域" clearable
                     @clear="getData(1)">
@@ -626,7 +645,6 @@ const {
     order_time: '',
     order_time_start: '',
     order_time_end: '',
-    order_time: '',
     province_id: '',
     city_id: '',
     channel_id: null,
@@ -638,6 +656,9 @@ const {
     deal_time: '',
     deal_time_start: '',
     deal_time_end: '',
+    create_time: '',
+    create_time_start: '',
+    create_time_end: '',
     invalid_tag: null,
     is_audit: is__audit,
     is_visit: null,
@@ -1162,6 +1183,9 @@ const resetFrom = () => {
   params.order_time = ''
   params.order_time_start = ''
   params.order_time_end = ''
+  params.create_time = ''
+  params.create_time_start = ''
+  params.create_time_end = ''
   params.province_id = ''
   params.city_id = ''
   params.channel_id = null

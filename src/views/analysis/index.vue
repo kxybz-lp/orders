@@ -228,6 +228,16 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item v-if="(params.tab === 'deal') && $store.state.adminInfo.branch_id === '1'"
+          label="公司状态">
+          <el-select v-model="params.branch_status" filterable multiple placeholder="选择公司状态"
+            :collapse-tags="$store.state.isMobile" :max-collapse-tags="3" @change="statusChange"
+            collapse-tags-tooltip clearable>
+            <!-- <el-option label='全选' :value='0' @click='selectAllRegion'></el-option> -->
+            <el-option :value="item.key" :label="item.value" v-for="item in statusList"
+              :key="item.id"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item v-if="params.tab !== 'other'">
           <el-button @click="onReset">重置</el-button>
           <el-button type="primary" @click="onSubmit" :loading="loading">生成报表</el-button>
@@ -394,6 +404,7 @@ const params = reactive({
   city_id: '',
   region_id: '',
   receive_company: '',
+  branch_status: '',
   scope: 'all',
 })
 
@@ -453,7 +464,13 @@ const regionChange = (val) => {
     branch.value = branchList.value
   }
 }
+
+const statusChange = (val) => {
+  params.receive_company = ''
+  dataDealList.value = []
+}
 const branchChange = (val) => {
+  params.branch_status = ''
   dataDealList.value = []
 }
 // 一级区域全选
@@ -465,6 +482,13 @@ const selectAllRegion = (e) => {
     params.region_id = ''
   }
 }
+
+// 公司状态
+const statusList = ref([
+  { key: 1, value: '在营' },
+  { key: 2, value: '关闭' },
+  { key: 3, value: '门店' },
+])
 
 // 公司全选
 const selectAllBranch = (e) => {
@@ -620,6 +644,7 @@ const handleTabChange = (val) => {
   params.city_id = ''
   params.region_id = ''
   params.receive_company = ''
+  params.branch_status = ''
   params.scope = 'all'
   dataChannelList.value = []
   dataSourceList.value = []
@@ -1015,6 +1040,7 @@ const onReset = () => {
   params.city_id = ''
   params.region_id = ''
   params.receive_company = ''
+  params.branch_status = ''
   params.scope = 'all'
   dataChannelList.value = []
   dataSourceList.value = []

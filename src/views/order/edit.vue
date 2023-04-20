@@ -10,7 +10,7 @@
                 show-word-limit />
             </el-form-item>
             <el-form-item label="联系方式" prop="mobile">
-              <el-input v-model="form.mobile" readonly placeholder="请输入客户电话" />
+              <el-input v-model="form.mobile" placeholder="请输入客户电话" />
             </el-form-item>
             <el-row :gutter="2" style="width: 100%">
               <el-col :md="10" :offset="0">
@@ -90,7 +90,9 @@
             </el-form-item>
             <el-form-item label="">
               <el-button type="warning" size="default" @click="changeTab('arrange')">下一步</el-button>
-              <el-button type="primary" size="default" @click="submit" :loading="loading">提交
+              <el-button type="primary" size="default"
+                v-if="form.is_audit === 1 || form.is_audit === 4" @click="submit"
+                :loading="loading">提交
               </el-button>
             </el-form-item>
           </el-tab-pane>
@@ -120,7 +122,9 @@
             <el-form-item label="">
               <el-button type="info" size="default" @click="changeTab('order')">上一步</el-button>
               <el-button type="warning" size="default" @click="changeTab('follow')">下一步</el-button>
-              <el-button type="primary" size="default" @click="submit" :loading="loading">提交
+              <el-button type="primary" size="default"
+                v-if="form.is_audit === 1 || form.is_audit === 4" @click="submit"
+                :loading="loading">提交
               </el-button>
             </el-form-item>
           </el-tab-pane>
@@ -207,7 +211,9 @@
             <el-form-item label="">
               <el-button type="info" size="default" @click="changeTab('arrange')">上一步</el-button>
               <el-button type="warning" size="default" @click="changeTab('visit')">下一步</el-button>
-              <el-button type="primary" size="default" @click="submit" :loading="loading">提交
+              <el-button type="primary" size="default"
+                v-if="form.is_audit === 1 || form.is_audit === 4" @click="submit"
+                :loading="loading">提交
               </el-button>
               <el-button type="success" size="default"
                 v-if="form.is_audit === 2 || form.is_audit === 3" @click="sh_success"
@@ -248,7 +254,9 @@
             </el-form-item>
             <el-form-item label="">
               <el-button type="info" size="default" @click="changeTab('follow')">上一步</el-button>
-              <el-button type="primary" size="default" @click="submit" :loading="loading">提交
+              <el-button type="primary" size="default"
+                v-if="form.is_audit === 1 || form.is_audit === 4" @click="submit"
+                :loading="loading">提交
               </el-button>
             </el-form-item>
           </el-tab-pane>

@@ -44,10 +44,6 @@
               </el-descriptions-item>
               <el-descriptions-item label="下单时间：">{{ parseTime(detail.order_time) }}
               </el-descriptions-item>
-              <el-descriptions-item v-if="$store.state.adminInfo.branch_id === '1'" label="推广渠道：">
-                {{ detail.channel_name }} </el-descriptions-item>
-              <el-descriptions-item v-if="$store.state.adminInfo.branch_id === '1'" label="客户来源：">
-                {{ detail.source_name }} </el-descriptions-item>
               <el-descriptions-item label="房屋类型：">{{ detail.type_name }} </el-descriptions-item>
               <el-descriptions-item label="房屋户型：">{{ detail.layout_name }} </el-descriptions-item>
               <el-descriptions-item label="房屋面积：">{{ detail.size }} </el-descriptions-item>
@@ -58,6 +54,10 @@
               </el-descriptions-item>
               <el-descriptions-item label="装修需求：">{{ detail.demand }} </el-descriptions-item>
               <el-descriptions-item label="其他：">{{ detail.other }} </el-descriptions-item>
+              <el-descriptions-item v-if="$store.state.adminInfo.branch_id === '1'" label="推广渠道：">
+                {{ detail.channel_name }} </el-descriptions-item>
+              <el-descriptions-item v-if="$store.state.adminInfo.branch_id === '1'" label="客户来源：">
+                {{ detail.source_name }} </el-descriptions-item>
               <el-descriptions-item v-if="$store.state.adminInfo.branch_id === '1'" label="无效标签：">
                 {{ detail.invalid_tag }} </el-descriptions-item>
               <el-descriptions-item v-if="$store.state.adminInfo.branch_id === '1'" label="推广标识：">
