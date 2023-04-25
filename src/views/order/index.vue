@@ -7,7 +7,7 @@
       <transition v-bind="listeners">
         <el-form class="search-more" :model="params" ref="searchMoreRef" label-width="68px"
           v-show="showSearch" :label-position="$store.state.isMobile ? 'top' : 'left'">
-          <template v-if="$store.state.adminInfo.branch_id === '1'">
+          <template v-if="$store.state.adminInfo.branch_id == 1">
             <el-row :gutter="20">
               <el-col :md="6" :offset="0">
                 <el-form-item label="下单时间">
@@ -76,7 +76,7 @@
                   </template>
                 </el-form-item>
               </el-col>
-              <el-col :md="6" :offset="0">
+              <el-col :md="6" :offset="0" v-if="!$store.state.isMobile">
                 <el-form-item label="所在省">
                   <el-select v-model="params.province_id" filterable placeholder="选择或搜索省" clearable
                     @clear="getData(1)">
@@ -85,7 +85,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :md="6" :offset="0">
+              <el-col :md="6" :offset="0" v-if="!$store.state.isMobile">
                 <el-form-item label="所在市">
                   <el-select v-model="params.city_id" placeholder="选择或搜索城市" filterable clearable
                     @clear="getData(1)">
@@ -144,7 +144,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :md="6" :offset="0">
+              <el-col :md="6" :offset="0" v-if="!$store.state.isMobile">
                 <el-form-item label="无效标签">
                   <el-select v-model="params.invalid_tag" placeholder="选择标签" clearable multiple
                     collapse-tags :max-collapse-tags="3" collapse-tags-tooltip @clear="getData(1)">
@@ -155,7 +155,7 @@
               </el-col>
             </el-row>
             <el-row :gutter="20">
-              <el-col :md="6" :offset="0">
+              <el-col :md="6" :offset="0" v-if="!$store.state.isMobile">
                 <el-form-item label="录入时间">
                   <template v-if="!$store.state.isMobile">
                     <el-date-picker style="width: 45%" v-model="params.create_time"
@@ -183,7 +183,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :md="6" :offset="0">
+              <el-col :md="6" :offset="0" v-if="!$store.state.isMobile">
                 <el-form-item label="客户回访">
                   <el-select v-model="params.is_visit" placeholder="请选择" clearable multiple
                     collapse-tags :max-collapse-tags="3" collapse-tags-tooltip @clear="getData(1)">
@@ -192,7 +192,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :md="6" :offset="0">
+              <el-col :md="6" :offset="0" v-if="!$store.state.isMobile">
                 <el-form-item label="客户名称">
                   <el-input v-model="params.name" placeholder="输入客户名称" clearable
                     @clear="getData(1)">
@@ -488,6 +488,7 @@
             <el-descriptions-item label="客户地址">
               {{ item.province_name }}{{ item.city_name }}{{ item.address }}
             </el-descriptions-item>
+            <el-descriptions-item label="接单公司">{{ item.branch_name }}</el-descriptions-item>
             <el-descriptions-item label="审核状态">
               <el-tag v-if="item.is_audit === 1">待跟进</el-tag>
               <el-tag type="warning" v-if="item.is_audit === 2">待审核</el-tag>
@@ -1389,5 +1390,9 @@ const followSubmit = () => {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+:deep(.el-form--label-left .el-form-item__label),
+:deep(.el-form--default.el-form--label-top .el-form-item .el-form-item__label) {
+  font-weight: 700 !important;
 }
 </style>

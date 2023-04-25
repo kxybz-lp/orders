@@ -138,8 +138,7 @@
       <el-form :model="form" ref="formRef" :rules="rules" label-width="140px"
         :label-position="$store.state.isMobile ? 'top' : 'right'">
         <el-form-item label="公司名称" prop="name">
-          <el-input minlength="2" maxlength="20" show-word-limit v-model="form.name"
-            :disabled="editId != 0"></el-input>
+          <el-input minlength="2" maxlength="20" show-word-limit v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item label="所在区域" prop="region_id">
           <el-select v-model="form.region_id" placeholder="选择区域" clearable @clear="getData(1)">
@@ -436,7 +435,7 @@ const resetFrom = () => {
   if (!searchMoreRef.value) return
   // searchMoreRef.value.resetFields()
   params.page = 1
-  params.pageSize = 10
+  params.pageSize = 15
   params.name = ''
   params.status = ''
   params.respon_phone = ''

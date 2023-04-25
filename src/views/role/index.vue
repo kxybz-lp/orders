@@ -33,7 +33,7 @@
         :total="count" class="fenye">
       </el-pagination>
     </el-card>
-    <FormDialog destroyOnClose :title="'管理员' + dialogTitle" ref="formDialogRef"
+    <FormDialog destroyOnClose :title="'角色' + dialogTitle" ref="formDialogRef"
       @dialogClosed="dialogClosed" @submit="handleSubmit">
       <el-form :model="form" ref="formRef" :rules="rules" label-width="140px"
         :label-position="$store.state.isMobile ? 'top' : 'right'">
