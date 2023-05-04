@@ -192,11 +192,21 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :md="6" :offset="0" v-if="!$store.state.isMobile">
+              <!-- <el-col :md="6" :offset="0" v-if="!$store.state.isMobile">
                 <el-form-item label="客户名称">
                   <el-input v-model="params.name" placeholder="输入客户名称" clearable
                     @clear="getData(1)">
                   </el-input>
+                </el-form-item>
+              </el-col> -->
+              <el-col :md="6" :offset="0">
+                <el-form-item label="死单标签">
+                  <el-select v-model="params.reason_id" multiple collapse-tags
+                    :max-collapse-tags="3" collapse-tags-tooltip placeholder="选择标签" clearable
+                    @clear="getData(1)">
+                    <el-option :value="item.id" :label="item.name" v-for="item in reasonList"
+                      :key="item.id"></el-option>
+                  </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -651,6 +661,7 @@ const {
     channel_id: null,
     source_id: null,
     status_id: null,
+    reason_id: null,
     arrange_time: '',
     arrange_time_start: '',
     arrange_time_end: '',
@@ -1086,6 +1097,7 @@ const branchList = ref([])
 const statusList = ref([])
 const regionList = ref([])
 const status = ref([])
+const reasonList = ref([])
 const tag = ref([])
 const branch = ref([])
 const source = computed(() => {
@@ -1159,6 +1171,7 @@ const getSelectData = () => {
       })
       branch.value = branchList.value = res.result.branch
       status.value = res.result.status
+      reasonList.value = res.result.reason
       tag.value = res.result.tag
       tag.value.push({ id: 100, name: '其他' })
       statusList.value = res.result.status
@@ -1192,6 +1205,7 @@ const resetFrom = () => {
   params.channel_id = null
   params.source_id = null
   params.status_id = null
+  params.reason_id = null
   params.arrange_time = ''
   params.arrange_time_start = ''
   params.arrange_time_end = ''

@@ -996,7 +996,6 @@ const getData = (param) => {
           })
         } else if (param.tab === 'deal') {
           if (store.state.isMobile && store.state.adminInfo.branch_id == 1) {
-            console.log(123)
             dataDealList.value = res.result.filter((item) => item.arrange_number > 0 || item.docking_number > 0)
           } else {
             dataDealList.value = res.result
