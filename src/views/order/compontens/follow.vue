@@ -22,6 +22,12 @@
         <el-form-item label="具体地址">
           <el-input v-model="form.address" />
         </el-form-item>
+        <el-form-item label="是否量房" prop="is_amount">
+          <el-radio-group v-model="form.is_amount">
+            <el-radio :label="1">未量房</el-radio>
+            <el-radio :label="2">已量房</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="房屋面积">
           <el-input v-model="form.size" />
         </el-form-item>
@@ -67,7 +73,7 @@
             :editable="false" clearable />
         </el-form-item>
         <el-form-item label="定金金额">
-          <el-input v-model="form.order_money" />
+          <el-input v-model="form.order_money" type="number" :readonly="has_money" />
         </el-form-item>
         <el-form-item label="签约时间">
           <el-date-picker style="width: 100%" v-model="form.signing_time" type="datetime"
@@ -75,7 +81,7 @@
             :editable="false" :disabled-date="disabledDate" clearable />
         </el-form-item>
         <el-form-item label="合同金额">
-          <el-input v-model="form.contract_money" />
+          <el-input v-model="form.contract_money" type="number" />
         </el-form-item>
         <el-form-item label="开工时间">
           <el-date-picker style="width: 100%" v-model="form.start_time" type="datetime"
@@ -123,6 +129,7 @@ const form = reactive({
   designer: '',
   follows: [{ follow_time: '', follow_note: '' }],
   status_id: 1,
+  is_amount: 0,
   deal_time: '',
   order_money: '',
   signing_time: '',
@@ -141,6 +148,7 @@ const loading = ref(false)
 const showLoading = () => (loading.value = true)
 const hideLoading = () => (loading.value = false)
 let status__id = 2
+let has_money = ref(false)
 
 const statusList = ref([])
 
@@ -208,6 +216,7 @@ const openFollowDrawer = (order_id) => {
         return { follow_time: parseTime(item.follow_time), follow_note: item.follow_note, readonly: true }
       })
       form.follows.push({ follow_time: time_init(), follow_note: '' })
+      has_money.value = form.order_money == 0 ? false : true
       form.order_money = form.order_money == 0 ? '' : form.order_money
       form.contract_money = form.contract_money == 0 ? '' : form.contract_money
       showFollowDrawer.value = true
@@ -235,6 +244,10 @@ const submit = () => {
   form.size = parseInt(form.size)
   if (form.status_id == 1) {
     toast('请修改订单状态', 'error')
+    return false
+  }
+  if (form.is_amount == 0) {
+    toast('请修改量房信息', 'error')
     return false
   }
   if (form.status_id == 3 || form.status_id == 4 || form.status_id == 5 || form.status_id == 6) {

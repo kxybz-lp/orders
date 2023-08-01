@@ -84,7 +84,6 @@ export function useInitTable(opt = {}) {
 
   // 表格数据字段排序
   const sortChange = (column, prop, order) => {
-    console.log(column, prop)
     params.page = 1
     if (column.prop == 'order_time_date') column.prop = 'order_time'
     params.sort = column.order == 'descending' ? column.prop + ' desc' : column.prop + ' asc'

@@ -139,7 +139,7 @@
                   <el-date-picker style="width: 100%" v-model="item.follow_time" type="datetime"
                     placeholder="请选择跟进时间" format="YYYY-MM-DD HH:mm:ss"
                     value-format="YYYY-MM-DD HH:mm:ss" :editable="false"
-                    :disabled-date="disabledDate" readonly clearable />
+                    :disabled-date="disabledDate" clearable />
                 </el-col>
                 <el-col :md="15" :offset="0">
                   <el-input v-model="item.follow_note" placeholder="请输入跟进说明" minlength="2"
@@ -181,7 +181,7 @@
                 :disabled-date="disabledDate" clearable />
             </el-form-item>
             <el-form-item label="定金金额" prop="order_money">
-              <el-input v-model="form.order_money" placeholder="请输入定金金额" />
+              <el-input v-model="form.order_money" type="number" placeholder="请输入定金金额" />
             </el-form-item>
             <el-form-item label="签约时间" prop="signing_time">
               <el-date-picker style="width: 100%" v-model="form.signing_time" type="datetime"
@@ -190,7 +190,7 @@
                 clearable />
             </el-form-item>
             <el-form-item label="合同金额" prop="contract_money">
-              <el-input v-model="form.contract_money" placeholder="请输入合同金额" />
+              <el-input v-model="form.contract_money" type="number" placeholder="请输入合同金额" />
             </el-form-item>
             <el-form-item label="开工时间" prop="start_time">
               <el-date-picker style="width: 100%" v-model="form.start_time" type="datetime"
@@ -643,7 +643,8 @@ const submit = () => {
           form.city_id = ''
           invalid_tags.value = ''
           activeTab.value = 'order'
-          router.replace({ path: '/order/index', query: { reload: true } }).catch((err) => {})
+          // router.replace({ path: '/order/index', query: { reload: true } }).catch((err) => {})
+          router.replace({ path: '/order/index' }).catch((err) => {})
           tabList.splice(index, 1)
           store.commit('setTabList', tabList)
           //获取通知消息

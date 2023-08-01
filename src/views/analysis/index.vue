@@ -914,8 +914,8 @@ const handleSearch = (item) => {
 }
 // 生成报表
 const onSubmit = () => {
-  if (params.tab === 'source' && !params.source_id) {
-    toast('请选择来源', 'error')
+  if (params.tab === 'source' && !params.channel_id) {
+    toast('请选择渠道', 'error')
     return
   }
   if (params.tab === 'state') {
