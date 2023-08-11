@@ -16,6 +16,10 @@ const order = {
   getStatus() {
     return get('/order/order/getStatusData')
   },
+  // 死单标签数据
+  getReason() {
+    return get('/order/order/getReasonData')
+  },
   // 新增
   create(params) {
     return post('/order/order/create', params)

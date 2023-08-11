@@ -67,6 +67,12 @@
               v-for="item in statusList" :key="item.id" />
           </el-select>
         </el-form-item>
+        <el-form-item label="死单标签" prop="reason_id" v-if="form.status_id==8">
+          <el-select v-model="form.reason_id" placeholder="请选择死单标签">
+            <el-option :value="item.id" :label="item.name" v-for="item in reasonList"
+              :key="item.id" />
+          </el-select>
+        </el-form-item>
         <el-form-item label="交定时间">
           <el-date-picker style="width: 100%" v-model="form.deal_time" type="datetime" readonly
             placeholder="自动获取反馈交定时间" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"
@@ -130,6 +136,7 @@ const form = reactive({
   follows: [{ follow_time: '', follow_note: '' }],
   status_id: 1,
   is_amount: 0,
+  reason_id: 0,
   deal_time: '',
   order_money: '',
   signing_time: '',
@@ -151,6 +158,7 @@ let status__id = 2
 let has_money = ref(false)
 
 const statusList = ref([])
+const reasonList = ref([])
 
 onMounted(() => {
   if (store.state.adminInfo.branch_id != 1) {
@@ -162,6 +170,9 @@ onMounted(() => {
         store.commit('setStatusList', res.result)
       })
     }
+    order.getReason().then((res) => {
+      reasonList.value = res.result
+    })
   }
 })
 
@@ -180,6 +191,9 @@ const statusChange = (status_id) => {
     }
   } else {
     // form.deal_time = ''
+  }
+  if (status_id != 8) {
+    form.reason_id = ''
   }
 }
 
@@ -219,6 +233,7 @@ const openFollowDrawer = (order_id) => {
       has_money.value = form.order_money == 0 ? false : true
       form.order_money = form.order_money == 0 ? '' : form.order_money
       form.contract_money = form.contract_money == 0 ? '' : form.contract_money
+      form.reason_id = form.reason_id === 0 ? '' : form.reason_id
       showFollowDrawer.value = true
       status__id = form.status_id
     } else {
@@ -273,6 +288,12 @@ const submit = () => {
     return false
   }
   form.follows = follow
+
+  // 死单标签处理
+  if (form.status_id == 8 && !form.reason_id) {
+    toast('请选择死单标签', 'error')
+    return false
+  }
 
   loading.value = true
   order
