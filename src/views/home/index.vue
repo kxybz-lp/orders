@@ -50,10 +50,10 @@
               <el-col :xs="24" :sm="14" :lg="14" :class="$store.state.isMobile ? 'tal' : 'tar'">
                 <div class="c">
                   <i style="font-size:12px;color:#999;padding-left: 0;">较昨日</i>
-                  <el-icon v-if="item.type === 'up'" class="success">
+                  <el-icon v-if="item.type === 'up'" class="fail">
                     <CaretTop />
                   </el-icon>
-                  <el-icon v-else class="fail">
+                  <el-icon v-else class="success">
                     <CaretBottom />
                   </el-icon>
                   <span style="padding-left: 5px">{{ item.diff }}</span>

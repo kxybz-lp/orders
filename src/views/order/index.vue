@@ -619,6 +619,7 @@ const route = useRoute()
 let is__audit = null
 let is__sign = null
 let is__arrange = null
+let is_renewal = null
 if (route.query.is_audit) {
   is__audit = route.query.is_audit
 }
@@ -627,6 +628,9 @@ if (route.query.is_sign) {
 }
 if (route.query.is_arrange) {
   is__arrange = route.query.is_arrange
+}
+if (route.query.is_renewal) {
+  is_renewal = route.query.is_renewal
 }
 
 const {
@@ -673,6 +677,7 @@ const {
     create_time_end: '',
     invalid_tag: null,
     is_audit: is__audit,
+    is_renewal: is_renewal,
     is_visit: null,
     is_arrange: is__arrange,
     is_sign: is__sign,

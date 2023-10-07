@@ -82,6 +82,12 @@
               <el-input v-if="form.invalid_tag === '其他'" v-model="invalid_tags"
                 placeholder="请输入无效标签" minlength="2" maxlength="20" show-word-limit />
             </el-form-item>
+            <el-form-item label="百度标签" prop="mark_type" v-if="form.clue_id">
+              <el-select v-model="form.mark_type" placeholder="请选择百度线索标签">
+                <el-option :value="item.id" :label="item.name" v-for="item in markList"
+                  :key="item.id"></el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item label="推广标识" prop="remark">
               <el-input v-model="form.remark" placeholder="请输入推广标识" />
             </el-form-item>
@@ -295,6 +301,8 @@ const form = reactive({
   address: '',
   type_id: '',
   layout_id: '',
+  clue_id: '',
+  mark_type: '',
   is_making: 0,
   size: '',
   demand: '',
@@ -543,6 +551,24 @@ const statusList = ref([])
 const tagList = ref([])
 const kefuList = ref([])
 const reasonList = ref([])
+const markList = ref([
+  { id: 1001, name: '恶意/骚扰' },
+  { id: 1002, name: '无效对话' },
+  { id: 1003, name: '空错号' },
+  { id: 1004, name: '回访电话3次未接通' },
+  { id: 1005, name: '非本人' },
+  { id: 1006, name: '无意向' },
+  { id: 2001, name: '聊到相关业务' },
+  { id: 2002, name: '留线索' },
+  { id: 2003, name: '回访电话接通' },
+  { id: 2004, name: '回访信息确认' },
+  { id: 2005, name: '回访发现意向' },
+  { id: 2006, name: '回访高潜成交' },
+  { id: 2007, name: '回访成单客户' },
+  { id: 2008, name: '服务购买成功' },
+  { id: 2009, name: '微信加粉成功' },
+  { id: 2010, name: '到店' },
+])
 
 const source = computed({
   get() {
@@ -627,6 +653,7 @@ const submit = () => {
       toast('请选择死单标签', 'error')
       return false
     }
+
     loading.value = true
     order
       .edit(id, form)
