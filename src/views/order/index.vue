@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-card class="order-card" shadow="hover">
-      <el-tabs v-model="params.tab" @tab-change="getData(1)" v-permission="85">
+      <el-tabs v-model="params.tab" @tab-change="tabChange" v-permission="85">
         <el-tab-pane :label="item.name" :name="item.key" v-for="item in tabbars" :key="item.key" />
       </el-tabs>
       <transition v-bind="listeners">
@@ -490,11 +490,17 @@
           <div class="hot-badge" style="color:#409eff;background: #ecf5ff;border: 1px solid #d9ecff"
             v-else-if="item.status_name === '退订'">{{item.status_name}}</div>
           <el-descriptions :column="1">
-            <el-descriptions-item label="下单时间">{{ item.order_time_mobile }}</el-descriptions-item>
             <el-descriptions-item label="客户名称">{{ item.name }}</el-descriptions-item>
             <el-descriptions-item label="客户电话"><span
                 v-mobile="item.mobile">{{ item.mobile }}</span><el-tag style="margin-left:5px;"
                 type="info" v-copy="item.mobile">复制手机号</el-tag></el-descriptions-item>
+            <el-descriptions-item label="下单时间">{{ item.order_time_mobile }}</el-descriptions-item>
+            <el-descriptions-item label="派单时间"
+              v-if="item.arrange_time">{{ item.arrange_time }}</el-descriptions-item>
+            <el-descriptions-item label="签单时间"
+              v-if="item.deal_time">{{ item.deal_time }}</el-descriptions-item>
+            <el-descriptions-item label="渠道来源"
+              v-if="$store.state.adminInfo.branch_id === '1'">{{ item.channel_name }}/{{ item.source_name }}</el-descriptions-item>
             <el-descriptions-item label="客户地址">
               {{ item.province_name }}{{ item.city_name }}{{ item.address }}
             </el-descriptions-item>
@@ -616,18 +622,21 @@ import draggable from 'vuedraggable'
 
 const store = useStore()
 const route = useRoute()
+let tab = 'all'
 let is__audit = null
 let is__sign = null
 let is__arrange = null
 let is_renewal = null
 if (route.query.is_audit) {
-  is__audit = route.query.is_audit
+  is__audit = [parseInt(route.query.is_audit)]
 }
 if (route.query.is_sign) {
   is__sign = route.query.is_sign
+  tab = 'sign'
 }
 if (route.query.is_arrange) {
   is__arrange = route.query.is_arrange
+  tab = 'arrange'
 }
 if (route.query.is_renewal) {
   is_renewal = route.query.is_renewal
@@ -681,7 +690,7 @@ const {
     is_visit: null,
     is_arrange: is__arrange,
     is_sign: is__sign,
-    tab: 'all',
+    tab: tab,
   },
   onGetListSuccess: (res) => {
     count.value = res.result.total
@@ -704,14 +713,16 @@ const {
     })
   },
 })
-if (route.query.is_audit) {
-  params.is_audit = [parseInt(route.query.is_audit)]
-}
-if (route.query.is_sign) {
-  params.tab = 'sign'
-}
-if (route.query.is_arrange) {
-  params.tab = 'arrange'
+
+// tab切换
+const tabChange = () => {
+  if (route.query.is_arrange && params.tab != 'arrange') {
+    params.is_arrange = null
+  }
+  if (route.query.is_sign && params.tab != 'sign') {
+    params.is_sign = null
+  }
+  getData(1)
 }
 
 // 搜索展示收起
