@@ -168,7 +168,6 @@ const dialogClosed = () => {}
 
 onMounted(() => {
   storeInfos.value = store.state.storeInfo.filter((item) => item.id != 1 && item.status != 2 && item.service_areas.length == 0)
-  console.log(storeInfos.value)
   if (storeInfos.value.length > 0) {
     storeInfo.value = storeInfos.value[0]
     store_id.value = storeInfo.value.id

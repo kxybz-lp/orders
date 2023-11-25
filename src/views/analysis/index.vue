@@ -267,16 +267,26 @@
         element-loading-text="数据加载中......">
         <!-- 渠道报表 -->
         <el-table id="channelTable" v-if="dataChannelList.length > 0" :data="dataChannelList" border
-          stripe show-summary :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }">
+          stripe :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }">
           <el-table-column prop="channel_name" label="渠道" min-width="90" />
           <el-table-column prop="order_number" label="下单数" />
           <el-table-column prop="arrange_number" label="派单数" />
           <el-table-column prop="docking_number" label="签单数" />
+          <el-table-column min-width="100" label="派单率">
+            <template #default="scope">
+              {{ scope.row.arrange_per }}%
+            </template>
+          </el-table-column>
+          <el-table-column min-width="100" label="签单率">
+            <template #default="scope">
+              {{ scope.row.docking_per }}%
+            </template>
+          </el-table-column>
         </el-table>
         <!-- 来源报表 -->
         <el-table id="sourceTable" v-if="dataSourceList.length > 0" :data="dataSourceList"
           style="width: 100%" :span-method="objectSpanMethod" border
-          :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }" show-summary>
+          :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }">
           <el-table-column :prop="item.prop" :label="item.label"
             v-for="(item, index) in SourceTableHeader" :key="index"></el-table-column>
         </el-table>
@@ -538,6 +548,14 @@ const SourceTableHeader = ref([
   {
     prop: 'docking_number',
     label: '签单数',
+  },
+  {
+    prop: 'arrange_per',
+    label: '派单率',
+  },
+  {
+    prop: 'docking_per',
+    label: '签单率',
   },
 ])
 const AreaTableHeader = ref([
@@ -988,7 +1006,15 @@ const getData = (param) => {
           dataChannelList.value = res.result
         } else if (param.tab === 'source') {
           dataSourceList.value = res.result.map((item) => {
-            return { channel_name: item.channel_name, source_name: item.source_name, order_number: item.order_number, arrange_number: item.arrange_number, docking_number: item.docking_number }
+            return {
+              channel_name: item.channel_name,
+              source_name: item.source_name,
+              order_number: item.order_number,
+              arrange_number: item.arrange_number,
+              docking_number: item.docking_number,
+              arrange_per: item.arrange_per + '%',
+              docking_per: item.docking_per + '%',
+            }
           })
         } else if (param.tab === 'area') {
           dataAreaList.value = res.result.map((item) => {

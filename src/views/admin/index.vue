@@ -90,6 +90,11 @@
               v-for="item in branchList" :key="item.id"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="渠道权限" prop="source_auth">
+          <el-cascader v-model="form.channel_scope" :options="channelList" collapse-tags
+            collapse-tags-tooltip max-collapse-tags="3" clearable :props="props" placeholder="不限制"
+            @change="channelChange" />
+        </el-form-item>
         <el-form-item label="微信号" v-if="editId != 0">
           <el-input v-model="form.openid" />
         </el-form-item>
@@ -131,6 +136,8 @@ const { loading, count, dataList, params, getData, handleCurrentChange, handleSw
     dataList.value = res.result.data.map((o) => {
       // o.last_login_time = dateFormart(o.last_login_time, 'hour')
       o.statusLoading = false
+      o.channel_scope = o.channel_scope ? o.channel_scope.split(',') : []
+      o.channel_scope = o.channel_scope.map(Number)
       return o
     })
   },
@@ -164,6 +171,13 @@ const { dialogTitle, formDialogRef, formRef, rules, form, editId, handleAdd, han
     password_confirm: '',
     role_id: '',
     branch_id: [],
+    // 可以只存来源ID
+    channel_scope: [
+      // [202, 206],
+      // [202, 204],
+      // [193, 194],
+      //194, 195,
+    ],
     openid: '',
     status: 1,
   },
@@ -213,6 +227,19 @@ const { dialogTitle, formDialogRef, formRef, rules, form, editId, handleAdd, han
   },
 })
 
+const props = {
+  multiple: true,
+  value: 'id',
+  label: 'name',
+  children: 'children',
+  multiple: true,
+  checkStrictly: false,
+}
+
+// 渠道切换
+const channelChange = (val) => {
+  console.log(val)
+}
 // 将字符串日期转时间戳， 2020-09-12 12:11:22
 // let time = (new Date(row.create_time)).getTime()
 // 当前时间戳
@@ -220,12 +247,14 @@ const { dialogTitle, formDialogRef, formRef, rules, form, editId, handleAdd, han
 
 const roleList = ref([])
 const branchList = ref([])
+const channelList = ref([])
 
 // select数据,合并远程请求
 admin.getSelect().then((res) => {
   if (res.code > 0) {
     roleList.value = res.result.role
     branchList.value = res.result.branch
+    channelList.value = res.result.channel
   } else {
     toast(res.message || 'Error', 'error')
   }
