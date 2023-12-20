@@ -282,6 +282,7 @@
               {{ scope.row.docking_per }}%
             </template>
           </el-table-column>
+          <el-table-column prop="size" label="平均签单面积" />
         </el-table>
         <!-- 来源报表 -->
         <el-table id="sourceTable" v-if="dataSourceList.length > 0" :data="dataSourceList"
@@ -297,20 +298,59 @@
           <el-table-column :prop="item.prop" :label="item.label"
             v-for="(item, index) in AreaTableHeader" :key="index"></el-table-column>
         </el-table>
-        <!-- 签单报表 -->
+        <!-- 签单报表,动态加载数据需要使用row-key -->
         <el-table id="dealTable" v-if="dataDealList.length > 0" :data="dataDealList" border stripe
-          :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }">
-          <el-table-column type="expand" v-if="$store.state.adminInfo.branch_id==1">
+          :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }" ref="dealTableRef"
+          row-key="id" @expand-change="handExpand">
+          <!--  width="1" -->
+          <el-table-column type="expand"
+            v-if="$store.state.adminInfo.role_id==1 || $store.state.adminInfo.role_id==19">
             <template #default="props">
-              <div style="padding: 10px 20px;">
+              <!-- <div style="padding: 10px 20px;">
                 <el-descriptions :column="1" title="签单详情">
                   <el-descriptions-item v-for="item in props.row.docking_detail"
                     :key="item.channel_id"
-                    :label="item.channel_name">{{ item.deal_num }}</el-descriptions-item>
+                    :label="item.channel_name">{{ item.docking_number }}</el-descriptions-item>
                 </el-descriptions>
+              </div> -->
+              <div style="padding:10px 20px">
+                <el-divider>
+                  <h4>签单面积信息</h4>
+                </el-divider>
+                <el-table :data="props.row.size_detail" v-loading="props.row.showDetail" stripe
+                  border>
+                  <el-table-column label="总面积" prop="sum_size"></el-table-column>
+                  <el-table-column label="最大面积" prop="max_size"></el-table-column>
+                  <el-table-column label="最小面积" prop="min_size"></el-table-column>
+                  <el-table-column label="平均面积" prop="avg_size"></el-table-column>
+                </el-table>
+                <el-divider>
+                  <h4>渠道信息</h4>
+                </el-divider>
+                <el-table :data="props.row.docking_detail" v-loading="props.row.showDetail" stripe
+                  border row-key="id">
+                  <el-table-column label="渠道" prop="channel_name"></el-table-column>
+                  <el-table-column label="派单数" prop="arrange_number"></el-table-column>
+                  <el-table-column label="下单数" prop="docking_number"></el-table-column>
+                  <el-table-column label="签单率">
+                    <template #default="scope">
+                      {{ scope.row.docking_per }}%
+                    </template>
+                  </el-table-column>
+                </el-table>
               </div>
             </template>
           </el-table-column>
+          <!-- <el-table-column label="" width="60" align="center">
+            <template #default="scope">
+              <el-icon v-if="!scope.row.showDetail">
+                <ArrowRight @click="handleDetails(scope.row)" />
+              </el-icon>
+              <el-icon v-else>
+                <ArrowDown @click="handleDetails(scope.row)" />
+              </el-icon>
+            </template>
+          </el-table-column> -->
           <el-table-column prop="branch_name" label="公司" min-width="120" />
           <el-table-column prop="arrange_number"
             :sortable="$store.state.adminInfo.branch_id==1 ? true : false" label="派单数"
@@ -343,9 +383,35 @@
           </el-auto-resizer>
         </div> -->
         <!-- 统计报表 -->
-        <!-- 签单报表 -->
         <el-table id="stateTable" v-if="dataStateList.length > 0" :data="dataStateList" border
-          stripe :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }">
+          stripe :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }"
+          row-key="project_name" @expand-change="handStateExpand">
+          <el-table-column type="expand">
+            <template #default="props">
+              <div style="padding:10px 20px">
+                <el-divider>
+                  <h4>渠道信息</h4>
+                </el-divider>
+                <el-table :data="props.row.docking_detail" v-loading="props.row.showDetail" stripe
+                  border row-key="id">
+                  <el-table-column label="渠道" prop="channel_name"></el-table-column>
+                  <el-table-column label="下单数" prop="order_number"></el-table-column>
+                  <el-table-column label="派单数" prop="arrange_number"></el-table-column>
+                  <el-table-column label="派单率">
+                    <template #default="scope">
+                      {{ scope.row.arrange_per }}%
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="签单数" prop="docking_number"></el-table-column>
+                  <el-table-column label="签单率">
+                    <template #default="scope">
+                      {{ scope.row.docking_per }}%
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column prop="project_name" min-width="100" label="项目" />
           <el-table-column prop="order_number" min-width="100" label="下单数" />
           <el-table-column prop="arrange_number" min-width="100" label="派单数" />
@@ -366,6 +432,7 @@ import search from '@/api/search'
 import * as FileSaver from 'file-saver'
 import * as XLSX from 'xlsx'
 import { useStore } from 'vuex'
+import log from '@/api/log'
 
 const store = useStore()
 
@@ -995,6 +1062,135 @@ const handExport = () => {
   })
 }
 
+// 签单统计查看渠道详情
+const handExpand = (row, expandedRows) => {
+  let branch_id = row.id ? row.id : 0
+  if (row.docking_detail.length == 0) {
+    params.branch_id = row.id ? row.id : 0
+    row.showDetail = true
+    order
+      .getChannelDetail(params)
+      .then((res) => {
+        if (res.code > 0) {
+          let admin_id = store.state.adminInfo.id
+          let channel = res.result.channel
+          let size = res.result.size
+          let sum_size = size.reduce((a, b) => a + b)
+          let max_size = size.reduce((a, b) => (a > b ? a : b)) // Math.max(...array)
+          let min_size = size.reduce((a, b) => (a < b ? a : b))
+          let avg_size = (sum_size / size.length).toFixed(1)
+          //console.log(size)
+          //console.log(sum_size, max_size, min_size, avg_size)
+          row.size_detail = [
+            {
+              sum_size: sum_size,
+              max_size: max_size,
+              min_size: min_size,
+              avg_size: avg_size,
+            },
+          ]
+          if (admin_id == 847) {
+            // 百度
+            row.docking_detail = channel.filter((item) => item.id == 4)
+          } else if (admin_id == 823) {
+            // 头条
+            row.docking_detail = channel.filter((item) => item.id == 3)
+          } else {
+            row.docking_detail = channel.filter((item) => item.arrange_number > 0 || item.docking_number > 0)
+          }
+        } else {
+          let msg = res.message || '数据请求失败'
+          toast(msg, 'error')
+        }
+      })
+      .finally(() => {
+        row.showDetail = false
+      })
+  }
+}
+const dealTableRef = ref(null)
+const handleDetails = (row) => {
+  let branch_id = row.id ? row.id : 0
+  //row.showDetail = !row.showDetail
+  dealTableRef.value.toggleRowExpansion(row)
+  order
+    .getChannelDetail(params)
+    .then((res) => {
+      if (res.code > 0) {
+        row.docking_detail = res.result
+      } else {
+        let msg = res.message || '数据请求失败'
+        toast(msg, 'error')
+      }
+    })
+    .finally(() => {
+      //row.showDetail = false
+    })
+
+  return
+}
+
+// 月度报表查看渠道详情
+const handStateExpand = (row, expandedRows) => {
+  if (!row.docking_detail) {
+    row.showDetail = true
+    let project_name = row.project_name
+    let start_time, end_time
+    if (params['year_time_start']) {
+      if (project_name == '合计') {
+        start_time = params['year_time_start']
+        end_time = params['year_time_end']
+      } else {
+        start_time = moment(project_name).startOf('year').format('YYYY-MM-DD HH:mm:ss')
+        end_time = moment(project_name).endOf('year').format('YYYY-MM-DD HH:mm:ss')
+      }
+    }
+    if (params['month_time_start']) {
+      if (project_name == '合计') {
+        start_time = params['month_time_start']
+        end_time = params['month_time_end']
+      } else {
+        start_time = moment(project_name).startOf('month').format('YYYY-MM-DD HH:mm:ss')
+        end_time = moment(project_name).endOf('month').format('YYYY-MM-DD HH:mm:ss')
+      }
+    }
+    if (params['week_time_start']) {
+      if (project_name == '合计') {
+        start_time = moment(params['week_time_start']).startOf('day').format('YYYY-MM-DD HH:mm:ss')
+        end_time = moment(params['week_time_end']).endOf('day').format('YYYY-MM-DD HH:mm:ss')
+      } else {
+        start_time = moment(project_name).startOf('week').format('YYYY-MM-DD HH:mm:ss')
+        end_time = moment(project_name).endOf('week').format('YYYY-MM-DD HH:mm:ss')
+      }
+    }
+    if (params['time_start']) {
+      if (project_name == '合计') {
+        //start_time = moment(params['time_start']).startOf('day').format('YYYY-MM-DD HH:mm:ss')
+        //end_time = moment(params['time_end']).endOf('day').format('YYYY-MM-DD HH:mm:ss')
+        start_time = params['time_start']
+        end_time = params['time_end']
+      } else {
+        start_time = moment(project_name).startOf('day').format('YYYY-MM-DD HH:mm:ss')
+        end_time = moment(project_name).endOf('day').format('YYYY-MM-DD HH:mm:ss')
+      }
+    }
+    order
+      .getStateDetail({ start_time, end_time })
+      .then((res) => {
+        if (res.code > 0) {
+          row.docking_detail = res.result.channel.filter((item) => item.order_number > 0 || item.arrange_number > 0 || item.docking_number > 0)
+          console.log(row.docking_detail)
+        } else {
+          let msg = res.message || '数据请求失败'
+          toast(msg, 'error')
+        }
+      })
+      .finally(() => {
+        row.showDetail = false
+      })
+  }
+}
+
 // 获取查询数据
 const getData = (param) => {
   loading.value = true
@@ -1021,6 +1217,7 @@ const getData = (param) => {
             return { province_name: item.province_name, city_name: item.city_name || '', order_number: item.order_number, arrange_number: item.arrange_number, docking_number: item.docking_number }
           })
         } else if (param.tab === 'deal') {
+          res.result.map((item) => (item.showDetail = false))
           if (store.state.isMobile && store.state.adminInfo.branch_id == 1) {
             dataDealList.value = res.result.filter((item) => item.arrange_number > 0 || item.docking_number > 0)
           } else {
@@ -1032,6 +1229,7 @@ const getData = (param) => {
           //   dataDealList.value = res.result
           // }
         } else if (param.tab === 'state') {
+          res.result.map((item) => (item.showDetail = false))
           dataStateList.value = res.result.filter((item) => item.order_number > 0 || item.arrange_number > 0 || item.docking_number > 0)
         }
       } else {
@@ -1234,4 +1432,7 @@ getSelectData()
 :deep(.el-form-item__label) {
   font-weight: 700 !important;
 }
+// :deep(.el-table__expand-icon) {
+//   display: none;
+// }
 </style>

@@ -265,9 +265,18 @@ const submit = () => {
     toast('请修改量房信息', 'error')
     return false
   }
+
+  // if (form.size && typeof form.size !== 'number') {
+  //   toast('面积格式为整数', 'error')
+  //   return false
+  // }
   if (form.status_id == 3 || form.status_id == 4 || form.status_id == 5 || form.status_id == 6) {
     if (form.order_money == 0) {
       toast('请填写订单金额', 'error')
+      return false
+    }
+    if (!form.size) {
+      toast('请填写面积', 'error')
       return false
     }
   }

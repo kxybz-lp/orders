@@ -8,9 +8,21 @@ const order = {
   getList(params) {
     return get('/order/order/index', params)
   },
+  // 渠道签单详情
+  getChannelDetail(params) {
+    return get('/order/order/getChannelDetail', params)
+  },
+  // 渠道签单详情
+  getStateDetail(params) {
+    return get('/order/order/getStateDetail', params)
+  },
   // select数据
   getSelect() {
     return get('/order/order/getSelectData')
+  },
+  // select数据
+  getOpenid() {
+    return get('/order/order/getOpenidByStore')
   },
   // 订单状态数据
   getStatus() {

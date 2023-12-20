@@ -210,6 +210,34 @@
                 </el-form-item>
               </el-col>
             </el-row>
+            <el-row :gutter="20">
+              <el-col :md="6" :offset="0">
+                <el-form-item label="房屋面积">
+                  <el-select v-model="params.size" placeholder="选择面积" clearable @clear="getData(1)">
+                    <el-option :value="item.value" :label="item.key" v-for="item in sizeList"
+                      :key="item.id"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :md="6" :offset="0">
+                <el-form-item label="房屋类型">
+                  <el-select v-model="params.type_id" placeholder="选择类型" clearable
+                    @clear="getData(1)">
+                    <el-option :value="item.id" :label="item.name" v-for="item in typeList"
+                      :key="item.id"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :md="6" :offset="0">
+                <el-form-item label="房屋户型">
+                  <el-select v-model="params.layout_id" placeholder="选择户型" clearable
+                    @clear="getData(1)">
+                    <el-option :value="item.id" :label="item.name" v-for="item in layoutList"
+                      :key="item.id"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </template>
           <template v-else>
             <el-row :gutter="20">
@@ -343,6 +371,8 @@
             </el-select>
           </el-form-item> -->
           <el-form-item>
+            <!-- <el-button type="primary" @click="checkOpenid">测试
+            </el-button> -->
             <el-button type="primary" @click="getData(1)"
               v-show="!showSearch && !$store.state.isMobile">搜索
             </el-button>
@@ -595,6 +625,22 @@
                 </el-select>
               </el-form-item>
             </el-tab-pane>
+            <el-tab-pane label="房屋类型" name="move_type">
+              <el-form-item label="房屋类型" prop="type_id">
+                <el-select v-model="moveForm.type_id" filterable placeholder="请选择房屋类型">
+                  <el-option :value="item.id" :label="item.name" v-for="item in typeList"
+                    :key="item.id" />
+                </el-select>
+              </el-form-item>
+            </el-tab-pane>
+            <el-tab-pane label="房屋户型" name="move_layout">
+              <el-form-item label="房屋户型" prop="layout_id">
+                <el-select v-model="moveForm.layout_id" filterable placeholder="请选择房屋户型">
+                  <el-option :value="item.id" :label="item.name" v-for="item in layoutList"
+                    :key="item.id" />
+                </el-select>
+              </el-form-item>
+            </el-tab-pane>
           </el-tabs>
         </el-form>
       </div>
@@ -674,6 +720,9 @@ const {
     channel_id: null,
     source_id: null,
     status_id: null,
+    size: null,
+    layout_id: null,
+    type_id: null,
     reason_id: null,
     arrange_time: '',
     arrange_time_start: '',
@@ -943,6 +992,8 @@ const moveForm = reactive({
   channel_id: '',
   source_id: '',
   receive_company: '',
+  layout_id: '',
+  type_id: '',
 })
 const handMove = () => {
   if (multiSelectionIds.value.length == 0) {
@@ -958,11 +1009,15 @@ const moveDialogClose = () => {
   moveForm.channel_id = ''
   moveForm.source_id = ''
   moveForm.receive_company = ''
+  moveForm.layout_id = ''
+  moveForm.type_id = ''
 }
 const moveTabChange = () => {
   moveForm.channel_id = ''
   moveForm.source_id = ''
   moveForm.receive_company = ''
+  moveForm.layout_id = ''
+  moveForm.type_id = ''
 }
 const sources = computed(() => {
   moveForm.source_id = ''
@@ -1104,6 +1159,29 @@ const visit = [
     name: '已回访',
   },
 ]
+// 回访
+const sizeList = [
+  {
+    key: '80以下',
+    value: '1-79',
+  },
+  {
+    key: '80-120',
+    value: '80-120',
+  },
+  {
+    key: '121-180',
+    value: '121-180',
+  },
+  {
+    key: '181-300',
+    value: '181-300',
+  },
+  {
+    key: '300以上',
+    value: '301-10000',
+  },
+]
 
 const channelList = ref([])
 const channel = ref([])
@@ -1114,6 +1192,8 @@ const statusList = ref([])
 const regionList = ref([])
 const status = ref([])
 const reasonList = ref([])
+const layoutList = ref([])
+const typeList = ref([])
 const tag = ref([])
 const branch = ref([])
 const source = computed(() => {
@@ -1174,6 +1254,13 @@ const searchMobile = (mobile) => {
 const showSearch = ref(false)
 const searchMoreRef = ref()
 
+// 测试对接人openid
+const checkOpenid = () => {
+  order.getOpenid().then((res) => {
+    console.log(res)
+  })
+}
+
 const getSelectData = () => {
   order.getSelect().then((res) => {
     if (res.code > 0) {
@@ -1188,6 +1275,8 @@ const getSelectData = () => {
       branch.value = branchList.value = res.result.branch
       status.value = res.result.status
       reasonList.value = res.result.reason
+      typeList.value = res.result.type
+      layoutList.value = res.result.layout
       tag.value = res.result.tag
       tag.value.push({ id: 100, name: '其他' })
       statusList.value = res.result.status
