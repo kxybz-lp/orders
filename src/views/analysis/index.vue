@@ -1,347 +1,359 @@
 <template>
-  <div class="app-container">
-    <el-card class="admin-card" shadow="hover" :class="params.tab === 'state' ? 'state' : ''">
-      <el-tabs v-model="params.tab" @tab-change="handleTabChange" v-permission="146">
-        <el-tab-pane :label="item.name" :name="item.key" v-for="item in tabbars" :key="item.key">
-        </el-tab-pane>
-      </el-tabs>
-      <el-form :model="params" ref="formRef" label-width="70px"
-        :class="$store.state.isMobile ? 'el-form-m' : 'el-form-p'"
-        :label-position="$store.state.isMobile ? 'top' : 'left'">
-        <el-form-item v-if="params.tab === 'channel' || params.tab === 'source'" label="时间">
-          <el-button-group v-show="!$store.state.isMobile">
-            <el-button :type="params.scope === 'allMix' ? 'primary' : ''"
-              @click="setScope('allMix')">
-              全部
-            </el-button>
-            <el-button :type="params.scope === 'todayMix' ? 'primary' : ''"
-              @click="setScope('todayMix')">
-              今日</el-button>
-            <el-button :type="params.scope === 'yestodayMix' ? 'primary' : ''"
-              @click="setScope('yestodayMix')">昨日</el-button>
-            <el-button :type="params.scope === 'last7dayMix' ? 'primary' : ''"
-              @click="setScope('last7dayMix')">近7日</el-button>
-            <el-button :type="params.scope === 'last30dayMix' ? 'primary' : ''"
-              @click="setScope('last30dayMix')">近30日</el-button>
-            <el-button :type="params.scope === 'monthMix' ? 'primary' : ''"
-              @click="setScope('monthMix')">
-              本月</el-button>
-            <el-button :type="params.scope === 'yearMix' ? 'primary' : ''"
-              @click="setScope('yearMix')">本年
-            </el-button>
-          </el-button-group>
-          <template v-if="!$store.state.isMobile">
-            <el-date-picker v-model="params.mix_time" value-format="YYYY-MM-DD" :editable="false"
-              type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"
-              @change="switchMixTime" />
-          </template>
-          <template v-else>
-            <el-date-picker style="width: 100%;margin-bottom: 10px;" v-model="params.mix_time_start"
+  <div :class="$store.state.isMobile && params.tab == 'deal' ? 'scroll-container' : ''">
+    <div class="app-container" @scroll="handleScroll">
+      <el-card class="admin-card" shadow="hover" :class="params.tab === 'state' ? 'state' : ''">
+        <el-tabs v-model="params.tab" @tab-change="handleTabChange" v-permission="146">
+          <el-tab-pane :label="item.name" :name="item.key" v-for="item in tabbars" :key="item.key">
+          </el-tab-pane>
+        </el-tabs>
+        <el-form :model="params" ref="formRef" label-width="70px"
+          :class="$store.state.isMobile ? 'el-form-m' : 'el-form-p'"
+          :label-position="$store.state.isMobile ? 'top' : 'left'">
+          <el-form-item v-if="params.tab === 'channel' || params.tab === 'source'" label="时间">
+            <el-button-group v-show="!$store.state.isMobile">
+              <el-button :type="params.scope === 'allMix' ? 'primary' : ''"
+                @click="setScope('allMix')">
+                全部
+              </el-button>
+              <el-button :type="params.scope === 'todayMix' ? 'primary' : ''"
+                @click="setScope('todayMix')">
+                今日</el-button>
+              <el-button :type="params.scope === 'yestodayMix' ? 'primary' : ''"
+                @click="setScope('yestodayMix')">昨日</el-button>
+              <el-button :type="params.scope === 'last7dayMix' ? 'primary' : ''"
+                @click="setScope('last7dayMix')">近7日</el-button>
+              <el-button :type="params.scope === 'last30dayMix' ? 'primary' : ''"
+                @click="setScope('last30dayMix')">近30日</el-button>
+              <el-button :type="params.scope === 'monthMix' ? 'primary' : ''"
+                @click="setScope('monthMix')">
+                本月</el-button>
+              <el-button :type="params.scope === 'yearMix' ? 'primary' : ''"
+                @click="setScope('yearMix')">本年
+              </el-button>
+            </el-button-group>
+            <template v-if="!$store.state.isMobile">
+              <el-date-picker v-model="params.mix_time" value-format="YYYY-MM-DD" :editable="false"
+                type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"
+                @change="switchMixTime" />
+            </template>
+            <template v-else>
+              <el-date-picker style="width: 100%;margin-bottom: 10px;"
+                v-model="params.mix_time_start" type="date" placeholder="开始日期" format="YYYY-MM-DD"
+                value-format="YYYY-MM-DD" :editable="false" @change="switchMixTime" clearable />
+              <el-date-picker style="width: 100%" v-model="params.mix_time_end" type="date"
+                placeholder="结束日期" format="YYYY-MM-DD" value-format="YYYY-MM-DD" :editable="false"
+                @change="switchMixTime" clearable />
+            </template>
+          </el-form-item>
+          <el-form-item v-if="params.tab === 'channel' || params.tab === 'source'" label="下单时间">
+            <el-button-group v-show="!$store.state.isMobile">
+              <el-button :type="params.scope === 'all' ? 'primary' : ''" @click="setScope('all')">
+                全部
+              </el-button>
+              <el-button :type="params.scope === 'today' ? 'primary' : ''"
+                @click="setScope('today')">
+                今日</el-button>
+              <el-button :type="params.scope === 'yestoday' ? 'primary' : ''"
+                @click="setScope('yestoday')">昨日</el-button>
+              <el-button :type="params.scope === 'last7day' ? 'primary' : ''"
+                @click="setScope('last7day')">近7日</el-button>
+              <el-button :type="params.scope === 'last30day' ? 'primary' : ''"
+                @click="setScope('last30day')">近30日</el-button>
+              <el-button :type="params.scope === 'month' ? 'primary' : ''"
+                @click="setScope('month')">
+                本月</el-button>
+              <el-button :type="params.scope === 'year' ? 'primary' : ''"
+                @click="setScope('year')">本年
+              </el-button>
+            </el-button-group>
+            <template v-if="!$store.state.isMobile">
+              <el-date-picker v-model="params.order_time" value-format="YYYY-MM-DD"
+                :editable="false" type="daterange" range-separator="至" start-placeholder="开始日期"
+                end-placeholder="结束日期" @change="switchTime" />
+            </template>
+            <template v-else>
+              <el-date-picker style="width: 100%;margin-bottom: 10px;"
+                v-model="params.order_time_start" type="date" placeholder="开始日期" format="YYYY-MM-DD"
+                value-format="YYYY-MM-DD" :editable="false" @change="switchTime" clearable />
+              <el-date-picker style="width: 100%" v-model="params.order_time_end" type="date"
+                placeholder="结束日期" format="YYYY-MM-DD" value-format="YYYY-MM-DD"
+                @change="switchTime" :editable="false" clearable />
+            </template>
+          </el-form-item>
+          <el-form-item v-if="params.tab === 'area'" label="派单时间">
+            <el-button-group v-show="!$store.state.isMobile">
+              <el-button :type="params.scope === 'all' ? 'primary' : ''" @click="setScope('all')">全部
+              </el-button>
+              <el-button :type="params.scope === 'today' ? 'primary' : ''"
+                @click="setScope('today')">
+                今日</el-button>
+              <el-button :type="params.scope === 'yestoday' ? 'primary' : ''"
+                @click="setScope('yestoday')">昨日</el-button>
+              <el-button :type="params.scope === 'last7day' ? 'primary' : ''"
+                @click="setScope('last7day')">近7日</el-button>
+              <el-button :type="params.scope === 'last30day' ? 'primary' : ''"
+                @click="setScope('last30day')">近30日</el-button>
+              <el-button :type="params.scope === 'month' ? 'primary' : ''"
+                @click="setScope('month')">
+                本月</el-button>
+              <el-button :type="params.scope === 'year' ? 'primary' : ''"
+                @click="setScope('year')">本年
+              </el-button>
+            </el-button-group>
+            <template v-if="!$store.state.isMobile">
+              <el-date-picker v-model="params.arrange_time" value-format="YYYY-MM-DD"
+                :editable="false" type="daterange" range-separator="至" start-placeholder="开始日期"
+                end-placeholder="结束日期" @change="switchTime" />
+            </template>
+            <template v-else>
+              <el-date-picker style="width: 100%;margin-bottom: 10px;"
+                v-model="params.arrange_time_start" type="date" placeholder="开始日期"
+                format="YYYY-MM-DD" value-format="YYYY-MM-DD" :editable="false" clearable
+                @change="switchMixTime" />
+              <el-date-picker style="width: 100%" v-model="params.arrange_time_end" type="date"
+                placeholder="结束日期" format="YYYY-MM-DD" value-format="YYYY-MM-DD" :editable="false"
+                clearable @change="switchMixTime" />
+            </template>
+          </el-form-item>
+          <el-form-item v-if="params.tab === 'deal'" label="时间">
+            <el-button-group v-show="!$store.state.isMobile">
+              <el-button :type="params.scope === 'all' ? 'primary' : ''" @click="setScope('all')">全部
+              </el-button>
+              <el-button :type="params.scope === 'today' ? 'primary' : ''"
+                @click="setScope('today')">
+                今日</el-button>
+              <el-button :type="params.scope === 'yestoday' ? 'primary' : ''"
+                @click="setScope('yestoday')">昨日</el-button>
+              <el-button :type="params.scope === 'last7day' ? 'primary' : ''"
+                @click="setScope('last7day')">近7日</el-button>
+              <el-button :type="params.scope === 'last30day' ? 'primary' : ''"
+                @click="setScope('last30day')">近30日</el-button>
+              <el-button :type="params.scope === 'month' ? 'primary' : ''"
+                @click="setScope('month')">
+                本月</el-button>
+              <el-button :type="params.scope === 'year' ? 'primary' : ''"
+                @click="setScope('year')">本年
+              </el-button>
+            </el-button-group>
+            <template v-if="!$store.state.isMobile">
+              <el-date-picker v-model="params.deal_time" value-format="YYYY-MM-DD" :editable="false"
+                type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"
+                @change="switchTime" />
+            </template>
+            <template v-else>
+              <el-date-picker style="width: 100%;margin-bottom: 10px;"
+                v-model="params.deal_time_start" type="date" placeholder="开始日期" format="YYYY-MM-DD"
+                value-format="YYYY-MM-DD" :editable="false" clearable @change="switchMixTime" />
+              <el-date-picker style="width: 100%" v-model="params.deal_time_end" type="date"
+                placeholder="结束日期" format="YYYY-MM-DD" value-format="YYYY-MM-DD" :editable="false"
+                clearable @change="switchMixTime" />
+            </template>
+          </el-form-item>
+          <el-form-item v-if="params.tab === 'state'" label="年报表">
+            <el-date-picker style="width: 100%;margin-bottom: 10px;"
+              v-model="params.year_time_start" type="year" placeholder="开始年份" format="YYYY"
+              value-format="YYYY-MM-DD" :editable="false" @change="hanldeStateYearChange" />
+            <el-date-picker style="width: 100%" v-model="params.year_time_end" type="year"
+              placeholder="结束年份" format="YYYY" value-format="YYYY" :editable="false"
+              @change="hanldeStateYearChange" />
+          </el-form-item>
+          <el-form-item v-if="params.tab === 'state'" label="月报表">
+            <el-date-picker style="width: 100%;margin-bottom: 10px;"
+              v-model="params.month_time_start" type="month" placeholder="开始月份" format="YYYY-MM"
+              value-format="YYYY-MM-DD" :editable="false" @change="hanldeStateMonthChange" />
+            <el-date-picker style="width: 100%" v-model="params.month_time_end" type="month"
+              placeholder="结束月份" format="YYYY-MM" value-format="YYYY-MM-DD" :editable="false"
+              @change="hanldeStateMonthChange" />
+          </el-form-item>
+          <el-form-item v-if="params.tab === 'state'" label="周报表">
+            <el-date-picker style="width: 100%;margin-bottom: 10px;"
+              v-model="params.week_time_start" type="week" placeholder="开始日期"
+              format="YYYY-[第] w [周]" value-format="YYYY-MM-DD" :editable="false"
+              @change="hanldeStateWeekChange" />
+            <el-date-picker style="width: 100%" v-model="params.week_time_end" type="week"
+              placeholder="结束日期" format="YYYY-[第] w [周]" value-format="YYYY-MM-DD" :editable="false"
+              @change="hanldeStateWeekChange" />
+          </el-form-item>
+          <el-form-item v-if="params.tab === 'state'" label="日报表">
+            <el-date-picker style="width: 100%;margin-bottom: 10px;" v-model="params.time_start"
               type="date" placeholder="开始日期" format="YYYY-MM-DD" value-format="YYYY-MM-DD"
-              :editable="false" @change="switchMixTime" clearable />
-            <el-date-picker style="width: 100%" v-model="params.mix_time_end" type="date"
+              :editable="false" @change="hanldeStateTimeChange" />
+            <el-date-picker style="width: 100%" v-model="params.time_end" type="date"
               placeholder="结束日期" format="YYYY-MM-DD" value-format="YYYY-MM-DD" :editable="false"
-              @change="switchMixTime" clearable />
-          </template>
-        </el-form-item>
-        <el-form-item v-if="params.tab === 'channel' || params.tab === 'source'" label="下单时间">
-          <el-button-group v-show="!$store.state.isMobile">
-            <el-button :type="params.scope === 'all' ? 'primary' : ''" @click="setScope('all')">
-              全部
-            </el-button>
-            <el-button :type="params.scope === 'today' ? 'primary' : ''" @click="setScope('today')">
-              今日</el-button>
-            <el-button :type="params.scope === 'yestoday' ? 'primary' : ''"
-              @click="setScope('yestoday')">昨日</el-button>
-            <el-button :type="params.scope === 'last7day' ? 'primary' : ''"
-              @click="setScope('last7day')">近7日</el-button>
-            <el-button :type="params.scope === 'last30day' ? 'primary' : ''"
-              @click="setScope('last30day')">近30日</el-button>
-            <el-button :type="params.scope === 'month' ? 'primary' : ''" @click="setScope('month')">
-              本月</el-button>
-            <el-button :type="params.scope === 'year' ? 'primary' : ''" @click="setScope('year')">本年
-            </el-button>
-          </el-button-group>
-          <template v-if="!$store.state.isMobile">
-            <el-date-picker v-model="params.order_time" value-format="YYYY-MM-DD" :editable="false"
-              type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"
-              @change="switchTime" />
-          </template>
-          <template v-else>
-            <el-date-picker style="width: 100%;margin-bottom: 10px;"
-              v-model="params.order_time_start" type="date" placeholder="开始日期" format="YYYY-MM-DD"
-              value-format="YYYY-MM-DD" :editable="false" @change="switchTime" clearable />
-            <el-date-picker style="width: 100%" v-model="params.order_time_end" type="date"
-              placeholder="结束日期" format="YYYY-MM-DD" value-format="YYYY-MM-DD" @change="switchTime"
-              :editable="false" clearable />
-          </template>
-        </el-form-item>
-        <el-form-item v-if="params.tab === 'area'" label="派单时间">
-          <el-button-group v-show="!$store.state.isMobile">
-            <el-button :type="params.scope === 'all' ? 'primary' : ''" @click="setScope('all')">全部
-            </el-button>
-            <el-button :type="params.scope === 'today' ? 'primary' : ''" @click="setScope('today')">
-              今日</el-button>
-            <el-button :type="params.scope === 'yestoday' ? 'primary' : ''"
-              @click="setScope('yestoday')">昨日</el-button>
-            <el-button :type="params.scope === 'last7day' ? 'primary' : ''"
-              @click="setScope('last7day')">近7日</el-button>
-            <el-button :type="params.scope === 'last30day' ? 'primary' : ''"
-              @click="setScope('last30day')">近30日</el-button>
-            <el-button :type="params.scope === 'month' ? 'primary' : ''" @click="setScope('month')">
-              本月</el-button>
-            <el-button :type="params.scope === 'year' ? 'primary' : ''" @click="setScope('year')">本年
-            </el-button>
-          </el-button-group>
-          <template v-if="!$store.state.isMobile">
-            <el-date-picker v-model="params.arrange_time" value-format="YYYY-MM-DD"
-              :editable="false" type="daterange" range-separator="至" start-placeholder="开始日期"
-              end-placeholder="结束日期" @change="switchTime" />
-          </template>
-          <template v-else>
-            <el-date-picker style="width: 100%;margin-bottom: 10px;"
-              v-model="params.arrange_time_start" type="date" placeholder="开始日期" format="YYYY-MM-DD"
-              value-format="YYYY-MM-DD" :editable="false" clearable />
-            <el-date-picker style="width: 100%" v-model="params.arrange_time_end" type="date"
-              placeholder="结束日期" format="YYYY-MM-DD" value-format="YYYY-MM-DD" :editable="false"
-              clearable />
-          </template>
-        </el-form-item>
-        <el-form-item v-if="params.tab === 'deal'" label="时间">
-          <el-button-group v-show="!$store.state.isMobile">
-            <el-button :type="params.scope === 'all' ? 'primary' : ''" @click="setScope('all')">全部
-            </el-button>
-            <el-button :type="params.scope === 'today' ? 'primary' : ''" @click="setScope('today')">
-              今日</el-button>
-            <el-button :type="params.scope === 'yestoday' ? 'primary' : ''"
-              @click="setScope('yestoday')">昨日</el-button>
-            <el-button :type="params.scope === 'last7day' ? 'primary' : ''"
-              @click="setScope('last7day')">近7日</el-button>
-            <el-button :type="params.scope === 'last30day' ? 'primary' : ''"
-              @click="setScope('last30day')">近30日</el-button>
-            <el-button :type="params.scope === 'month' ? 'primary' : ''" @click="setScope('month')">
-              本月</el-button>
-            <el-button :type="params.scope === 'year' ? 'primary' : ''" @click="setScope('year')">本年
-            </el-button>
-          </el-button-group>
-          <template v-if="!$store.state.isMobile">
-            <el-date-picker v-model="params.deal_time" value-format="YYYY-MM-DD" :editable="false"
-              type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"
-              @change="switchTime" />
-          </template>
-          <template v-else>
-            <el-date-picker style="width: 100%;margin-bottom: 10px;"
-              v-model="params.deal_time_start" type="date" placeholder="开始日期" format="YYYY-MM-DD"
-              value-format="YYYY-MM-DD" :editable="false" clearable />
-            <el-date-picker style="width: 100%" v-model="params.deal_time_end" type="date"
-              placeholder="结束日期" format="YYYY-MM-DD" value-format="YYYY-MM-DD" :editable="false"
-              clearable />
-          </template>
-        </el-form-item>
-        <el-form-item v-if="params.tab === 'state'" label="年报表">
-          <el-date-picker style="width: 100%;margin-bottom: 10px;" v-model="params.year_time_start"
-            type="year" placeholder="开始年份" format="YYYY" value-format="YYYY-MM-DD" :editable="false"
-            @change="hanldeStateYearChange" />
-          <el-date-picker style="width: 100%" v-model="params.year_time_end" type="year"
-            placeholder="结束年份" format="YYYY" value-format="YYYY" :editable="false"
-            @change="hanldeStateYearChange" />
-        </el-form-item>
-        <el-form-item v-if="params.tab === 'state'" label="月报表">
-          <el-date-picker style="width: 100%;margin-bottom: 10px;" v-model="params.month_time_start"
-            type="month" placeholder="开始月份" format="YYYY-MM" value-format="YYYY-MM-DD"
-            :editable="false" @change="hanldeStateMonthChange" />
-          <el-date-picker style="width: 100%" v-model="params.month_time_end" type="month"
-            placeholder="结束月份" format="YYYY-MM" value-format="YYYY-MM-DD" :editable="false"
-            @change="hanldeStateMonthChange" />
-        </el-form-item>
-        <el-form-item v-if="params.tab === 'state'" label="周报表">
-          <el-date-picker style="width: 100%;margin-bottom: 10px;" v-model="params.week_time_start"
-            type="week" placeholder="开始日期" format="YYYY-[第] w [周]" value-format="YYYY-MM-DD"
-            :editable="false" @change="hanldeStateWeekChange" />
-          <el-date-picker style="width: 100%" v-model="params.week_time_end" type="week"
-            placeholder="结束日期" format="YYYY-[第] w [周]" value-format="YYYY-MM-DD" :editable="false"
-            @change="hanldeStateWeekChange" />
-        </el-form-item>
-        <el-form-item v-if="params.tab === 'state'" label="日报表">
-          <el-date-picker style="width: 100%;margin-bottom: 10px;" v-model="params.time_start"
-            type="date" placeholder="开始日期" format="YYYY-MM-DD" value-format="YYYY-MM-DD"
-            :editable="false" @change="hanldeStateTimeChange" />
-          <el-date-picker style="width: 100%" v-model="params.time_end" type="date"
-            placeholder="结束日期" format="YYYY-MM-DD" value-format="YYYY-MM-DD" :editable="false"
-            @change="hanldeStateTimeChange" />
-        </el-form-item>
-        <el-form-item v-if="params.tab === 'channel' || params.tab === 'source'" label="渠道">
-          <el-select v-model="params.channel_id" placeholder="选择或搜索渠道" clearable multiple
-            :collapse-tags="$store.state.isMobile" :max-collapse-tags="3" collapse-tags-tooltip>
-            <el-option label='全选' :value='0' @click='selectAllChannel'></el-option>
-            <el-option :value="item.id" :label="item.name" v-for="item in channel" :key="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item v-if="params.tab === 'source'" label="来源">
-          <el-select v-model="params.source_id" placeholder="选择或搜索来源" clearable multiple
-            @change="sourceChange">
-            <el-option-group v-for="group in source" :key="group.label" :label="group.label">
-              <el-option :value="item.id" :label="item.name" v-for="item in group.options"
+              @change="hanldeStateTimeChange" />
+          </el-form-item>
+          <el-form-item v-if="params.tab === 'channel' || params.tab === 'source'" label="渠道">
+            <el-select v-model="params.channel_id" placeholder="选择或搜索渠道" clearable multiple
+              :collapse-tags="$store.state.isMobile" :max-collapse-tags="3" collapse-tags-tooltip>
+              <el-option label='全选' :value='0' @click='selectAllChannel'></el-option>
+              <el-option :value="item.id" :label="item.name" v-for="item in channel" :key="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-if="params.tab === 'source'" label="来源">
+            <el-select v-model="params.source_id" placeholder="选择或搜索来源" clearable multiple
+              @change="sourceChange">
+              <el-option-group v-for="group in source" :key="group.label" :label="group.label">
+                <el-option :value="item.id" :label="item.name" v-for="item in group.options"
+                  :key="item.id"></el-option>
+              </el-option-group>
+            </el-select>
+          </el-form-item>
+          <el-form-item
+            v-if="(params.tab === 'area' || params.tab === 'deal') && $store.state.adminInfo.branch_id === '1'"
+            label="所在省">
+            <el-select v-model="params.province_id" filterable multiple
+              :collapse-tags="$store.state.isMobile" :max-collapse-tags="3" collapse-tags-tooltip
+              placeholder="选择或搜索省" clearable @change="areaChange">
+              <el-option :value="item.id" :label="item.areaname" v-for="item in province"
                 :key="item.id"></el-option>
-            </el-option-group>
-          </el-select>
-        </el-form-item>
-        <el-form-item
-          v-if="(params.tab === 'area' || params.tab === 'deal') && $store.state.adminInfo.branch_id === '1'"
-          label="所在省">
-          <el-select v-model="params.province_id" filterable multiple
-            :collapse-tags="$store.state.isMobile" :max-collapse-tags="3" collapse-tags-tooltip
-            placeholder="选择或搜索省" clearable @change="areaChange">
-            <el-option :value="item.id" :label="item.areaname" v-for="item in province"
-              :key="item.id"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item
-          v-if="(params.tab === 'area' || params.tab === 'deal') && $store.state.adminInfo.branch_id === '1'"
-          label="所在市">
-          <el-select v-model="params.city_id" placeholder="选择或搜索市" filterable multiple
-            :collapse-tags="$store.state.isMobile" :max-collapse-tags="3" collapse-tags-tooltip
-            clearable @change="areaChange">
-            <el-option-group v-for="group in city" :key="group.label" :label="group.label">
-              <el-option :value="item.id" :label="item.areaname" v-for="item in group.options"
+            </el-select>
+          </el-form-item>
+          <el-form-item
+            v-if="(params.tab === 'area' || params.tab === 'deal') && $store.state.adminInfo.branch_id === '1'"
+            label="所在市">
+            <el-select v-model="params.city_id" placeholder="选择或搜索市" filterable multiple
+              :collapse-tags="$store.state.isMobile" :max-collapse-tags="3" collapse-tags-tooltip
+              clearable @change="areaChange">
+              <el-option-group v-for="group in city" :key="group.label" :label="group.label">
+                <el-option :value="item.id" :label="item.areaname" v-for="item in group.options"
+                  :key="item.id"></el-option>
+              </el-option-group>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-if="(params.tab === 'deal') && $store.state.adminInfo.branch_id === '1'"
+            label="一级区域">
+            <el-select v-model="params.region_id" filterable multiple placeholder="选择一级区域"
+              :collapse-tags="$store.state.isMobile" :max-collapse-tags="3" @change="regionChange"
+              collapse-tags-tooltip clearable>
+              <el-option label='全选' :value='0' @click='selectAllRegion'></el-option>
+              <el-option :value="item.id" :label="item.name" v-for="item in regionList"
                 :key="item.id"></el-option>
-            </el-option-group>
-          </el-select>
-        </el-form-item>
-        <el-form-item v-if="(params.tab === 'deal') && $store.state.adminInfo.branch_id === '1'"
-          label="一级区域">
-          <el-select v-model="params.region_id" filterable multiple placeholder="选择一级区域"
-            :collapse-tags="$store.state.isMobile" :max-collapse-tags="3" @change="regionChange"
-            collapse-tags-tooltip clearable>
-            <el-option label='全选' :value='0' @click='selectAllRegion'></el-option>
-            <el-option :value="item.id" :label="item.name" v-for="item in regionList"
-              :key="item.id"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item v-if="params.tab === 'deal'" label="接单公司">
-          <el-select v-model="params.receive_company" placeholder="选择或搜索公司" clearable multiple
-            collapse-tags :max-collapse-tags="3" collapse-tags-tooltip filterable
-            @change="branchChange">
-            <el-option label='全选' :value='0' @click='selectAllBranch'></el-option>
-            <el-option :value="item.id" :label="item.name" v-for="item in branch" :key="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item v-if="(params.tab === 'deal') && $store.state.adminInfo.branch_id === '1'"
-          label="公司状态">
-          <el-select v-model="params.branch_status" filterable multiple placeholder="选择公司状态"
-            :collapse-tags="$store.state.isMobile" :max-collapse-tags="3" @change="statusChange"
-            collapse-tags-tooltip clearable>
-            <!-- <el-option label='全选' :value='0' @click='selectAllRegion'></el-option> -->
-            <el-option :value="item.key" :label="item.value" v-for="item in statusList"
-              :key="item.id"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item v-if="params.tab !== 'other'">
-          <el-button @click="onReset">重置</el-button>
-          <el-button type="primary" @click="onSubmit" :loading="loading">生成报表</el-button>
-        </el-form-item>
-      </el-form>
-      <!-- 常用查询 -->
-      <el-row :gutter="20" class="search-tag" v-if="params.tab === 'other'">
-        <el-col :span="24" :offset="0">
-          <el-tag :type="tagId === tag.id ? '' : 'info'" v-for="tag in dataSearchList"
-            @click="handleSearch(tag)" :key="tag.id" closable @close="searchDelete(tag.id)">
-            {{ tag.name }}
-          </el-tag>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20"
-        v-if="dataChannelList.length > 0 || dataSourceList.length > 0 || dataAreaList.length > 0 || dataDealList.length > 0 || dataStateList.length > 0">
-        <el-col :span="24" :offset="0" style="text-align: right; margin-bottom: 15px">
-          <el-button v-permission="129"
-            v-if="params.tab == 'channel' || params.tab == 'source' || params.tab == 'area' || params.tab == 'deal'"
-            type="primary" @click="searchAdd" :loading="loading">添加到常用查询</el-button>
-          <el-button v-permission="120" type="danger" @click="handExport"
-            :loading="loading">导出</el-button>
-        </el-col>
-      </el-row>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-if="params.tab === 'deal'" label="接单公司">
+            <el-select v-model="params.receive_company" placeholder="选择或搜索公司" clearable multiple
+              collapse-tags :max-collapse-tags="3" collapse-tags-tooltip filterable
+              @change="branchChange">
+              <el-option label='全选' :value='0' @click='selectAllBranch'></el-option>
+              <el-option :value="item.id" :label="item.name" v-for="item in branch" :key="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-if="(params.tab === 'deal') && $store.state.adminInfo.branch_id === '1'"
+            label="公司状态">
+            <el-select v-model="params.branch_status" filterable multiple placeholder="选择公司状态"
+              :collapse-tags="$store.state.isMobile" :max-collapse-tags="3" @change="statusChange"
+              collapse-tags-tooltip clearable>
+              <!-- <el-option label='全选' :value='0' @click='selectAllRegion'></el-option> -->
+              <el-option :value="item.key" :label="item.value" v-for="item in statusList"
+                :key="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-if="params.tab !== 'other'">
+            <el-button @click="onReset">重置</el-button>
+            <el-button type="primary" @click="onSubmit" :loading="loading">生成报表</el-button>
+          </el-form-item>
+        </el-form>
+        <!-- 常用查询 -->
+        <el-row :gutter="20" class="search-tag" v-if="params.tab === 'other'">
+          <el-col :span="24" :offset="0">
+            <el-tag :type="tagId === tag.id ? '' : 'info'" v-for="tag in dataSearchList"
+              @click="handleSearch(tag)" :key="tag.id" closable @close="searchDelete(tag.id)">
+              {{ tag.name }}
+            </el-tag>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20"
+          v-if="dataChannelList.length > 0 || dataSourceList.length > 0 || dataAreaList.length > 0 || dataDealList.length > 0 || dataStateList.length > 0">
+          <el-col :span="24" :offset="0" style="text-align: right; margin-bottom: 15px">
+            <el-button v-permission="129"
+              v-if="params.tab == 'channel' || params.tab == 'source' || params.tab == 'area' || params.tab == 'deal'"
+              type="primary" @click="searchAdd" :loading="loading">添加到常用查询</el-button>
+            <el-button v-permission="120" type="danger" @click="handExport"
+              :loading="loading">导出</el-button>
+          </el-col>
+        </el-row>
 
-      <div class="tableData" style="padding-bottom: 15px" v-loading="loading"
-        element-loading-text="数据加载中......">
-        <!-- 渠道报表 -->
-        <el-table id="channelTable" v-if="dataChannelList.length > 0" :data="dataChannelList" border
-          stripe :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }">
-          <el-table-column prop="channel_name" label="渠道" min-width="90" />
-          <el-table-column prop="order_number" label="下单数" />
-          <el-table-column prop="arrange_number" label="派单数" />
-          <el-table-column prop="docking_number" label="签单数" />
-          <el-table-column min-width="100" label="派单率">
-            <template #default="scope">
-              {{ scope.row.arrange_per }}%
-            </template>
-          </el-table-column>
-          <el-table-column min-width="100" label="签单率">
-            <template #default="scope">
-              {{ scope.row.docking_per }}%
-            </template>
-          </el-table-column>
-          <el-table-column prop="size" label="平均签单面积" />
-        </el-table>
-        <!-- 来源报表 -->
-        <el-table id="sourceTable" v-if="dataSourceList.length > 0" :data="dataSourceList"
-          style="width: 100%" :span-method="objectSpanMethod" border
-          :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }">
-          <el-table-column :prop="item.prop" :label="item.label"
-            v-for="(item, index) in SourceTableHeader" :key="index"></el-table-column>
-        </el-table>
-        <!-- 区域报表 -->
-        <el-table id="areaTable" v-if="dataAreaList.length > 0" :data="dataAreaList"
-          style="width: 100%" :span-method="objectSpanMethod" border
-          :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }" show-summary>
-          <el-table-column :prop="item.prop" :label="item.label"
-            v-for="(item, index) in AreaTableHeader" :key="index"></el-table-column>
-        </el-table>
-        <!-- 签单报表,动态加载数据需要使用row-key -->
-        <el-table id="dealTable" v-if="dataDealList.length > 0" :data="dataDealList" border stripe
-          :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }" ref="dealTableRef"
-          row-key="id" @expand-change="handExpand">
-          <!--  width="1" -->
-          <el-table-column type="expand"
-            v-if="$store.state.adminInfo.role_id==1 || $store.state.adminInfo.role_id==19">
-            <template #default="props">
-              <!-- <div style="padding: 10px 20px;">
+        <div class="tableData" style="padding-bottom: 15px" v-loading="loading"
+          element-loading-text="数据加载中......">
+          <!-- 渠道报表 -->
+          <el-table id="channelTable" v-if="dataChannelList.length > 0" :data="dataChannelList"
+            border stripe :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }">
+            <el-table-column prop="channel_name" label="渠道" min-width="90" />
+            <el-table-column prop="order_number" label="下单数" />
+            <el-table-column prop="arrange_number" label="派单数" />
+            <el-table-column prop="docking_number" label="签单数" />
+            <el-table-column min-width="100" label="派单率">
+              <template #default="scope">
+                {{ scope.row.arrange_per }}%
+              </template>
+            </el-table-column>
+            <el-table-column min-width="100" label="签单率">
+              <template #default="scope">
+                {{ scope.row.docking_per }}%
+              </template>
+            </el-table-column>
+            <el-table-column prop="size" label="平均签单面积" />
+          </el-table>
+          <!-- 来源报表 -->
+          <el-table id="sourceTable" v-if="dataSourceList.length > 0" :data="dataSourceList"
+            style="width: 100%" :span-method="objectSpanMethod" border
+            :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }">
+            <el-table-column :prop="item.prop" :label="item.label"
+              v-for="(item, index) in SourceTableHeader" :key="index"></el-table-column>
+          </el-table>
+          <!-- 区域报表 -->
+          <el-table id="areaTable" v-if="dataAreaList.length > 0" :data="dataAreaList"
+            style="width: 100%" :span-method="objectSpanMethod" border
+            :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }" show-summary>
+            <el-table-column :prop="item.prop" :label="item.label"
+              v-for="(item, index) in AreaTableHeader" :key="index"></el-table-column>
+          </el-table>
+          <!-- 签单报表,动态加载数据需要使用row-key -->
+          <el-table id="dealTable" v-if="dataDealList.length > 0" :data="dataDealList" border stripe
+            :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }" ref="dealTableRef"
+            row-key="id" @expand-change="handExpand">
+            <!--  width="1" -->
+            <el-table-column type="expand"
+              v-if="$store.state.adminInfo.role_id==1 || $store.state.adminInfo.role_id==19">
+              <template #default="props">
+                <!-- <div style="padding: 10px 20px;">
                 <el-descriptions :column="1" title="签单详情">
                   <el-descriptions-item v-for="item in props.row.docking_detail"
                     :key="item.channel_id"
                     :label="item.channel_name">{{ item.docking_number }}</el-descriptions-item>
                 </el-descriptions>
               </div> -->
-              <div style="padding:10px 20px">
-                <el-divider>
-                  <h4>签单面积信息</h4>
-                </el-divider>
-                <el-table :data="props.row.size_detail" v-loading="props.row.showDetail" stripe
-                  border>
-                  <el-table-column label="总面积" prop="sum_size"></el-table-column>
-                  <el-table-column label="最大面积" prop="max_size"></el-table-column>
-                  <el-table-column label="最小面积" prop="min_size"></el-table-column>
-                  <el-table-column label="平均面积" prop="avg_size"></el-table-column>
-                </el-table>
-                <el-divider>
-                  <h4>渠道信息</h4>
-                </el-divider>
-                <el-table :data="props.row.docking_detail" v-loading="props.row.showDetail" stripe
-                  border row-key="id">
-                  <el-table-column label="渠道" prop="channel_name"></el-table-column>
-                  <el-table-column label="派单数" prop="arrange_number"></el-table-column>
-                  <el-table-column label="下单数" prop="docking_number"></el-table-column>
-                  <el-table-column label="签单率">
-                    <template #default="scope">
-                      {{ scope.row.docking_per }}%
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </div>
-            </template>
-          </el-table-column>
-          <!-- <el-table-column label="" width="60" align="center">
+                <div style="padding:10px 20px">
+                  <el-divider>
+                    <h4>签单面积信息</h4>
+                  </el-divider>
+                  <el-table :data="props.row.size_detail" v-loading="props.row.showDetail" stripe
+                    border>
+                    <el-table-column label="总面积" prop="sum_size"></el-table-column>
+                    <el-table-column label="最大面积" prop="max_size"></el-table-column>
+                    <el-table-column label="最小面积" prop="min_size"></el-table-column>
+                    <el-table-column label="平均面积" prop="avg_size"></el-table-column>
+                  </el-table>
+                  <el-divider>
+                    <h4>渠道信息</h4>
+                  </el-divider>
+                  <el-table :data="props.row.docking_detail" v-loading="props.row.showDetail" stripe
+                    border row-key="id">
+                    <el-table-column label="渠道" prop="channel_name"></el-table-column>
+                    <el-table-column label="派单数" prop="arrange_number"></el-table-column>
+                    <el-table-column label="签单数" prop="docking_number"></el-table-column>
+                    <el-table-column label="签单率">
+                      <template #default="scope">
+                        {{ scope.row.docking_per }}%
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </div>
+              </template>
+            </el-table-column>
+            <!-- <el-table-column label="" width="60" align="center">
             <template #default="scope">
               <el-icon v-if="!scope.row.showDetail">
                 <ArrowRight @click="handleDetails(scope.row)" />
@@ -351,29 +363,30 @@
               </el-icon>
             </template>
           </el-table-column> -->
-          <el-table-column prop="branch_name" label="公司" min-width="120" />
-          <el-table-column prop="arrange_number"
-            :sortable="$store.state.adminInfo.branch_id==1 ? true : false" label="派单数"
-            min-width="100" />
-          <el-table-column prop="docking_number"
-            :sortable="$store.state.adminInfo.branch_id==1 ? true : false" label="签单数"
-            min-width="100" />
-          <el-table-column prop="per" :sortable="$store.state.adminInfo.branch_id==1 ? true : false"
-            label="签单率" min-width="100">
-            <template #default="scope">
-              {{ scope.row.per }}%
-            </template>
-          </el-table-column>
-          <el-table-column prop="feedback_per"
-            :sortable="$store.state.adminInfo.branch_id==1 ? true : false" label="反馈率"
-            min-width="100">
-            <template #default="scope">
-              {{ scope.row.feedback_per }}%
-            </template>
-          </el-table-column>
-        </el-table>
-        <!-- 虚拟表格 -->
-        <!-- <div style="height: 400px">
+            <el-table-column prop="branch_name" label="公司" min-width="120" />
+            <el-table-column prop="arrange_number"
+              :sortable="$store.state.adminInfo.branch_id==1 ? true : false" label="派单数"
+              min-width="100" />
+            <el-table-column prop="docking_number"
+              :sortable="$store.state.adminInfo.branch_id==1 ? true : false" label="签单数"
+              min-width="100" />
+            <el-table-column prop="per"
+              :sortable="$store.state.adminInfo.branch_id==1 ? true : false" label="签单率"
+              min-width="100">
+              <template #default="scope">
+                {{ scope.row.per }}%
+              </template>
+            </el-table-column>
+            <el-table-column prop="feedback_per"
+              :sortable="$store.state.adminInfo.branch_id==1 ? true : false" label="反馈率"
+              min-width="100">
+              <template #default="scope">
+                {{ scope.row.feedback_per }}%
+              </template>
+            </el-table-column>
+          </el-table>
+          <!-- 虚拟表格 -->
+          <!-- <div style="height: 400px">
           <el-auto-resizer>
             <template #default="{ height, width }">
               <el-table-v2 v-if="dataDealList.length > 0" :columns="columns" :data="dataDealList"
@@ -382,45 +395,46 @@
             </template>
           </el-auto-resizer>
         </div> -->
-        <!-- 统计报表 -->
-        <el-table id="stateTable" v-if="dataStateList.length > 0" :data="dataStateList" border
-          stripe :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }"
-          row-key="project_name" @expand-change="handStateExpand">
-          <el-table-column type="expand">
-            <template #default="props">
-              <div style="padding:10px 20px">
-                <el-divider>
-                  <h4>渠道信息</h4>
-                </el-divider>
-                <el-table :data="props.row.docking_detail" v-loading="props.row.showDetail" stripe
-                  border row-key="id">
-                  <el-table-column label="渠道" prop="channel_name"></el-table-column>
-                  <el-table-column label="下单数" prop="order_number"></el-table-column>
-                  <el-table-column label="派单数" prop="arrange_number"></el-table-column>
-                  <el-table-column label="派单率">
-                    <template #default="scope">
-                      {{ scope.row.arrange_per }}%
-                    </template>
-                  </el-table-column>
-                  <el-table-column label="签单数" prop="docking_number"></el-table-column>
-                  <el-table-column label="签单率">
-                    <template #default="scope">
-                      {{ scope.row.docking_per }}%
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="project_name" min-width="100" label="项目" />
-          <el-table-column prop="order_number" min-width="100" label="下单数" />
-          <el-table-column prop="arrange_number" min-width="100" label="派单数" />
-          <el-table-column prop="arrange_per" min-width="100" label="派单率" />
-          <el-table-column prop="docking_number" min-width="100" label="签单数" />
-          <el-table-column prop="docking_per" min-width="100" label="签单率" />
-        </el-table>
-      </div>
-    </el-card>
+          <!-- 统计报表 -->
+          <el-table id="stateTable" v-if="dataStateList.length > 0" :data="dataStateList" border
+            stripe :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }"
+            row-key="project_name" @expand-change="handStateExpand">
+            <el-table-column type="expand">
+              <template #default="props">
+                <div style="padding:10px 20px">
+                  <el-divider>
+                    <h4>渠道信息</h4>
+                  </el-divider>
+                  <el-table :data="props.row.docking_detail" v-loading="props.row.showDetail" stripe
+                    border row-key="id">
+                    <el-table-column label="渠道" prop="channel_name"></el-table-column>
+                    <el-table-column label="下单数" prop="order_number"></el-table-column>
+                    <el-table-column label="派单数" prop="arrange_number"></el-table-column>
+                    <el-table-column label="派单率">
+                      <template #default="scope">
+                        {{ scope.row.arrange_per }}%
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="签单数" prop="docking_number"></el-table-column>
+                    <el-table-column label="签单率">
+                      <template #default="scope">
+                        {{ scope.row.docking_per }}%
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="project_name" min-width="100" label="项目" />
+            <el-table-column prop="order_number" min-width="100" label="下单数" />
+            <el-table-column prop="arrange_number" min-width="100" label="派单数" />
+            <el-table-column prop="arrange_per" min-width="100" label="派单率" />
+            <el-table-column prop="docking_number" min-width="100" label="签单数" />
+            <el-table-column prop="docking_per" min-width="100" label="签单率" />
+          </el-table>
+        </div>
+      </el-card>
+    </div>
   </div>
 </template>
 <script setup>
@@ -432,7 +446,6 @@ import search from '@/api/search'
 import * as FileSaver from 'file-saver'
 import * as XLSX from 'xlsx'
 import { useStore } from 'vuex'
-import log from '@/api/log'
 
 const store = useStore()
 
@@ -485,6 +498,12 @@ const params = reactive({
   scope: 'all',
 })
 
+const dealPage = reactive({
+  page: 1,
+  pageSize: 20,
+  countPage: 1,
+})
+
 if (store.state.adminInfo.branch_id != 1) {
   params.tab = 'deal'
 }
@@ -533,6 +552,7 @@ const regionChange = (val) => {
   params.province_id = ''
   params.city_id = ''
   params.receive_company = ''
+  dealPage.page = 1
   dataDealList.value = []
 
   if (val.length > 0 && !val.includes(0)) {
@@ -545,10 +565,12 @@ const regionChange = (val) => {
 const statusChange = (val) => {
   params.receive_company = ''
   dataDealList.value = []
+  dealPage.page = 1
 }
 const branchChange = (val) => {
   params.branch_status = ''
   dataDealList.value = []
+  dealPage.page = 1
 }
 // 一级区域全选
 const selectAllRegion = (e) => {
@@ -738,6 +760,7 @@ const handleTabChange = (val) => {
   dataStateList.value = []
   pos.value = 0
   tagId.value = 0
+  dealPage.page = 1
   spanArr.value = []
   if (val === 'other') {
     getSearch()
@@ -910,6 +933,7 @@ const switchTime = (val) => {
   dataAreaList.value = []
   dataDealList.value = []
   dataStateList.value = []
+  dealPage.page = 1
   // getBarData()
 }
 
@@ -920,11 +944,13 @@ const switchMixTime = (val) => {
     params.scope = 'allMix'
   }
   params.order_time = params.order_time_start = params.order_time_end = ''
+  dealPage.page = 1
   dataChannelList.value = []
   dataSourceList.value = []
   dataAreaList.value = []
   dataDealList.value = []
   dataStateList.value = []
+  console.log(params.deal_time_start)
   // getBarData()
 }
 
@@ -1191,6 +1217,26 @@ const handStateExpand = (row, expandedRows) => {
   }
 }
 
+const loadMore = ref(false)
+const dataDealList2 = ref([])
+
+const handleScroll = () => {
+  if (store.state.isMobile) {
+    setTimeout(() => {
+      let appContainer = document.querySelector('.app-container')
+      if (appContainer.scrollTop + appContainer.clientHeight + 10 >= appContainer.scrollHeight && !loadMore.value && dataDealList.value.length > 0 && dealPage.page < dealPage.countPage) {
+        loadMore.value = true
+        dealPage.page++
+        let start = (dealPage.page - 1) * dealPage.pageSize
+        let list = JSON.parse(JSON.stringify(dataDealList2.value))
+        list = list.splice(start, dealPage.pageSize)
+        dataDealList.value = [...dataDealList.value, ...list]
+        loadMore.value = false
+      }
+    }, 100)
+  }
+}
+
 // 获取查询数据
 const getData = (param) => {
   loading.value = true
@@ -1220,9 +1266,15 @@ const getData = (param) => {
           res.result.map((item) => (item.showDetail = false))
           if (store.state.isMobile && store.state.adminInfo.branch_id == 1) {
             dataDealList.value = res.result.filter((item) => item.arrange_number > 0 || item.docking_number > 0)
+            dataDealList2.value = JSON.parse(JSON.stringify(dataDealList.value))
+            dealPage.countPage = Math.ceil(dataDealList2.value.length / dealPage.pageSize)
+            dataDealList.value = dataDealList.value.splice(0, dealPage.pageSize)
           } else {
             dataDealList.value = res.result
           }
+          if (store.state.isMobile) {
+          }
+
           // if (store.state.adminInfo.branch_id == 1) {
           //   dataDealList.value = res.result.filter((item) => item.arrange_number > 0 || item.docking_number > 0)
           // } else {
@@ -1241,6 +1293,7 @@ const getData = (param) => {
       loading.value = false
     })
 }
+
 // 重置
 const onReset = () => {
   params.order_time = ''
@@ -1277,6 +1330,7 @@ const onReset = () => {
   dataStateList.value = []
   pos.value = 0
   spanArr.value = []
+  dealPage.page = 1
 }
 
 // 获取select数据
@@ -1435,4 +1489,28 @@ getSelectData()
 // :deep(.el-table__expand-icon) {
 //   display: none;
 // }
+.scroll-container {
+  height: 100%;
+  overflow-y: hidden;
+}
+.app-container {
+  height: 100%;
+  overflow-y: scroll;
+}
+.app-container::-webkit-scrollbar-track-piece {
+  background-color: rgba(255, 255, 255, 0.6);
+}
+.app-container::-webkit-scrollbar {
+  width: 5px !important;
+  height: 3px;
+}
+.app-container::-webkit-scrollbar-thumb {
+  background-color: #999;
+  background-clip: padding-box;
+  min-height: 28px;
+  overflow-x: hidden;
+}
+.app-container::-webkit-scrollbar-thumb:hover {
+  background-color: #000;
+}
 </style>

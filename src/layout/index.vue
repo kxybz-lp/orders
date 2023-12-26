@@ -7,7 +7,8 @@
         <el-header class="header">
           <Header></Header>
         </el-header>
-        <el-main>
+        <!-- @scroll="handleMainScroll" -->
+        <el-main ref="main">
           <tagsView></tagsView>
           <!-- <router-view :key="$route.fullPath" v-if="$route.name === 'OrderEdit'"></router-view> -->
           <router-view #default="{ Component }">
@@ -28,6 +29,16 @@ import Nav from '@/layout/nav/index.vue'
 import Navm from '@/layout/navm/index.vue'
 import Header from '@/layout/header/index.vue'
 import tagsView from '@/layout/tags/index.vue'
+// const loadMore = ref(false)
+//const handleMainScroll = () => {
+// setTimeout(() => {
+//   let elMain = document.querySelector('.el-main')
+//   if (elMain.scrollTop + elMain.clientHeight + 10 >= elMain.scrollHeight && !loadMore.value) {
+//     console.log('到底了')
+//     loadMore.value = true
+//   }
+// }, 100)
+//}
 </script>
 
 <style lang="scss" scoped>
