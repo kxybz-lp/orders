@@ -520,6 +520,8 @@
           <div class="hot-badge" style="color:#409eff;background: #ecf5ff;border: 1px solid #d9ecff"
             v-else-if="item.status_name === '退订'">{{item.status_name}}</div>
           <el-descriptions :column="1">
+            <el-descriptions-item label="订单类型"
+              v-if="$store.state.adminInfo.branch_id !== '1'">{{ item.type }}</el-descriptions-item>
             <el-descriptions-item label="客户名称">{{ item.name }}</el-descriptions-item>
             <el-descriptions-item label="客户电话"><span
                 v-mobile="item.mobile">{{ item.mobile }}</span><el-tag style="margin-left:5px;"
@@ -758,6 +760,10 @@ const {
       o.end_time = parseTime(parseInt(o.end_time), '{y}-{m}-{d} {h}:{i}')
       o.order_money = o.order_money == 0 ? '' : o.order_money
       o.contract_money = o.contract_money == 0 ? '' : o.contract_money
+      // o.type = '投放'
+      // if (o.channel_id == 172 || o.channel_id == 117 || o.channel_id == 167 || o.channel_id == 108 || o.channel_id == 152 || o.channel_id == 134 || o.channel_id == 119) {
+      //   o.type = '电商'
+      // }
       return o
     })
   },
@@ -855,6 +861,7 @@ onMounted(() => {
     if (store.state.adminInfo.branch_id == 1) {
       columns.value = [
         { id: 1, prop: 'id', label: 'ID', type: 'selection', sortable: false, minWidth: 55, show: true },
+        // { id: 41, prop: 'type', label: '类型', sortable: false, minWidth: 100, isDrag: 'drag', show: true },
         { id: 2, prop: 'channel_name', label: '渠道', sortable: false, minWidth: 100, isDrag: 'drag', show: true },
         { id: 3, prop: 'order_time', label: '下单日期', sortable: true, minWidth: 120, isDrag: 'drag', show: true },
         { id: 4, prop: 'order_time_hi', label: '下单时间', sortable: false, minWidth: 100, isDrag: 'drag', show: true },
@@ -898,6 +905,7 @@ onMounted(() => {
     } else {
       columns.value = [
         { id: 1, prop: 'id', label: 'ID', type: 'selection', sortable: false, minWidth: 55, show: true },
+        { id: 2, prop: 'type', label: '类型', sortable: false, minWidth: 100, isDrag: 'drag', show: true },
         { id: 3, prop: 'order_time', label: '下单日期', sortable: true, minWidth: 120, isDrag: 'drag', show: true },
         { id: 4, prop: 'order_time_hi', label: '下单时间', sortable: false, minWidth: 100, isDrag: 'drag', show: true },
         { id: 6, prop: 'name', label: '姓名', sortable: false, minWidth: 110, isDrag: 'drag', show: true },

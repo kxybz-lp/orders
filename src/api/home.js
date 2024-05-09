@@ -25,6 +25,10 @@ const home = {
   getNote() {
     return post('/order/index/note')
   },
+  // 未跟进订单公司
+  getFollowData() {
+    return post('/order/index/follow_data')
+  },
 }
 
 export default home

@@ -174,6 +174,24 @@
         </span>
       </template>
     </el-dialog>
+    <!-- 订单未跟进公司展示 -->
+    <el-dialog v-model="dialogFollowVisible" title="订单未跟进公司"
+      :width="$store.state.isMobile? '90%' : '40%'" class="follow">
+      <el-scrollbar class="follow-main">
+        <el-table :data="followData" style="width: 100%">
+          <el-table-column prop="branch_name" label="公司名称" />
+          <el-table-column prop="total" label="未跟进订单数" />
+        </el-table>
+      </el-scrollbar>
+      <template #footer>
+        <div class="notice">
+          <span>注：</span>列表中显示2021.1.1至{{threeDay}}从未反馈订单跟进情况的数据，请各分公司如实并及时反馈订单跟进情况，以免影响集团广告投放！！
+        </div>
+        <!-- <span class="dialog-footer">
+              <el-button type="primary" @click="dialogFollowVisible = false"> 确认 </el-button>
+            </span> -->
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -194,6 +212,7 @@ const tooltip_name = ref('订单数')
 const store = ref(null)
 const chatBar = ref(null)
 const chatPie = ref(null)
+const threeDay = ref(null)
 const params = reactive({
   type: 'order',
   scope: 'week',
@@ -201,6 +220,8 @@ const params = reactive({
 })
 // 当天日期
 const currentDay = moment().format('YYYY-MM-DD')
+// 3天前日期
+threeDay.value = moment().add(-3, 'd').format('YYYY-MM-DD')
 // 6天前日期,近7日
 const weekDay = moment().add(-6, 'd').format('YYYY-MM-DD')
 // 29天前日期,近3日
@@ -223,6 +244,12 @@ home.getPanels().then((res) => {
 // 公告数据
 home.getNotice().then((res) => {
   notice.value = res.result
+})
+
+// 未跟进订单公司数据
+const followData = ref([])
+home.getFollowData().then((res) => {
+  followData.value = res.result
 })
 
 const setType = (val) => {
@@ -403,6 +430,8 @@ const readNotice = (item) => {
   noticeDetail.value = item
   dialogVisible.value = true
 }
+// 未跟进订单公司展示
+const dialogFollowVisible = ref(true)
 </script>
 
 <style lang="scss" scoped>
@@ -580,5 +609,22 @@ const readNotice = (item) => {
   .time {
     color: var(--color);
   }
+}
+.follow-main {
+  height: 300px;
+  overflow: hidden;
+}
+:deep(.follow .el-dialog__footer) {
+  text-align: left !important;
+}
+.follow .notice {
+  font-size: 14px;
+  color: #999;
+}
+.follow .notice span {
+  color: #f56c6c;
+}
+:deep(.follow-main .el-table .el-table__cell) {
+  text-align: center !important;
 }
 </style>

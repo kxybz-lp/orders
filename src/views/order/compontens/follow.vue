@@ -31,6 +31,9 @@
         <el-form-item label="房屋面积">
           <el-input v-model="form.size" />
         </el-form-item>
+        <el-form-item label="跟单人" v-if="form.receive_company == 215">
+          <el-input v-model="form.receive_man" placeholder="跟单人" />
+        </el-form-item>
         <el-form-item label="设计师">
           <el-input v-model="form.designer" placeholder="跟进设计师" />
         </el-form-item>
@@ -123,7 +126,6 @@ import order from '@/api/order'
 import { ref, reactive, onMounted } from 'vue'
 import { useStore } from 'vuex'
 const store = useStore()
-
 // 订单跟进
 const form = reactive({
   name: '',
@@ -133,6 +135,8 @@ const form = reactive({
   address: '',
   size: '',
   designer: '',
+  receive_man: '',
+  receive_company: '',
   follows: [{ follow_time: '', follow_note: '' }],
   status_id: 1,
   is_amount: 0,
