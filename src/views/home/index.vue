@@ -248,9 +248,9 @@ home.getNotice().then((res) => {
 
 // 未跟进订单公司数据
 const followData = ref([])
-home.getFollowData().then((res) => {
-  followData.value = res.result
-})
+// home.getFollowData().then((res) => {
+//   followData.value = res.result
+// })
 
 const setType = (val) => {
   params.type = val
@@ -431,7 +431,7 @@ const readNotice = (item) => {
   dialogVisible.value = true
 }
 // 未跟进订单公司展示
-const dialogFollowVisible = ref(true)
+const dialogFollowVisible = ref(false)
 </script>
 
 <style lang="scss" scoped>
