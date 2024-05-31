@@ -106,7 +106,7 @@
         <el-table-column prop="service_areas" show-overflow-tooltip label="服务区域" width="150" />
         <el-table-column prop="service_area" show-overflow-tooltip label="区域补充" width="150" />
         <el-table-column prop="service_sizes" show-overflow-tooltip label="服务面积" width="150" />
-        <el-table-column prop="service_budgets" show-overflow-tooltip label="装修预算" width="150" />
+        <!-- <el-table-column prop="service_budgets" show-overflow-tooltip label="装修预算" width="150" /> -->
         <el-table-column prop="service_projects" show-overflow-tooltip label="承接项目" width="150" />
         <el-table-column prop="status" sortable label="状态">
           <template #default="scope">
@@ -185,14 +185,14 @@
             <el-radio label="120㎡以上" value="120㎡以上"></el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="装修预算" prop="service_budgets">
+        <!-- <el-form-item label="装修预算" prop="service_budgets">
           <el-checkbox-group v-model="form.service_budgets">
             <el-checkbox label="8-10万" value="8-10万" />
             <el-checkbox label="10-15万" value="10-15万" />
             <el-checkbox label="15-20万" value="15-20万" />
             <el-checkbox label="20万以上" value="20万以上" />
           </el-checkbox-group>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="承接项目" prop="service_projects">
           <el-checkbox-group v-model="form.service_projects">
             <el-checkbox label="半包" value="半包" />

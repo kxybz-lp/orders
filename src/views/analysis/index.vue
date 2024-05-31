@@ -1116,11 +1116,11 @@ const handExpand = (row, expandedRows) => {
             },
           ]
           if (admin_id == 847) {
-            // 百度
-            row.docking_detail = channel.filter((item) => item.id == 4)
+            // 百度+二类电商
+            row.docking_detail = channel.filter((item) => item.id == 4 || item.id == 172 || item.id == 117 || item.id == 167 || item.id == 108 || item.id == 152 || item.id == 134 || item.id == 119)
           } else if (admin_id == 823) {
-            // 头条
-            row.docking_detail = channel.filter((item) => item.id == 3)
+            // 头条+二类电商
+            row.docking_detail = channel.filter((item) => item.id == 3 || item.id == 172 || item.id == 117 || item.id == 167 || item.id == 108 || item.id == 152 || item.id == 134 || item.id == 119)
           } else {
             row.docking_detail = channel.filter((item) => item.arrange_number > 0 || item.docking_number > 0)
           }
@@ -1422,11 +1422,9 @@ watch([() => params.province_id, () => params.city_id], (newValue, oldValue) => 
   }
   // params.receive_company = ''
   if (newValue[1][0]) {
-    console.log(1)
     branch.value = branchList.value.filter((o) => params.city_id.includes(o.city_id))
   } else if (newValue[0][0]) {
-    console.log(2)
-    console.log(params.province_id)
+    //console.log(params.province_id)
     // branch.value = branchList.value.filter((o) => o.province_id === newValue[0][0])
     branch.value = branchList.value.filter((o) => params.province_id.includes(o.province_id))
   } else {
