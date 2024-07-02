@@ -179,10 +179,10 @@
         </el-form-item>
         <el-form-item label="服务面积" prop="service_sizes">
           <el-radio-group v-model="form.service_sizes">
+            <el-radio label="50㎡以上" value="50㎡以上"></el-radio>
             <el-radio label="70㎡以上" value="70㎡以上"></el-radio>
             <el-radio label="80㎡以上" value="80㎡以上"></el-radio>
             <el-radio label="100㎡以上" value="100㎡以上"></el-radio>
-            <el-radio label="120㎡以上" value="120㎡以上"></el-radio>
           </el-radio-group>
         </el-form-item>
         <!-- <el-form-item label="装修预算" prop="service_budgets">
@@ -197,6 +197,7 @@
           <el-checkbox-group v-model="form.service_projects">
             <el-checkbox label="半包" value="半包" />
             <el-checkbox label="全包" value="全包" />
+            <el-checkbox label="局部翻新" value="局部翻新" />
             <el-checkbox label="单独软装" value="单独软装" />
           </el-checkbox-group>
         </el-form-item>

@@ -38,8 +38,8 @@
             <el-checkbox-group v-model="form.service_projects">
               <el-checkbox label="半包" value="半包" />
               <el-checkbox label="全包" value="全包" />
-              <el-checkbox label="单独软装" value="单独软装" />
               <el-checkbox label="局部翻新" value="局部翻新" />
+              <el-checkbox label="单独软装" value="单独软装" />
             </el-checkbox-group>
           </el-form-item>
         </el-form>
