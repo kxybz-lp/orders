@@ -675,6 +675,7 @@ let is__audit = null
 let is__sign = null
 let is__arrange = null
 let is_renewal = null
+let show_delete_time = ref(false)
 if (route.query.is_audit) {
   is__audit = [parseInt(route.query.is_audit)]
 }
@@ -758,6 +759,7 @@ const {
       o.signing_time = parseTime(parseInt(o.signing_time), '{y}-{m}-{d} {h}:{i}')
       o.start_time = parseTime(parseInt(o.start_time), '{y}-{m}-{d} {h}:{i}')
       o.end_time = parseTime(parseInt(o.end_time), '{y}-{m}-{d} {h}:{i}')
+      o.delete_time = parseTime(parseInt(o.delete_time), '{y}-{m}-{d} {h}:{i}')
       o.order_money = o.order_money == 0 ? '' : o.order_money
       o.contract_money = o.contract_money == 0 ? '' : o.contract_money
       // o.type = '投放'
@@ -776,6 +778,11 @@ const tabChange = () => {
   }
   if (route.query.is_sign && params.tab != 'sign') {
     params.is_sign = null
+  }
+  if (params.tab == 'recyc') {
+    show_delete_time.value = true
+  } else {
+    show_delete_time.value = false
   }
   getData(1)
 }
@@ -900,6 +907,7 @@ onMounted(() => {
         { id: 31, prop: 'is_amount', label: '是否量房', sortable: false, minWidth: 100, isDrag: 'drag', show: false },
         { id: 38, prop: 'user_name', label: '录入者', sortable: false, minWidth: 120, isDrag: 'drag', show: false },
         { id: 39, prop: 'create_time', label: '录入时间', sortable: false, minWidth: 160, isDrag: 'drag', show: false },
+        { id: 39, prop: 'delete_time', label: '删除时间', sortable: false, minWidth: 160, isDrag: 'drag', show: show_delete_time },
         { id: 40, prop: 'operation', label: '操作', minWidth: 210, fixed: 'right', show: true },
       ]
     } else {
