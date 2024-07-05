@@ -65,6 +65,10 @@ const order = {
   export(params) {
     return post('/order/order/export', params)
   },
+  // 导出号码重复的数据
+  export_repeat(params) {
+    return post('/order/order/export_repeat', params)
+  },
   // 导入
   import(params) {
     return post('/order/order/import', params)
