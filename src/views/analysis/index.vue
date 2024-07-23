@@ -1090,9 +1090,9 @@ const handExport = () => {
 
 // 签单统计查看渠道详情
 const handExpand = (row, expandedRows) => {
-  let branch_id = row.id ? row.id : 0
   if (row.docking_detail.length == 0) {
     params.branch_id = row.id ? row.id : 0
+    params.branch_id = params.branch_id ? params.branch_id : params.receive_company
     row.showDetail = true
     order
       .getChannelDetail(params)
@@ -1101,12 +1101,16 @@ const handExpand = (row, expandedRows) => {
           let admin_id = store.state.adminInfo.id
           let channel = res.result.channel
           let size = res.result.size
-          let sum_size = size.reduce((a, b) => a + b)
-          let max_size = size.reduce((a, b) => (a > b ? a : b)) // Math.max(...array)
-          let min_size = size.reduce((a, b) => (a < b ? a : b))
-          let avg_size = (sum_size / size.length).toFixed(1)
-          //console.log(size)
-          //console.log(sum_size, max_size, min_size, avg_size)
+          let sum_size = 0
+          let max_size = 0
+          let min_size = 0
+          let avg_size = 0
+          if (size.length > 0) {
+            sum_size = size.reduce((a, b) => a + b)
+            max_size = size.reduce((a, b) => (a > b ? a : b)) // Math.max(...array)
+            min_size = size.reduce((a, b) => (a < b ? a : b))
+            avg_size = (sum_size / size.length).toFixed(1)
+          }
           row.size_detail = [
             {
               sum_size: sum_size,
