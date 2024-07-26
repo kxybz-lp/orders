@@ -182,9 +182,9 @@
             </el-form-item>
             <el-form-item label="交定时间" prop="deal_time">
               <el-date-picker style="width: 100%" v-model="form.deal_time" type="datetime"
-                :readonly="$store.state.adminInfo.role_id!=3" placeholder="交定时间"
-                format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" :editable="false"
-                :disabled-date="disabledDate" clearable />
+                :readonly="$store.state.adminInfo.role_id != 3 && $store.state.adminInfo.role_id != 22"
+                placeholder="交定时间" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"
+                :editable="false" :disabled-date="disabledDate" clearable />
             </el-form-item>
             <el-form-item label="定金金额" prop="order_money">
               <el-input v-model="form.order_money" type="number" placeholder="请输入定金金额" />

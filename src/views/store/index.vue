@@ -472,7 +472,7 @@ const importExcel = (e) => {
 }
 // 下载
 const download = () => {
-  location.href = '/template_branch.xlsx'
+  location.href = '/template_branch.xlsx?v=1'
 }
 </script>
 <style lang="scss" scoped>

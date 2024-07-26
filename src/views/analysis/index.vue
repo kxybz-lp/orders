@@ -508,32 +508,58 @@ if (store.state.adminInfo.branch_id != 1) {
   params.tab = 'deal'
 }
 // tabs
-const tabbars = [
-  {
-    key: 'channel',
-    name: '渠道',
-  },
-  {
-    key: 'source',
-    name: '来源',
-  },
-  {
-    key: 'area',
-    name: '区域',
-  },
-  {
-    key: 'deal',
-    name: '反馈签单',
-  },
-  {
-    key: 'state',
-    name: '报表',
-  },
-  {
-    key: 'other',
-    name: '常用查询',
-  },
-]
+let tabbars = []
+if (store.state.adminInfo.role_id == 22 || store.state.adminInfo.role_id == 23) {
+  tabbars = [
+    {
+      key: 'channel',
+      name: '渠道',
+    },
+    {
+      key: 'source',
+      name: '来源',
+    },
+    {
+      key: 'area',
+      name: '区域',
+    },
+    {
+      key: 'deal',
+      name: '反馈签单',
+    },
+    {
+      key: 'state',
+      name: '报表',
+    },
+  ]
+} else {
+  tabbars = [
+    {
+      key: 'channel',
+      name: '渠道',
+    },
+    {
+      key: 'source',
+      name: '来源',
+    },
+    {
+      key: 'area',
+      name: '区域',
+    },
+    {
+      key: 'deal',
+      name: '反馈签单',
+    },
+    {
+      key: 'state',
+      name: '报表',
+    },
+    {
+      key: 'other',
+      name: '常用查询',
+    },
+  ]
+}
 
 // 渠道全选
 const selectAllChannel = (e) => {

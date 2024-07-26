@@ -1340,6 +1340,9 @@ const resetFrom = () => {
   params.invalid_tag = null
   params.is_audit = null
   params.is_visit = null
+  params.size = null
+  params.type_id = null
+  params.layout_id = null
   getData(1)
 }
 
