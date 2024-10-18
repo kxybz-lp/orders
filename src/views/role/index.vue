@@ -54,7 +54,8 @@
       </el-form>
     </FormDialog>
     <!-- 权限配置 -->
-    <FormDrawer ref="setAuthsformDialogRef" title="授权角色" @submit="handleSetAuthsSubmit">
+    <FormDrawer ref="setAuthsformDialogRef" title="授权角色" @drawerClosed="drawerClosed"
+      @submit="handleSetAuthsSubmit">
       <el-scrollbar>
         <el-tree ref="elTreeRef" node-key="id" :check-strictly="checkStrictly"
           :check-on-click-node="true" :default-expanded-keys="defaultExpandedKeys" :data="ruleList"
@@ -137,6 +138,14 @@ const handleTreeCheck = (...e) => {
   // 获取选中与半选中的值
   const { checkedKeys, halfCheckedKeys } = e[1]
   ruleIds.value = [...checkedKeys, ...halfCheckedKeys]
+}
+
+// 关闭弹窗，清空所有选中的节点
+const drawerClosed = () => {
+  //elTreeRef.value.setCurrentKey(null)
+  //elTreeRef.value.setCheckedNodes([])
+  //console.log(elTreeRef.value.getCheckedNodes())
+  ruleIds.value = []
 }
 
 // 设置权限
