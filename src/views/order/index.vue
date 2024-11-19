@@ -237,6 +237,15 @@
                   </el-select>
                 </el-form-item>
               </el-col>
+              <el-col :md="6" :offset="0">
+                <el-form-item label="派单类型">
+                  <el-select v-model="params.arrange_type" placeholder="选择派单类型" clearable multiple
+                    collapse-tags :max-collapse-tags="3" collapse-tags-tooltip @clear="getData(1)">
+                    <el-option :value="item.id" :label="item.name" v-for="item in arrangeType"
+                      :key="item.id"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
             </el-row>
           </template>
           <template v-else>
@@ -343,6 +352,17 @@
                 </el-form-item>
               </el-col>
             </el-row>
+            <el-row :gutter="20">
+              <el-col :md="6" :offset="0">
+                <el-form-item label="派单类型">
+                  <el-select v-model="params.arrange_type" placeholder="选择派单类型" clearable multiple
+                    collapse-tags :max-collapse-tags="3" collapse-tags-tooltip @clear="getData(1)">
+                    <el-option :value="item.id" :label="item.name" v-for="item in arrangeType"
+                      :key="item.id"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </template>
           <el-row :gutter="2">
             <el-col :span="24" :offset="0">
@@ -429,6 +449,10 @@
                     <p style="cursor: pointer;font-size: 12px;color: #999;">点击查看原因</p>
                   </div>
                   <el-tag type="success" v-else-if="scope.row.is_audit === 4">审核通过</el-tag>
+                </div>
+                <div v-else-if="item.prop == 'arrange_type'">
+                  <div v-if="scope.row.arrange_type == 1">客服派单</div>
+                  <div v-else-if="scope.row.arrange_type == 2" style="color: #f00;">系统派单</div>
                 </div>
                 <div v-else-if="item.prop == 'mobile'">
                   <div style="cursor: pointer;">
@@ -522,6 +546,11 @@
           <el-descriptions :column="1">
             <el-descriptions-item label="订单类型"
               v-if="$store.state.adminInfo.branch_id !== '1'">{{ item.type }}</el-descriptions-item>
+            <el-descriptions-item label="派单类型"
+              v-if="item.arrange_type == 1">客服派单</el-descriptions-item>
+            <el-descriptions-item label="派单类型" v-if="item.arrange_type == 2">
+              <span style="color: #f00">系统派单</span>
+            </el-descriptions-item>
             <el-descriptions-item label="客户名称">{{ item.name }}</el-descriptions-item>
             <el-descriptions-item label="客户电话"><span
                 v-mobile="item.mobile">{{ item.mobile }}</span><el-tag style="margin-left:5px;"
@@ -714,6 +743,7 @@ const {
     name: '',
     mobile: '',
     region_id: '',
+    arrange_type: '',
     receive_company: null,
     order_time: '',
     order_time_start: '',
@@ -868,6 +898,7 @@ onMounted(() => {
     if (store.state.adminInfo.branch_id == 1) {
       columns.value = [
         { id: 1, prop: 'id', label: 'ID', type: 'selection', sortable: false, minWidth: 55, show: true },
+        { id: 41, prop: 'arrange_type', label: '派单类型', sortable: false, minWidth: 100, isDrag: 'drag', show: true },
         // { id: 41, prop: 'type', label: '类型', sortable: false, minWidth: 100, isDrag: 'drag', show: true },
         { id: 2, prop: 'channel_name', label: '渠道', sortable: false, minWidth: 100, isDrag: 'drag', show: true },
         { id: 3, prop: 'order_time', label: '下单日期', sortable: true, minWidth: 120, isDrag: 'drag', show: true },
@@ -913,7 +944,8 @@ onMounted(() => {
     } else {
       columns.value = [
         { id: 1, prop: 'id', label: 'ID', type: 'selection', sortable: false, minWidth: 55, show: true },
-        { id: 2, prop: 'type', label: '类型', sortable: false, minWidth: 100, isDrag: 'drag', show: true },
+        { id: 2, prop: 'type', label: '订单类型', sortable: false, minWidth: 100, isDrag: 'drag', show: true },
+        { id: 41, prop: 'arrange_type', label: '派单类型', sortable: false, minWidth: 100, isDrag: 'drag', show: true },
         { id: 3, prop: 'order_time', label: '下单日期', sortable: true, minWidth: 120, isDrag: 'drag', show: true },
         { id: 4, prop: 'order_time_hi', label: '下单时间', sortable: false, minWidth: 100, isDrag: 'drag', show: true },
         { id: 6, prop: 'name', label: '姓名', sortable: false, minWidth: 110, isDrag: 'drag', show: true },
@@ -923,6 +955,7 @@ onMounted(() => {
         { id: 10, prop: 'address', label: '详细地址', sortable: false, minWidth: 180, isDrag: 'drag', show: true },
         { id: 14, prop: 'size', label: '面积', sortable: false, minWidth: 120, isDrag: 'drag', show: true },
         { id: 15, prop: 'demand', label: '装修需求', sortable: false, minWidth: 140, isDrag: 'drag', show: true },
+        { id: 42, prop: 'other', label: '其他', sortable: false, minWidth: 140, isDrag: 'drag', show: true },
         { id: 17, prop: 'arrange_time', label: '派单时间', sortable: true, minWidth: 150, isDrag: 'drag', show: true },
         { id: 18, prop: 'branch_name', label: '接单公司', sortable: false, minWidth: 140, isDrag: 'drag', show: true },
         { id: 20, prop: 'status_name', label: '订单状态', sortable: false, minWidth: 120, isDrag: 'drag', show: true },
@@ -1216,6 +1249,16 @@ const layoutList = ref([])
 const typeList = ref([])
 const tag = ref([])
 const branch = ref([])
+const arrangeType = [
+  {
+    id: 1,
+    name: '客服派单',
+  },
+  {
+    id: 2,
+    name: '系统派单',
+  },
+]
 const source = computed(() => {
   params.source_id = ''
   if (params.channel_id) {
@@ -1319,6 +1362,7 @@ const resetFrom = () => {
   params.mobile = ''
   params.receive_company = null
   params.region_id = ''
+  params.arrange_type = ''
   params.order_time = ''
   params.order_time_start = ''
   params.order_time_end = ''

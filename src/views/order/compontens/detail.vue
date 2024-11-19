@@ -33,6 +33,10 @@
               <el-descriptions-item label="审核失败原因：" v-if="detail.is_audit == 3">
                 {{ detail.fail_reason }} </el-descriptions-item>
               <el-descriptions-item label="订单类型：">{{ detail.type }} </el-descriptions-item>
+              <el-descriptions-item label="派单类型：">
+                <span v-if="detail.arrange_type == 1">客服派单</span>
+                <span v-if="detail.arrange_type == 2" style="color: #f00;">系统派单</span>
+              </el-descriptions-item>
               <el-descriptions-item label="客户名称：">{{ detail.name }} </el-descriptions-item>
               <el-descriptions-item label="联系方式："><span
                   v-mobile="detail.mobile">{{ detail.mobile }}</span><el-tag v-if="!$store.state.isMobile
