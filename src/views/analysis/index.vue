@@ -1147,7 +1147,8 @@ const handExpand = (row, expandedRows) => {
           ]
           if (admin_id == 847) {
             // 百度+二类电商
-            row.docking_detail = channel.filter((item) => item.id == 4 || item.id == 172 || item.id == 117 || item.id == 167 || item.id == 108 || item.id == 152 || item.id == 134 || item.id == 119)
+            //row.docking_detail = channel.filter((item) => item.id == 4 || item.id == 172 || item.id == 117 || item.id == 167 || item.id == 108 || item.id == 152 || item.id == 134 || item.id == 119)
+            row.docking_detail = channel.filter((item) => item.arrange_number > 0 || item.docking_number > 0)
           } else if (admin_id == 823) {
             // 头条+二类电商
             row.docking_detail = channel.filter((item) => item.id == 3 || item.id == 172 || item.id == 117 || item.id == 167 || item.id == 108 || item.id == 152 || item.id == 134 || item.id == 119)
