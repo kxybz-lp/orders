@@ -290,7 +290,7 @@ const setScope = (val) => {
   }
   params.scope = val
   getBarData()
-  getSign()
+  // getSign()
 }
 const switchRangeTime = (val) => {
   if (val) {
@@ -299,7 +299,7 @@ const switchRangeTime = (val) => {
     params.scope = 'week'
   }
   getBarData()
-  getSign()
+  // getSign()
 }
 echarts.use([TooltipComponent, GridComponent, BarChart, CanvasRenderer, LegendComponent, PieChart, LabelLayout])
 let chartBar = null
@@ -417,7 +417,10 @@ const getPieData = () => {
 
 // 签单门店排名数据
 const getSign = () => {
-  let range_time = params.range_time
+  //let range_time = params.range_time
+  let range_time = [weekDay, currentDay]
+  console.log(range_time)
+
   home.getBranch({ range_time }).then((res) => {
     store.value = res.result
   })
