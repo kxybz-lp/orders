@@ -566,6 +566,7 @@
               {{ item.province_name }}{{ item.city_name }}{{ item.address }}
             </el-descriptions-item>
             <el-descriptions-item label="接单公司">{{ item.branch_name }}</el-descriptions-item>
+            <el-descriptions-item label="订单备注">{{ item.other }}</el-descriptions-item>
             <el-descriptions-item label="审核状态">
               <el-tag v-if="item.is_audit === 1">待跟进</el-tag>
               <el-tag type="warning" v-if="item.is_audit === 2">待审核</el-tag>
