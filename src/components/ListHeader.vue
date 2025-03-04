@@ -12,8 +12,9 @@
         @click="$emit('delete')">批量删除</el-button>
       <el-button v-if="rule.sort && !$store.state.isMobile" v-permission="rule.sort" type="success"
         size="default" @click="$emit('sort')">排序</el-button>
-      <el-button v-if="rule.export && !$store.state.isMobile" v-permission="rule.export"
-        type="danger" size="default" @click="$emit('export')">导出</el-button>
+      <el-button v-if="rule.export && !$store.state.isMobile && $store.state.adminInfo.id!=781"
+        v-permission="rule.export" type="danger" size="default"
+        @click="$emit('export')">导出</el-button>
       <UploadExcel v-if="(rule.import && !$store.state.isMobile)" v-permission="rule.import"
         :action="action" @success="$emit('import')" />
       <el-button v-if="(rule.download && !$store.state.isMobile)" v-permission="rule.download"

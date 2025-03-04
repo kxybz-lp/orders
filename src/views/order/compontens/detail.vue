@@ -39,11 +39,13 @@
               </el-descriptions-item>
               <el-descriptions-item label="客户名称：">{{ detail.name }} </el-descriptions-item>
               <el-descriptions-item label="联系方式："><span
-                  v-mobile="detail.mobile">{{ detail.mobile }}</span><el-tag v-if="!$store.state.isMobile
+                  v-mobile="detail.mobile">{{ detail.mobile }}</span><span
+                  v-if="$store.state.adminInfo.role_id==3 || $store.state.adminInfo.role_id==4 || $store.state.adminInfo.role_id==5 || $store.state.adminInfo.role_id==6"><el-tag
+                    v-if="!$store.state.isMobile
                   " style="margin-left:5px;cursor: pointer;" v-copy="detail.mobile"
-                  type="info">复制手机号</el-tag><el-tag v-else style="margin-left:5px;cursor: pointer;"
-                  type="success"
-                  @click="callphone(detail.mobile)">拨打电话</el-tag></el-descriptions-item>
+                    type="info">复制手机号</el-tag><el-tag v-else
+                    style="margin-left:5px;cursor: pointer;" type="success"
+                    @click="callphone(detail.mobile)">拨打电话</el-tag></span></el-descriptions-item>
               <el-descriptions-item label="房屋地址：">
                 {{ detail.province_name }}{{ detail.city_name }}{{ detail.address }}
               </el-descriptions-item>
@@ -129,7 +131,7 @@
               </el-descriptions-item>
               <el-descriptions-item label="回访信息：">
                 <el-descriptions style="margin-left: 115px" :column="1" border>
-                  <template v-for="item in detail.visit">
+                  <template v-for="item in detail.visit" v-bind:key="item.visit_time">
                     <el-descriptions-item label="回访时间">{{ parseTime(item.visit_time) }}
                     </el-descriptions-item>
                     <el-descriptions-item label="回访说明">{{ item.remark }}</el-descriptions-item>

@@ -250,6 +250,16 @@
                 :key="item.id"></el-option>
             </el-select>
           </el-form-item>
+          <el-form-item v-if="(params.tab === 'deal') && $store.state.adminInfo.branch_id === '1'"
+            label="渠道类型">
+            <el-select v-model="params.channel_status" filterable placeholder="选择渠道类型"
+              :collapse-tags="$store.state.isMobile" :max-collapse-tags="3"
+              @change="channelStatusChange" collapse-tags-tooltip clearable>
+              <!-- <el-option label='全选' :value='0' @click='selectAllRegion'></el-option> -->
+              <el-option :value="item.key" :label="item.value" v-for="item in channeStatuslList"
+                :key="item.id"></el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item v-if="params.tab !== 'other'">
             <el-button @click="onReset">重置</el-button>
             <el-button type="primary" @click="onSubmit" :loading="loading">生成报表</el-button>
@@ -495,6 +505,7 @@ const params = reactive({
   region_id: '',
   receive_company: '',
   branch_status: '',
+  channel_status: '',
   scope: 'all',
 })
 
@@ -590,11 +601,19 @@ const regionChange = (val) => {
 
 const statusChange = (val) => {
   params.receive_company = ''
+  // params.channel_status = ''
+  dataDealList.value = []
+  dealPage.page = 1
+}
+const channelStatusChange = (val) => {
+  params.receive_company = ''
+  params.branch_status = ''
   dataDealList.value = []
   dealPage.page = 1
 }
 const branchChange = (val) => {
   params.branch_status = ''
+  params.channel_status = ''
   dataDealList.value = []
   dealPage.page = 1
 }
@@ -613,6 +632,13 @@ const statusList = ref([
   { key: 1, value: '在营' },
   { key: 2, value: '关闭' },
   { key: 3, value: '门店' },
+])
+
+// 渠道类型
+const channeStatuslList = ref([
+  { key: 1, value: '网销' },
+  { key: 2, value: '策划' },
+  { key: 3, value: '矩阵' },
 ])
 
 // 公司全选
@@ -778,6 +804,7 @@ const handleTabChange = (val) => {
   params.region_id = ''
   params.receive_company = ''
   params.branch_status = ''
+  params.channel_status = ''
   params.scope = 'all'
   dataChannelList.value = []
   dataSourceList.value = []
@@ -1353,6 +1380,7 @@ const onReset = () => {
   params.region_id = ''
   params.receive_company = ''
   params.branch_status = ''
+  params.channel_status = ''
   params.scope = 'all'
   dataChannelList.value = []
   dataSourceList.value = []

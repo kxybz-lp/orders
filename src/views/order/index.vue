@@ -247,6 +247,17 @@
                 </el-form-item>
               </el-col>
             </el-row>
+            <el-row :gutter="20">
+              <el-col :md="6" :offset="0">
+                <el-form-item label="渠道类型">
+                  <el-select v-model="params.channel_status" placeholder="选择渠道类型" clearable
+                    collapse-tags :max-collapse-tags="3" collapse-tags-tooltip @clear="getData(1)">
+                    <el-option :value="item.id" :label="item.name" v-for="item in channeStatuslList"
+                      :key="item.id"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </template>
           <template v-else>
             <el-row :gutter="20">
@@ -459,7 +470,9 @@
                     <span :key="scope.row.id" @click.stop="searchMobile(scope.row.mobile)"
                       v-mobile="scope.row.mobile"
                       :class="scope.row.mobile_repeats > 1 ? 'red' : ''">{{ scope.row.mobile }}</span>
-                    <el-tooltip effect="light" content="复制手机号" placement="top-start">
+                    <el-tooltip effect="light" content="复制手机号"
+                      v-if="$store.state.adminInfo.role_id==3 || $store.state.adminInfo.role_id==4 || $store.state.adminInfo.role_id==5 || $store.state.adminInfo.role_id==6"
+                      placement="top-start">
                       <el-icon style="margin-left:5px;" v-copy.stop="scope.row.mobile"
                         :key="scope.row.id">
                         <CopyDocument />
@@ -498,7 +511,7 @@
                   <el-button v-if="params.tab !== 'recyc'" v-permission="83" size="small"
                     type="success" @click="handleDetail(scope.row.id)">详情 </el-button>
                   <el-button
-                    v-if="params.tab !== 'recyc' && $store.state.adminInfo.branch_id === '1'"
+                    v-if="params.tab !== 'recyc' && $store.state.adminInfo.branch_id === '1' && $store.state.adminInfo.id!= '781'"
                     v-permission="80" size="small" type="primary"
                     @click="$router.push('/order/edit/' + scope.row.id)">编辑 </el-button>
                   <el-button
@@ -506,8 +519,9 @@
                     type="primary" v-permission="80" size="small" @click="handleFollow(scope.row)"
                     :loading="scope.row.followLoading"> 编辑
                   </el-button>
-                  <el-button v-if="params.tab !== 'recyc'" v-permission="87" size="small"
-                    type="danger" @click="handleDelete(scope.row.id)"> 删除 </el-button>
+                  <el-button v-if="params.tab !== 'recyc' && $store.state.adminInfo.id!= '781'"
+                    v-permission="87" size="small" type="danger"
+                    @click="handleDelete(scope.row.id)"> 删除 </el-button>
                   <el-button v-if="params.tab == 'recyc'" v-permission="88" size="small"
                     type="success" @click="handleResave(scope.row.id)">恢复 </el-button>
                   <el-button v-if="params.tab == 'recyc'" v-permission="128" size="small"
@@ -553,8 +567,10 @@
             </el-descriptions-item>
             <el-descriptions-item label="客户名称">{{ item.name }}</el-descriptions-item>
             <el-descriptions-item label="客户电话"><span
-                v-mobile="item.mobile">{{ item.mobile }}</span><el-tag style="margin-left:5px;"
-                type="info" v-copy="item.mobile">复制手机号</el-tag></el-descriptions-item>
+                v-mobile="item.mobile">{{ item.mobile }}</span><el-tag
+                v-if="$store.state.adminInfo.role_id==3 || $store.state.adminInfo.role_id==4 || $store.state.adminInfo.role_id==5 || $store.state.adminInfo.role_id==6"
+                style="margin-left:5px;" type="info"
+                v-copy="item.mobile">复制手机号</el-tag></el-descriptions-item>
             <el-descriptions-item label="下单时间">{{ item.order_time_mobile }}</el-descriptions-item>
             <el-descriptions-item label="派单时间"
               v-if="item.arrange_time">{{ item.arrange_time }}</el-descriptions-item>
@@ -591,15 +607,17 @@
           <div class="buttons-mobile">
             <el-button v-if="params.tab !== 'recyc'" v-permission="83" size="default" type="success"
               @click="handleDetail(item.id)">详情 </el-button>
-            <el-button v-if="params.tab !== 'recyc' && $store.state.adminInfo.branch_id === '1'"
+            <el-button
+              v-if="params.tab !== 'recyc' && $store.state.adminInfo.branch_id === '1' && $store.state.adminInfo.id!= '781'"
               v-permission="80" size="default" type="primary"
               @click="$router.push('/order/edit/' + item.id)">编辑 </el-button>
             <el-button v-if="params.tab !== 'recyc' && $store.state.adminInfo.branch_id !== '1'"
               type="primary" v-permission="80" size="default" @click="handleFollow(item)"
               :loading="item.followLoading"> 编辑
             </el-button>
-            <el-button v-if="params.tab !== 'recyc'" v-permission="87" size="default" type="danger"
-              @click="handleDelete(item.id)"> 删除 </el-button>
+            <el-button v-if="params.tab !== 'recyc' && $store.state.adminInfo.id!= '781'"
+              v-permission="87" size="default" type="danger" @click="handleDelete(item.id)"> 删除
+            </el-button>
             <el-button v-if="params.tab == 'recyc'" v-permission="88" size="small" type="success"
               @click="handleResave(item.id)">恢复 </el-button>
             <el-button v-if="params.tab == 'recyc'" v-permission="128" size="small" type="danger"
@@ -745,6 +763,7 @@ const {
     mobile: '',
     region_id: '',
     arrange_type: '',
+    channel_status: '',
     receive_company: null,
     order_time: '',
     order_time_start: '',
@@ -1260,6 +1279,12 @@ const arrangeType = [
     name: '系统派单',
   },
 ]
+// 渠道类型
+const channeStatuslList = ref([
+  { id: 1, name: '网销' },
+  { id: 2, name: '策划' },
+  { id: 3, name: '矩阵' },
+])
 const source = computed(() => {
   params.source_id = ''
   if (params.channel_id) {
@@ -1364,6 +1389,7 @@ const resetFrom = () => {
   params.receive_company = null
   params.region_id = ''
   params.arrange_type = ''
+  params.channel_status = ''
   params.order_time = ''
   params.order_time_start = ''
   params.order_time_end = ''
