@@ -709,7 +709,7 @@ import detail from './compontens/detail.vue'
 import follow from './compontens/follow.vue'
 import { computed, reactive, ref, watch, onMounted } from 'vue'
 import order from '@/api/order'
-import { toast, parseTime, elLoading, closeElLoading } from '@/utils/utils'
+import { toast, showModal, parseTime, elLoading, closeElLoading } from '@/utils/utils'
 import { useInitTable } from '@/hooks/useCommon'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
@@ -1139,7 +1139,8 @@ const exportExcel = () => {
     .export(params)
     .then((res) => {
       if (res.code > 0) {
-        location.href = res.result.url
+        showModal('数据导出成功，等管理员审核后前往"导出记录"页面下载')
+        //location.href = res.result.url
       } else {
         toast(res.message || 'Error', 'error')
       }
