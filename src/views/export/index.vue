@@ -76,6 +76,7 @@
         <el-table-column prop="export_branch_name" show-overflow-tooltip label="公司" width="150" />
         <el-table-column prop="create_time" label="导出时间" width="180" />
         <el-table-column prop="export_total_num" label="导出订单数" width="150" />
+        <el-table-column prop="export_remark" label="导出原因" width="200" />
         <el-table-column prop="docking_man" show-overflow-tooltip label="公司对接人" width="150" />
         <el-table-column prop="docking_phone" show-overflow-tooltip label="公司对接人电话" width="150" />
         <el-table-column prop="respon_man" show-overflow-tooltip label="公司负责人" width="150" />

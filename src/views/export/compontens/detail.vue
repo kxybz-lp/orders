@@ -18,6 +18,7 @@
           <el-descriptions-item label="公司">{{ detail.export_branch_name }} </el-descriptions-item>
           <el-descriptions-item label="导出时间">{{ detail.create_time }} </el-descriptions-item>
           <el-descriptions-item label="导出订单数">{{ detail.export_total_num }} </el-descriptions-item>
+          <el-descriptions-item label="导出原因">{{ detail.export_remark }} </el-descriptions-item>
           <el-descriptions-item label="筛选条件">
             <el-descriptions :column="1" style="padding-left: 80px;">
               <el-descriptions-item label="下单时间："
