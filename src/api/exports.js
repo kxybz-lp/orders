@@ -24,6 +24,10 @@ const exports = {
   down(params) {
     return post(`/order/export/down`, params)
   },
+  // 导出
+  export(params) {
+    return post(`/order/export/export`, params)
+  },
   // 删除
   delete(id) {
     id = !Array.isArray(id) ? [id] : id

@@ -48,7 +48,7 @@
         </el-row>
       </el-form>
       <ListHeader ref="headerRef" action="https://api.xydec.com.cn/order/branch/import"
-        :rule="{ export: 64}" @export="exportExcel">
+        :rule="{ export: 155}" @export="exportExcel">
         <el-form class="search-form" :model="params" ref="searchRef" label-width="0px"
           size="default">
           <el-form-item label="" v-show="!showSearch && !$store.state.isMobile">
@@ -87,17 +87,17 @@
             <el-tag size="small" type="danger" v-if="scope.row.export_status == 3">审核未通过</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="examine_time" show-overflow-tooltip label="审核时间" width="180" />
-        <el-table-column prop="examine_admin_name" show-overflow-tooltip label="审核人" width="150" />
+        <!-- <el-table-column prop="examine_time" show-overflow-tooltip label="审核时间" width="180" />
+        <el-table-column prop="examine_admin_name" show-overflow-tooltip label="审核人" width="150" /> -->
         <el-table-column label="操作" fixed="right" min-width="200">
           <template #default="scope">
-            <el-button v-if="params.tab !== 'recyc'" v-permission="83" size="small" type="success"
+            <el-button v-if="params.tab !== 'recyc'" v-permission="153" size="small" type="success"
               @click="handleDetail(scope.row.id)">详情 </el-button>
-            <el-button v-permission="63"
+            <el-button v-permission="154"
               :disabled="scope.row.export_status != 1 && scope.row.export_status != 3" size="small"
               type="primary" @click="handleExamine(scope.row)">
               审核 </el-button>
-            <el-button v-permission="67" size="small" type="danger"
+            <el-button v-permission="156" size="small" type="danger"
               :disabled="!scope.row.export_allow" @click="handleDown(scope.row)"> 下载
             </el-button>
           </template>
@@ -162,10 +162,9 @@ const { loading, count, dataList, params, getData, handleCurrentChange, handleSi
   },
   onGetListSuccess: (res) => {
     dataList.value = res.result.data.map((o) => {
+      count.value = res.result.total
       o.export_allow = false
       if (o.export_num == 0 && o.export_status == 2) o.export_allow = true
-      console.log(o.export_allow)
-
       return o
     })
   },

@@ -18,7 +18,33 @@
           <el-descriptions-item label="公司">{{ detail.export_branch_name }} </el-descriptions-item>
           <el-descriptions-item label="导出时间">{{ detail.create_time }} </el-descriptions-item>
           <el-descriptions-item label="导出订单数">{{ detail.export_total_num }} </el-descriptions-item>
-          <el-descriptions-item label="筛选条件">{{ detail.export_filter.deal_time }}
+          <el-descriptions-item label="筛选条件">
+            <el-descriptions :column="1" style="padding-left: 80px;">
+              <el-descriptions-item label="下单时间："
+                v-if="detail.export_filter.order_time">{{ detail.export_filter.order_time[0] }}
+                - {{ detail.export_filter.order_time[1] }}
+              </el-descriptions-item>
+              <el-descriptions-item label="下单时间："
+                v-if="detail.export_filter.order_time_start">{{ detail.export_filter.order_time_start}}
+                - {{ detail.export_filter.order_time_end }}
+              </el-descriptions-item>
+              <el-descriptions-item label="派单时间："
+                v-if="detail.export_filter.arrange_time">{{ detail.export_filter.arrange_time[0] }}
+                - {{ detail.export_filter.arrange_time[1] }}
+              </el-descriptions-item>
+              <el-descriptions-item label="下单时间："
+                v-if="detail.export_filter.arrange_time_start">{{ detail.export_filter.arrange_time_start}}
+                - {{ detail.export_filter.arrange_time_end }}
+              </el-descriptions-item>
+              <el-descriptions-item label="签单时间："
+                v-if="detail.export_filter.deal_time">{{ detail.export_filter.deal_time[0] }}
+                - {{ detail.export_filter.deal_time[1] }}
+              </el-descriptions-item>
+              <el-descriptions-item label="下单时间："
+                v-if="detail.export_filter.deal_time_start">{{ detail.export_filter.deal_time_start}}
+                - {{ detail.export_filter.deal_time_end }}
+              </el-descriptions-item>
+            </el-descriptions>
           </el-descriptions-item>
           <el-descriptions-item label="公司对接人">{{ detail.docking_man }} </el-descriptions-item>
           <el-descriptions-item label="公司对接人电话">{{ detail.docking_phone }} </el-descriptions-item>
