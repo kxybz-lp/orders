@@ -709,12 +709,13 @@ import detail from './compontens/detail.vue'
 import follow from './compontens/follow.vue'
 import { computed, reactive, ref, watch, onMounted } from 'vue'
 import order from '@/api/order'
-import { toast, showModal, parseTime, elLoading, closeElLoading } from '@/utils/utils'
+import { toast, showModal, showPrompt, parseTime, elLoading, closeElLoading } from '@/utils/utils'
 import { useInitTable } from '@/hooks/useCommon'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import Sortable from 'sortablejs'
 import draggable from 'vuedraggable'
+const router = useRouter()
 
 const store = useStore()
 const route = useRoute()
@@ -1104,6 +1105,7 @@ const sources = computed(() => {
 })
 
 // 提交
+
 const moveSubmit = () => {
   if (moveForm.source_id && !moveForm.channel_id) {
     toast('请选择渠道', 'error')
@@ -1134,19 +1136,41 @@ const moveSubmit = () => {
 
 // 导出
 const exportExcel = () => {
-  elLoading('数据导出中...')
-  order
-    .export(params)
+  showPrompt('导出原因')
     .then((res) => {
-      if (res.code > 0) {
-        showModal('数据导出成功，等管理员审核后前往"导出记录"页面下载')
-        //location.href = res.result.url
-      } else {
-        toast(res.message || 'Error', 'error')
+      // 确认
+      if (!res.value) {
+        toast('请填写导出原因', 'error')
+        return
       }
+      params.export_remark = res.value
+      //console.log(res.value)
+      elLoading('数据导出中...')
+      order
+        .export(params)
+        .then((res) => {
+          if (res.code > 0) {
+            showModal('数据导出成功，等管理员审核后前往"导出记录"页面下载')
+              .then((res) => {
+                // 确认
+                router.push('/order/export')
+              })
+              .catch((e) => {
+                // 取消
+                //console.log(e)
+                router.push('/order/export')
+              })
+            //location.href = res.result.url
+          } else {
+            toast(res.message || 'Error', 'error')
+          }
+        })
+        .finally(() => {
+          closeElLoading()
+        })
     })
-    .finally(() => {
-      closeElLoading()
+    .catch((e) => {
+      console.log(e)
     })
 }
 

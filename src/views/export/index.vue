@@ -77,10 +77,6 @@
         <el-table-column prop="create_time" label="导出时间" width="180" />
         <el-table-column prop="export_total_num" label="导出订单数" width="150" />
         <el-table-column prop="export_remark" label="导出原因" width="200" />
-        <el-table-column prop="docking_man" show-overflow-tooltip label="公司对接人" width="150" />
-        <el-table-column prop="docking_phone" show-overflow-tooltip label="公司对接人电话" width="150" />
-        <el-table-column prop="respon_man" show-overflow-tooltip label="公司负责人" width="150" />
-        <el-table-column prop="respon_phone" show-overflow-tooltip label="公司负责人电话" width="150" />
         <el-table-column prop="status" width="160" label="审核状态">
           <template #default="scope">
             <el-tag size="small" type="warning" v-if="scope.row.export_status == 1">待审核</el-tag>
@@ -88,6 +84,10 @@
             <el-tag size="small" type="danger" v-if="scope.row.export_status == 3">审核未通过</el-tag>
           </template>
         </el-table-column>
+        <el-table-column prop="docking_man" show-overflow-tooltip label="公司对接人" width="150" />
+        <el-table-column prop="docking_phone" show-overflow-tooltip label="公司对接人电话" width="150" />
+        <el-table-column prop="respon_man" show-overflow-tooltip label="公司负责人" width="150" />
+        <el-table-column prop="respon_phone" show-overflow-tooltip label="公司负责人电话" width="150" />
         <!-- <el-table-column prop="examine_time" show-overflow-tooltip label="审核时间" width="180" />
         <el-table-column prop="examine_admin_name" show-overflow-tooltip label="审核人" width="150" /> -->
         <el-table-column label="操作" fixed="right" min-width="200">
