@@ -356,7 +356,7 @@ const { dialogTitle, formDialogRef, formRef, rules, form, editId, handleAdd, han
         })
       }
     })
-    for (const key in row) {
+    for (const key in form) {
       form[key] = row[key]
     }
   },

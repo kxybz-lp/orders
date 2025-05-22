@@ -165,7 +165,8 @@ const { loading, count, dataList, params, getData, handleCurrentChange, handleSi
     dataList.value = res.result.data.map((o) => {
       count.value = res.result.total
       o.export_allow = false
-      if (o.export_num == 0 && o.export_status == 2) o.export_allow = true
+      // if (o.export_num == 0 && o.export_status == 2) o.export_allow = true
+      if (o.export_num <= 10 && o.export_status == 2) o.export_allow = true
       return o
     })
   },

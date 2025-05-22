@@ -178,14 +178,38 @@
     <el-dialog v-model="dialogFollowVisible" title="订单未跟进公司"
       :width="$store.state.isMobile? '90%' : '40%'" class="follow">
       <el-scrollbar class="follow-main">
-        <el-table :data="followData" style="width: 100%">
+        <el-table :data="followData" style="width: 100%" :row-class-name="followDataClassName">
+          <el-table-column type="index" label="序号" width="60" />
           <el-table-column prop="branch_name" label="公司名称" />
-          <el-table-column prop="total" label="未跟进订单数" />
+          <el-table-column prop="docking_man" label="对接人" />
+          <el-table-column prop="total" label="未跟进数" />
+          <!-- <el-table-column prop="branch_name" label="公司名称">
+            <template #default="scope">
+              <span v-if="scope.row.total >= 10"
+                style="color: #f00;">{{ scope.row.branch_name }}</span>
+              <span v-else>{{ scope.row.branch_name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="docking_man" label="对接人">
+            <template #default="scope">
+              <span v-if="scope.row.total >= 10"
+                style="color: #f00;">{{ scope.row.docking_man }}</span>
+              <span v-else>{{ scope.row.docking_man }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="total" label="未跟订单">
+            <template #default="scope">
+              <span v-if="scope.row.total >= 10" style="color: #f00;">{{ scope.row.total }}</span>
+              <span v-else>{{ scope.row.total }}</span>
+            </template>
+          </el-table-column> -->
         </el-table>
       </el-scrollbar>
       <template #footer>
         <div class="notice">
-          <span>注：</span>列表中显示2021.1.1至{{threeDay}}从未反馈订单跟进情况的数据，请各分公司如实并及时反馈订单跟进情况，以免影响集团广告投放！！
+          <span>注：</span>列表中显示2025.1.1至{{threeDay}}从未反馈订单跟进情况的数据。根据集团要求，所有分公司网单对接人收到集团派单后，须<i
+            style="color: #f00;font-style:normal;">5分钟</i>内联系客户，且必须<i
+            style="color: #f00;font-style:normal;">24小时</i>内将首次跟进情况反馈到系统，请各分公司如实并及时反馈订单跟进情况，以免影响集团广告投放！
         </div>
         <!-- <span class="dialog-footer">
               <el-button type="primary" @click="dialogFollowVisible = false"> 确认 </el-button>
@@ -248,9 +272,17 @@ home.getNotice().then((res) => {
 
 // 未跟进订单公司数据
 const followData = ref([])
-// home.getFollowData().then((res) => {
-//   followData.value = res.result
-// })
+home.getFollowData().then((res) => {
+  followData.value = res.result
+})
+
+const followDataClassName = ({ row, rowIndex }) => {
+  if (row.total >= 10) {
+    return 'red'
+  } else {
+    return ''
+  }
+}
 
 const setType = (val) => {
   params.type = val
@@ -434,7 +466,7 @@ const readNotice = (item) => {
   dialogVisible.value = true
 }
 // 未跟进订单公司展示
-const dialogFollowVisible = ref(false)
+const dialogFollowVisible = ref(true)
 </script>
 
 <style lang="scss" scoped>
@@ -629,5 +661,8 @@ const dialogFollowVisible = ref(false)
 }
 :deep(.follow-main .el-table .el-table__cell) {
   text-align: center !important;
+}
+.red {
+  color: #f00;
 }
 </style>

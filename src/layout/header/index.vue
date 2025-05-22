@@ -99,8 +99,8 @@
     </el-form>
   </FormDrawer>
   <follow ref="followHeaderRef" />
-  <FormStore></FormStore>
   <!-- 公司信息编辑 -->
+  <FormStore></FormStore>
 
 </template>
 
