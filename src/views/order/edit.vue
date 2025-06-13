@@ -1,13 +1,11 @@
 <template>
   <div class="app-container" v-loading="loading" element-loading-text="数据读取中...">
     <el-card class="menu-order-add" shadow="hover">
-      <el-form class="order" :model="form" :rules="rules" ref="formRef" label-width="80px"
-        :label-position="$store.state.isMobile ? 'top' : 'right'">
+      <el-form class="order" :model="form" :rules="rules" ref="formRef" label-width="80px" :label-position="$store.state.isMobile ? 'top' : 'right'">
         <el-tabs v-model="activeTab" @tab-change="handleTabChange">
           <el-tab-pane label="订单信息" name="order">
             <el-form-item label="客户名称" prop="name">
-              <el-input v-model="form.name" placeholder="请输入客户名称" minlength="2" maxlength="20"
-                show-word-limit />
+              <el-input v-model="form.name" placeholder="请输入客户名称" minlength="2" maxlength="20" show-word-limit />
             </el-form-item>
             <el-form-item label="联系方式" prop="mobile">
               <el-input v-model="form.mobile" placeholder="请输入客户电话" />
@@ -15,9 +13,7 @@
             <el-row :gutter="2" style="width: 100%">
               <el-col :md="10" :offset="0">
                 <el-form-item label="房屋地址" prop="city_id">
-                  <el-cascader v-model="area" :options="areaList"
-                    :props="{ value: 'id', label: 'areaname', children: 'children' }"
-                    placeholder="请选择省/市" />
+                  <el-cascader v-model="area" :options="areaList" :props="{ value: 'id', label: 'areaname', children: 'children' }" placeholder="请选择省/市" />
                 </el-form-item>
               </el-col>
               <el-col :md="14" :offset="0">
@@ -27,33 +23,36 @@
               </el-col>
             </el-row>
             <el-form-item label="下单时间" prop="order_time">
-              <el-date-picker style="width: 100%" v-model="form.order_time" type="datetime"
-                placeholder="请选择下单时间" format="YYYY-MM-DD HH:mm:ss"
-                value-format="YYYY-MM-DD HH:mm:ss" :editable="false" :disabled-date="disabledDate"
-                clearable />
+              <el-date-picker
+                style="width: 100%"
+                v-model="form.order_time"
+                type="datetime"
+                placeholder="请选择下单时间"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                :editable="false"
+                :disabled-date="disabledDate"
+                clearable
+              />
             </el-form-item>
             <el-form-item label="推广渠道" prop="channel_id">
               <el-select v-model="form.channel_id" filterable placeholder="请选择或搜索渠道">
-                <el-option :disabled="item.status === 0" :value="item.id" :label="item.name"
-                  v-for="item in channel" :key="item.id" />
+                <el-option :disabled="item.status === 0" :value="item.id" :label="item.name" v-for="item in channel" :key="item.id" />
               </el-select>
             </el-form-item>
             <el-form-item label="客户来源" prop="source_id">
               <el-select v-model="form.source_id" filterable placeholder="请选择或搜索来源">
-                <el-option :disabled="item.status === 0" :value="item.id" :label="item.name"
-                  v-for="item in source" :key="item.id" />
+                <el-option :disabled="item.status === 0" :value="item.id" :label="item.name" v-for="item in source" :key="item.id" />
               </el-select>
             </el-form-item>
             <el-form-item label="房屋类型" prop="type_id">
               <el-select v-model="form.type_id" placeholder="请选择类型">
-                <el-option :disabled="item.status === 0" :value="item.id" :label="item.name"
-                  v-for="item in typeList" :key="item.id" />
+                <el-option :disabled="item.status === 0" :value="item.id" :label="item.name" v-for="item in typeList" :key="item.id" />
               </el-select>
             </el-form-item>
             <el-form-item label="房屋户型" prop="layout_id">
               <el-select v-model="form.layout_id" placeholder="请选择户型">
-                <el-option :disabled="item.status === 0" :value="item.id" :label="item.name"
-                  v-for="item in layoutList" :key="item.id" />
+                <el-option :disabled="item.status === 0" :value="item.id" :label="item.name" v-for="item in layoutList" :key="item.id" />
               </el-select>
             </el-form-item>
             <el-form-item label="房屋面积" prop="size">
@@ -67,25 +66,20 @@
               </el-radio-group>
             </el-form-item>
             <el-form-item label="装修需求" prop="demand">
-              <el-input v-model="form.demand" placeholder="请输入装修需求" minlength="2" maxlength="100"
-                show-word-limit />
+              <el-input v-model="form.demand" placeholder="请输入装修需求" minlength="2" maxlength="100" show-word-limit />
             </el-form-item>
             <el-form-item label="其他" prop="other">
-              <el-input v-model="form.other" placeholder="请输入其他" minlength="2" maxlength="100"
-                show-word-limit />
+              <el-input v-model="form.other" placeholder="请输入其他" minlength="2" maxlength="100" show-word-limit />
             </el-form-item>
             <el-form-item label="无效标签" prop="invalid_tag">
               <el-select v-model="form.invalid_tag" placeholder="请选择标签" @change="invalidTagChange">
-                <el-option :value="item.name" :label="item.name" v-for="item in tagList"
-                  :key="item.id"></el-option>
+                <el-option :value="item.name" :label="item.name" v-for="item in tagList" :key="item.id"></el-option>
               </el-select>
-              <el-input v-if="form.invalid_tag === '其他'" v-model="invalid_tags"
-                placeholder="请输入无效标签" minlength="2" maxlength="20" show-word-limit />
+              <el-input v-if="form.invalid_tag === '其他'" v-model="invalid_tags" placeholder="请输入无效标签" minlength="2" maxlength="20" show-word-limit />
             </el-form-item>
             <el-form-item label="百度标签" prop="mark_type" v-if="form.clue_id">
               <el-select v-model="form.mark_type" placeholder="请选择百度线索标签">
-                <el-option :value="item.id" :label="item.name" v-for="item in markList"
-                  :key="item.id"></el-option>
+                <el-option :value="item.id" :label="item.name" v-for="item in markList" :key="item.id"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="推广标识" prop="remark">
@@ -96,30 +90,31 @@
             </el-form-item>
             <el-form-item label="">
               <el-button type="warning" size="default" @click="changeTab('arrange')">下一步</el-button>
-              <el-button type="primary" size="default"
-                v-if="form.is_audit === 1 || form.is_audit === 4" @click="submit"
-                :loading="loading">提交
-              </el-button>
+              <el-button type="primary" size="default" v-if="form.is_audit === 1 || form.is_audit === 4" @click="submit" :loading="loading">提交 </el-button>
             </el-form-item>
           </el-tab-pane>
           <el-tab-pane label="派单信息" name="arrange">
             <el-form-item label="派单时间" prop="arrange_time">
-              <el-date-picker style="width: 100%" v-model="form.arrange_time" type="datetime"
-                placeholder="请选择派单时间" format="YYYY-MM-DD HH:mm:ss"
-                value-format="YYYY-MM-DD HH:mm:ss" :editable="false" :disabled-date="disabledDate"
-                clearable />
+              <el-date-picker
+                style="width: 100%"
+                v-model="form.arrange_time"
+                type="datetime"
+                placeholder="请选择派单时间"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                :editable="false"
+                :disabled-date="disabledDate"
+                clearable
+              />
             </el-form-item>
             <el-form-item label="派单人" prop="arrange_man">
               <el-select v-model="form.arrange_man" placeholder="请选择接派单人">
-                <el-option :value="item.id.toString()" :label="item.name" v-for="item in kefuList"
-                  :key="item.id" />
+                <el-option :value="item.id.toString()" :label="item.name" v-for="item in kefuList" :key="item.id" />
               </el-select>
             </el-form-item>
             <el-form-item label="接单公司" prop="receive_company">
-              <el-select v-model="form.receive_company" filterable placeholder="请选择或搜索接单公司"
-                @change="getDockingMan">
-                <el-option :disabled="item.status === 2 || item.status === 3" :value="item.id"
-                  :label="item.name" v-for="item in branchList" :key="item.id" />
+              <el-select v-model="form.receive_company" filterable placeholder="请选择或搜索接单公司" @change="getDockingMan">
+                <el-option :disabled="item.status === 2 || item.status === 3" :value="item.id" :label="item.name" v-for="item in branchList" :key="item.id" />
               </el-select>
             </el-form-item>
             <el-form-item label="接单人" prop="receive_man">
@@ -128,10 +123,7 @@
             <el-form-item label="">
               <el-button type="info" size="default" @click="changeTab('order')">上一步</el-button>
               <el-button type="warning" size="default" @click="changeTab('follow')">下一步</el-button>
-              <el-button type="primary" size="default"
-                v-if="form.is_audit === 1 || form.is_audit === 4" @click="submit"
-                :loading="loading">提交
-              </el-button>
+              <el-button type="primary" size="default" v-if="form.is_audit === 1 || form.is_audit === 4" @click="submit" :loading="loading">提交 </el-button>
             </el-form-item>
           </el-tab-pane>
           <el-tab-pane label="跟进信息" name="follow">
@@ -139,17 +131,22 @@
               <el-input v-model="form.designer" placeholder="请输入跟进设计师" />
             </el-form-item>
             <el-form-item label="跟进信息">
-              <el-row :gutter="2" v-for="(item, index) in form.follows" :key="item.key"
-                style="width: 100%">
+              <el-row :gutter="2" v-for="(item, index) in form.follows" :key="item.key" style="width: 100%">
                 <el-col :md="8" :offset="0">
-                  <el-date-picker style="width: 100%" v-model="item.follow_time" type="datetime"
-                    placeholder="请选择跟进时间" format="YYYY-MM-DD HH:mm:ss"
-                    value-format="YYYY-MM-DD HH:mm:ss" :editable="false"
-                    :disabled-date="disabledDate" clearable />
+                  <el-date-picker
+                    style="width: 100%"
+                    v-model="item.follow_time"
+                    type="datetime"
+                    placeholder="请选择跟进时间"
+                    format="YYYY-MM-DD HH:mm:ss"
+                    value-format="YYYY-MM-DD HH:mm:ss"
+                    :editable="false"
+                    :disabled-date="disabledDate"
+                    clearable
+                  />
                 </el-col>
                 <el-col :md="15" :offset="0">
-                  <el-input v-model="item.follow_note" placeholder="请输入跟进说明" minlength="2"
-                    maxlength="100" show-word-limit />
+                  <el-input v-model="item.follow_note" placeholder="请输入跟进说明" minlength="2" maxlength="100" show-word-limit />
                 </el-col>
                 <el-col :span="1" :offset="0">
                   <el-icon v-if="index == 0" @click="addFollow" size="24">
@@ -170,43 +167,70 @@
             </el-form-item>
             <el-form-item label="订单状态" prop="status_id">
               <el-select v-model="form.status_id" placeholder="请选择订单状态" @change="statusChange">
-                <el-option :disabled="item.status === 0" :value="item.id" :label="item.name"
-                  v-for="item in statusList" :key="item.id" />
+                <el-option :disabled="item.status === 0" :value="item.id" :label="item.name" v-for="item in statusList" :key="item.id" />
               </el-select>
             </el-form-item>
-            <el-form-item label="死单标签" prop="reason_id" v-if="form.status_id==8">
+            <el-form-item label="死单标签" prop="reason_id" v-if="form.status_id == 8">
               <el-select v-model="form.reason_id" placeholder="请选择死单标签">
-                <el-option :value="item.id" :label="item.name" v-for="item in reasonList"
-                  :key="item.id" />
+                <el-option :value="item.id" :label="item.name" v-for="item in reasonList" :key="item.id" />
               </el-select>
             </el-form-item>
             <el-form-item label="交定时间" prop="deal_time">
-              <el-date-picker style="width: 100%" v-model="form.deal_time" type="datetime"
+              <el-date-picker
+                style="width: 100%"
+                v-model="form.deal_time"
+                type="datetime"
                 :readonly="$store.state.adminInfo.role_id != 3 && $store.state.adminInfo.role_id != 22"
-                placeholder="交定时间" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"
-                :editable="false" :disabled-date="disabledDate" clearable />
+                placeholder="交定时间"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                :editable="false"
+                :disabled-date="disabledDate"
+                clearable
+              />
             </el-form-item>
             <el-form-item label="定金金额" prop="order_money">
               <el-input v-model="form.order_money" type="number" placeholder="请输入定金金额" />
             </el-form-item>
             <el-form-item label="签约时间" prop="signing_time">
-              <el-date-picker style="width: 100%" v-model="form.signing_time" type="datetime"
-                placeholder="请选择签约时间" format="YYYY-MM-DD HH:mm:ss"
-                value-format="YYYY-MM-DD HH:mm:ss" :disabled-date="disabledDate" :editable="false"
-                clearable />
+              <el-date-picker
+                style="width: 100%"
+                v-model="form.signing_time"
+                type="datetime"
+                placeholder="请选择签约时间"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                :disabled-date="disabledDate"
+                :editable="false"
+                clearable
+              />
             </el-form-item>
             <el-form-item label="合同金额" prop="contract_money">
               <el-input v-model="form.contract_money" type="number" placeholder="请输入合同金额" />
             </el-form-item>
             <el-form-item label="开工时间" prop="start_time">
-              <el-date-picker style="width: 100%" v-model="form.start_time" type="datetime"
-                placeholder="请选择开工时间" format="YYYY-MM-DD HH:mm:ss"
-                value-format="YYYY-MM-DD HH:mm:ss" :editable="false" clearable />
+              <el-date-picker
+                style="width: 100%"
+                v-model="form.start_time"
+                type="datetime"
+                placeholder="请选择开工时间"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                :editable="false"
+                clearable
+              />
             </el-form-item>
             <el-form-item label="完工时间" prop="end_time">
-              <el-date-picker style="width: 100%" v-model="form.end_time" type="datetime"
-                placeholder="请选择完工时间" format="YYYY-MM-DD HH:mm:ss"
-                value-format="YYYY-MM-DD HH:mm:ss" :editable="false" clearable />
+              <el-date-picker
+                style="width: 100%"
+                v-model="form.end_time"
+                type="datetime"
+                placeholder="请选择完工时间"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                :editable="false"
+                clearable
+              />
             </el-form-item>
             <el-form-item label="施工经理" prop="construction_manager">
               <el-input v-model="form.construction_manager" placeholder="请输入施工经理" />
@@ -217,15 +241,9 @@
             <el-form-item label="">
               <el-button type="info" size="default" @click="changeTab('arrange')">上一步</el-button>
               <el-button type="warning" size="default" @click="changeTab('visit')">下一步</el-button>
-              <el-button type="primary" size="default"
-                v-if="form.is_audit === 1 || form.is_audit === 4" @click="submit"
-                :loading="loading">提交
-              </el-button>
-              <el-button type="success" size="default"
-                v-if="form.is_audit === 2 || form.is_audit === 3" @click="sh_success"
-                :loading="loading">审核通过</el-button>
-              <el-button type="danger" v-if="form.is_audit === 2 || form.is_audit === 3"
-                size="default" @click="sh_fail" :loading="loading">审核不通过</el-button>
+              <el-button type="primary" size="default" v-if="form.is_audit === 1 || form.is_audit === 4" @click="submit" :loading="loading">提交 </el-button>
+              <el-button type="success" size="default" v-if="form.is_audit === 2 || form.is_audit === 3" @click="sh_success" :loading="loading">审核通过</el-button>
+              <el-button type="danger" v-if="form.is_audit === 2 || form.is_audit === 3" size="default" @click="sh_fail" :loading="loading">审核不通过</el-button>
             </el-form-item>
           </el-tab-pane>
           <el-tab-pane label="回访信息" name="visit">
@@ -237,16 +255,21 @@
               </el-radio-group>
             </el-form-item>
             <el-form-item label="回访信息">
-              <el-row :gutter="2" v-for="(item, index) in form.visit" :key="item.key"
-                style="width: 100%">
+              <el-row :gutter="2" v-for="(item, index) in form.visit" :key="item.key" style="width: 100%">
                 <el-col :md="8" :offset="0">
-                  <el-date-picker style="width: 100%" v-model="item.visit_time" type="datetime"
-                    placeholder="请选择回访时间" format="YYYY-MM-DD HH:mm:ss"
-                    value-format="YYYY-MM-DD HH:mm:ss" :editable="false" clearable />
+                  <el-date-picker
+                    style="width: 100%"
+                    v-model="item.visit_time"
+                    type="datetime"
+                    placeholder="请选择回访时间"
+                    format="YYYY-MM-DD HH:mm:ss"
+                    value-format="YYYY-MM-DD HH:mm:ss"
+                    :editable="false"
+                    clearable
+                  />
                 </el-col>
                 <el-col :md="15" :offset="0">
-                  <el-input v-model="item.remark" placeholder="请输入回访说明" minlength="2"
-                    maxlength="100" show-word-limit />
+                  <el-input v-model="item.remark" placeholder="请输入回访说明" minlength="2" maxlength="100" show-word-limit />
                 </el-col>
                 <el-col :span="1" :offset="0">
                   <el-icon v-if="index == 0" @click="addVisit" size="24">
@@ -260,10 +283,7 @@
             </el-form-item>
             <el-form-item label="">
               <el-button type="info" size="default" @click="changeTab('follow')">上一步</el-button>
-              <el-button type="primary" size="default"
-                v-if="form.is_audit === 1 || form.is_audit === 4" @click="submit"
-                :loading="loading">提交
-              </el-button>
+              <el-button type="primary" size="default" v-if="form.is_audit === 1 || form.is_audit === 4" @click="submit" :loading="loading">提交 </el-button>
             </el-form-item>
           </el-tab-pane>
         </el-tabs>
@@ -317,6 +337,7 @@ const form = reactive({
   receive_man: '',
   arrange_time: '',
   arrange_man: '',
+  arrange_info: '',
   start_time: '',
   end_time: '',
   is_audit: 1,
