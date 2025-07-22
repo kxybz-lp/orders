@@ -275,6 +275,7 @@ export function useInitForm(opt = {}) {
               toast('数据更新成功')
               formDialogRef.value.closeFormDialog()
               opt.getData()
+              
             } else {
               toast(res.message, 'error')
             }

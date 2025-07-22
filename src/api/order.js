@@ -8,6 +8,10 @@ const order = {
   getList(params) {
     return get('/order/order/index', params)
   },
+  // 公司签单详情
+  getStoreDetail(params) {
+    return get('/order/order/getStoreDetail', params)
+  },
   // 渠道签单详情
   getChannelDetail(params) {
     return get('/order/order/getChannelDetail', params)
