@@ -85,7 +85,7 @@ const order = {
   move(params) {
     return post('/order/order/move', params)
   },
-  // 统计
+  // 统计 analysis_test
   getAnalysis(params) {
     return post('/order/order/analysis', params)
   },

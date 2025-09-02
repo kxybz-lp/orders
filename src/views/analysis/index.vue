@@ -483,7 +483,6 @@
             :span-method="objectSpanMethod"
             border
             :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }"
-            show-summary
           >
             <el-table-column :prop="item.prop" :label="item.label" v-for="(item, index) in AreaTableHeader" :key="index"></el-table-column>
           </el-table>
@@ -553,6 +552,8 @@
             <el-table-column prop="feedback_per" :sortable="$store.state.adminInfo.branch_id == 1 ? 'feedback_per' : false" label="反馈率" min-width="100">
               <template #default="scope"> {{ scope.row.feedback_per }}% </template>
             </el-table-column>
+            <el-table-column prop="avg_response_minutes" :sortable="$store.state.adminInfo.branch_id == 1 ? 'avg_response_minutes' : false" label="首次反馈时效(分钟)" min-width="100" />
+            <el-table-column prop="avg_follow_count" :sortable="$store.state.adminInfo.branch_id == 1 ? 'avg_follow_count' : false" label="平均反馈次数" min-width="100" />
           </el-table>
           <!-- 虚拟表格 -->
           <!-- <div style="height: 400px">
