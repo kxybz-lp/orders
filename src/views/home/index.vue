@@ -23,7 +23,7 @@
           </el-skeleton>
         </el-col>
       </template>
-      <el-col :xs="12" :sm="12" :lg="6" :offset="0" v-for="(item) in panels" :key="item.title">
+      <el-col :xs="12" :sm="12" :lg="6" :offset="0" v-for="item in panels" :key="item.title">
         <el-card shadow="hover" class="border-0" @click="$router.push(item.url)">
           <div class="el-card-header">
             <span>{{ item.title }}</span>
@@ -40,16 +40,16 @@
             </div>
           </div>
           <div class="el-card-footer">
-            <el-row style="width:100%;justify-content: space-between;padding-top: 10px;">
+            <el-row style="width: 100%; justify-content: space-between; padding-top: 10px">
               <el-col :xs="24" :sm="10" :lg="10">
                 <div class="s">
-                  <span style="color:#999;">今日</span>
+                  <span style="color: #999">今日</span>
                   <i>{{ item.current }}</i>
                 </div>
               </el-col>
               <el-col :xs="24" :sm="14" :lg="14" :class="$store.state.isMobile ? 'tal' : 'tar'">
                 <div class="c">
-                  <i style="font-size:12px;color:#999;padding-left: 0;">较昨日</i>
+                  <i style="font-size: 12px; color: #999; padding-left: 0">较昨日</i>
                   <el-icon v-if="item.type === 'up'" class="fail">
                     <CaretTop />
                   </el-icon>
@@ -84,26 +84,26 @@
           <template #header>
             <div class="statistical-header">
               <div class="type">
-                <span :class="params.type == 'order' ? 'current_type' : ''"
-                  @click="setType('order')">订单数</span>
-                <span v-if="$store.state.adminInfo.branch_id==1"
-                  :class="params.type == 'arrange' ? 'current_type' : ''"
-                  @click="setType('arrange')">派单数</span>
-                <span :class="params.type == 'sign' ? 'current_type' : ''"
-                  @click="setType('sign')">签单数</span>
+                <span :class="params.type == 'order' ? 'current_type' : ''" @click="setType('order')">订单数</span>
+                <span v-if="$store.state.adminInfo.branch_id == 1" :class="params.type == 'arrange' ? 'current_type' : ''" @click="setType('arrange')">派单数</span>
+                <span :class="params.type == 'sign' ? 'current_type' : ''" @click="setType('sign')">签单数</span>
               </div>
               <div class="date" v-show="!$store.state.isMobile">
-                <span :class="params.scope == 'week' ? 'current_scope' : ''"
-                  @click="setScope('week')">近7日</span>
-                <span :class="params.scope == 'month' ? 'current_scope' : ''"
-                  @click="setScope('month')">近30日</span>
-                <span :class="params.scope == 'current_month' ? 'current_scope' : ''"
-                  @click="setScope('current_month')">本月</span>
-                <span :class="params.scope == 'year' ? 'current_scope' : ''"
-                  @click="setScope('year')">本年</span>
-                <el-date-picker v-model="params.range_time" type="daterange" range-separator="至"
-                  start-placeholder="开始日期" end-placeholder="结束日期" format="YYYY-MM-DD"
-                  value-format="YYYY-MM-DD" @change="switchRangeTime" size="default" />
+                <span :class="params.scope == 'week' ? 'current_scope' : ''" @click="setScope('week')">近7日</span>
+                <span :class="params.scope == 'month' ? 'current_scope' : ''" @click="setScope('month')">近30日</span>
+                <span :class="params.scope == 'current_month' ? 'current_scope' : ''" @click="setScope('current_month')">本月</span>
+                <span :class="params.scope == 'year' ? 'current_scope' : ''" @click="setScope('year')">本年</span>
+                <el-date-picker
+                  v-model="params.range_time"
+                  type="daterange"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  format="YYYY-MM-DD"
+                  value-format="YYYY-MM-DD"
+                  @change="switchRangeTime"
+                  size="default"
+                />
               </div>
             </div>
           </template>
@@ -152,8 +152,7 @@
             </div>
           </template>
           <div id="notice">
-            <div class="notice-item" v-for="item in notice" :key="item.id"
-              @click="readNotice(item)">
+            <div class="notice-item" v-for="item in notice" :key="item.id" @click="readNotice(item)">
               <div class="title">{{ item.title }}</div>
               <div class="time">{{ item.create_time }}</div>
             </div>
@@ -161,11 +160,11 @@
         </el-card>
       </el-col>
     </el-row>
-    <el-dialog v-model="dialogVisible" :title="noticeDetail.title"
-      :width="$store.state.isMobile? '90%' : '40%'">
+    <el-dialog v-model="dialogVisible" :title="noticeDetail.title" :width="$store.state.isMobile ? '90%' : '40%'">
       <div class="main">
         <div style="font-size: 14px; color: #333; line-height: 24px; margin: 0 0 15px">
-          {{ noticeDetail.content }}</div>
+          {{ noticeDetail.content }}
+        </div>
         <div style="font-size: 14px; color: #666">发布时间:{{ noticeDetail.create_time }}</div>
       </div>
       <template #footer>
@@ -175,8 +174,7 @@
       </template>
     </el-dialog>
     <!-- 订单未跟进公司展示 -->
-    <el-dialog v-model="dialogFollowVisible" title="订单未跟进公司"
-      :width="$store.state.isMobile? '90%' : '40%'" class="follow">
+    <el-dialog v-model="dialogFollowVisible" title="订单未跟进公司" :width="$store.state.isMobile ? '90%' : '40%'" class="follow">
       <el-scrollbar class="follow-main">
         <el-table :data="followData" style="width: 100%" :row-class-name="followDataClassName">
           <el-table-column type="index" label="序号" width="60" />
@@ -207,9 +205,8 @@
       </el-scrollbar>
       <template #footer>
         <div class="notice">
-          <span>注：</span>列表中显示2025.1.1至{{threeDay}}从未反馈订单跟进情况的数据。根据集团要求，所有分公司网单对接人收到集团派单后，须<i
-            style="color: #f00;font-style:normal;">5分钟</i>内联系客户，且必须<i
-            style="color: #f00;font-style:normal;">24小时</i>内将首次跟进情况反馈到系统，请各分公司如实并及时反馈订单跟进情况，以免影响集团广告投放！
+          <span>注：</span>列表中显示2025.1.1至{{ threeDay }}从未反馈订单跟进情况的数据。根据集团要求，所有分公司网单对接人收到集团派单后，须<i style="color: #f00; font-style: normal">5分钟</i
+          >内联系客户，且必须<i style="color: #f00; font-style: normal">24小时</i>内将首次跟进情况反馈到系统，请各分公司如实并及时反馈订单跟进情况，以免影响集团广告投放！
         </div>
         <!-- <span class="dialog-footer">
               <el-button type="primary" @click="dialogFollowVisible = false"> 确认 </el-button>
@@ -466,7 +463,7 @@ const readNotice = (item) => {
   dialogVisible.value = true
 }
 // 未跟进订单公司展示
-const dialogFollowVisible = ref(true)
+const dialogFollowVisible = ref(false)
 </script>
 
 <style lang="scss" scoped>
