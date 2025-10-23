@@ -419,7 +419,7 @@
             row-key="id"
             @expand-change="handPlatformExpand"
           >
-            <el-table-column type="expand" v-if="$store.state.adminInfo.role_id == 1 || $store.state.adminInfo.role_id == 19">
+            <el-table-column type="expand" v-if="$store.state.adminInfo.role_id == 1 || $store.state.adminInfo.role_id == 2 || $store.state.adminInfo.role_id == 19">
               <template #default="props">
                 <div style="padding: 10px 20px">
                   <el-divider>
@@ -500,7 +500,7 @@
             @sort-change="handleSortChange"
           >
             <!--  width="1" -->
-            <el-table-column type="expand" v-if="$store.state.adminInfo.role_id == 1 || $store.state.adminInfo.role_id == 19">
+            <el-table-column type="expand" v-if="$store.state.adminInfo.role_id == 1 || $store.state.adminInfo.role_id == 2 || $store.state.adminInfo.role_id == 19">
               <template #default="props">
                 <!-- <div style="padding: 10px 20px;">
                 <el-descriptions :column="1" title="签单详情">

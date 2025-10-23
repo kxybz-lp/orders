@@ -1,5 +1,5 @@
 /**
- * article模块接口列表
+ * order模块接口列表
  */
 import { get, post } from '@/utils/http'
 
