@@ -36,7 +36,7 @@
         <el-table-column prop="channel" label="渠道" min-width="100" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="create_time" label="下单时间" min-width="170"> </el-table-column>
         <el-table-column prop="source" label="来源" min-width="140" show-overflow-tooltip> </el-table-column>
-        <el-table-column prop="name" label="客户名称" min-width="80" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="name" label="客户名称" min-width="90" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="mobile" label="客户电话" min-width="110"> </el-table-column>
         <el-table-column prop="address" label="客户地址" min-width="120" show-overflow-tooltip>
           <template #default="scope"> {{ scope.row.province_name }}{{ scope.row.city_name }}{{ scope.row.building }} </template>
@@ -51,7 +51,7 @@
             <el-switch :modelValue="scope.row.status" :active-value="1" :inactive-value="0" :loading="scope.row.statusLoading" @change="handleSwitch($event, scope.row)" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="160" fixed="right">
+        <el-table-column label="操作" width="160">
           <template #default="scope">
             <el-button v-permission="172" size="small" type="primary" @click="handleEdit(scope.row)">详情 </el-button>
             <el-button v-permission="174" size="small" type="danger" @click="handleDelete(scope.row.id)"> 删除 </el-button>

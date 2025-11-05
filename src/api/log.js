@@ -12,6 +12,10 @@ const log = {
   delete(id) {
     return post(`/order/log/delete/`, { id })
   },
+  // 导出
+  export(params) {
+    return post('/order/log/export', params)
+  },
   // 批量删除
   deleteAll(ids) {
     ids = !Array.isArray(ids) ? [ids] : ids

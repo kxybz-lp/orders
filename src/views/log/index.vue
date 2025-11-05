@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-card class="log-card" shadow="hover">
-      <ListHeader :rule="{}" @delete="handleMultiDelete">
+      <ListHeader :rule="{ export: 70 }" @export="exportExcel" @delete="handleMultiDelete">
         <el-form class="search-form" :model="params" ref="searchRef" label-width="0px" size="default" v-if="!$store.state.isMobile">
           <el-form-item label="">
             <el-select v-model="params.type" placeholder="操作类型" clearable @clear="getData(1)">
@@ -68,6 +68,7 @@
 import { ref } from 'vue'
 import ListHeader from '@/components/ListHeader.vue'
 import log from '@/api/log'
+import { toast, elLoading, closeElLoading } from '@/utils/utils'
 import { useInitTable } from '@/hooks/useCommon'
 const { loading, count, dataList, params, getData, handleCurrentChange, handleDelete, handleSelectionChange, multipleTableRef, handleMultiDelete } = useInitTable({
   api: log,
@@ -127,5 +128,23 @@ const type = ref([
     name: '其他',
   },
 ])
+
+// 导出
+const exportExcel = () => {
+  elLoading('数据导出中...')
+  log
+    .export(params)
+    .then((res) => {
+      if (res.code > 0) {
+        console.log(res)
+        location.href = res.result.url
+      } else {
+        toast(res.message || 'Error', 'error')
+      }
+    })
+    .finally(() => {
+      closeElLoading()
+    })
+}
 </script>
 <style lang="scss" scoped></style>
