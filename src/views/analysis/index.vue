@@ -416,10 +416,11 @@
             stripe
             :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }"
             ref="dealTableRef"
+            show-summary
             row-key="id"
             @expand-change="handPlatformExpand"
           >
-            <el-table-column type="expand" v-if="$store.state.adminInfo.role_id == 1 || $store.state.adminInfo.role_id == 2 || $store.state.adminInfo.role_id == 19">
+            <el-table-column type="expand" min-width="30" v-if="$store.state.adminInfo.role_id == 1 || $store.state.adminInfo.role_id == 2 || $store.state.adminInfo.role_id == 19">
               <template #default="props">
                 <div style="padding: 10px 20px">
                   <el-divider>
