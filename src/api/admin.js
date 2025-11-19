@@ -28,10 +28,6 @@ const admin = {
   getSelect() {
     return post('/order/admin/getSelectData')
   },
-  // 修改密码
-  password(params) {
-    return post('/order/admin/password', params)
-  },
   // 新增
   create(params) {
     return post('/order/admin/create', params)

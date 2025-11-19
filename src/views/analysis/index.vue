@@ -417,6 +417,7 @@
             :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }"
             ref="dealTableRef"
             show-summary
+            :summary-method="getSummaries"
             row-key="id"
             @expand-change="handPlatformExpand"
           >
@@ -738,6 +739,69 @@ if (store.state.adminInfo.role_id == 22 || store.state.adminInfo.role_id == 23) 
       name: '常用查询',
     },
   ]
+}
+
+// 合计
+const getSummaries = (param) => {
+  const { columns, data } = param
+  const sums = []
+  const summaryData = {
+    order_number: 0,
+    arrange_number: 0,
+    docking_number: 0,
+    size: 0,
+  }
+
+  // 先计算数值型列的总和
+  data.forEach((item) => {
+    if (item.platform_name != '合计') {
+      summaryData.order_number += item.order_number || 0
+      summaryData.arrange_number += item.arrange_number || 0
+      summaryData.docking_number += item.docking_number || 0
+      summaryData.size += parseInt(item.size) || 0
+    }
+  })
+
+  // 计算完成率（基于汇总值计算）
+  const arrange_per = summaryData.order_number > 0 ? summaryData.arrange_number / summaryData.order_number : 0
+  // 计算阶段完成率（基于汇总值计算）
+  const docking_per = summaryData.arrange_number > 0 ? summaryData.docking_number / summaryData.arrange_number : 0
+  // 计算平均签单面积
+  const size_avg = data.length > 0 ? summaryData.size / data.length : 0
+
+  columns.forEach((column, index) => {
+    if (index === 0) {
+      sums[index] = '合计'
+      return
+    }
+
+    const property = column.property
+    switch (property) {
+      case 'order_number':
+        sums[index] = summaryData.order_number
+        break
+      case 'arrange_number':
+        sums[index] = summaryData.arrange_number
+        break
+      case 'docking_number':
+        sums[index] = summaryData.docking_number
+        break
+      case 'arrange_per':
+        sums[index] = `${(arrange_per * 100).toFixed(2)}%`
+        break
+      case 'docking_per':
+        sums[index] = `${(docking_per * 100).toFixed(2)}%`
+        break
+      case 'size':
+        sums[index] = size_avg.toFixed(1)
+        break
+      default:
+        sums[index] = '—'
+        break
+    }
+  })
+
+  return sums
 }
 
 // 渠道全选
