@@ -448,7 +448,6 @@ const getPieData = () => {
 const getSign = () => {
   //let range_time = params.range_time
   let range_time = [weekDay, currentDay]
-  console.log(range_time)
 
   home.getBranch({ range_time }).then((res) => {
     store.value = res.result

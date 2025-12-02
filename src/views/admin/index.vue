@@ -251,7 +251,7 @@ const props = {
 
 // 渠道切换
 const channelChange = (val) => {
-  console.log(val)
+  // console.log(val)
 }
 // 将字符串日期转时间戳， 2020-09-12 12:11:22
 // let time = (new Date(row.create_time)).getTime()
