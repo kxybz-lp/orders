@@ -551,6 +551,13 @@
             <el-table-column prop="per" :sortable="$store.state.adminInfo.branch_id == 1 ? 'per' : false" label="签单率" min-width="100">
               <template #default="scope"> {{ scope.row.per }}% </template>
             </el-table-column>
+            <el-table-column
+              v-if="$store.state.adminInfo.branch_id == 1"
+              prop="avg_arrange_duration"
+              :sortable="$store.state.adminInfo.branch_id == 1 ? 'avg_arrange_duration' : false"
+              label="平均派单时长(小时)"
+              min-width="100"
+            />
             <el-table-column prop="feedback_per" :sortable="$store.state.adminInfo.branch_id == 1 ? 'feedback_per' : false" label="反馈率" min-width="100">
               <template #default="scope"> {{ scope.row.feedback_per }}% </template>
             </el-table-column>
