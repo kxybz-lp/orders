@@ -80,7 +80,11 @@
           <el-input minlength="2" maxlength="20" show-word-limit v-model="form.name" :disabled="editId != 0"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input type="password" show-password v-model="form.password" :placeholder="editId == 0 ? '' : '留空则不修改密码'"></el-input>
+          <div style="width: 100%; display: flex; gap: 10px">
+            <el-input type="password" show-password v-model="form.password" :placeholder="editId == 0 ? '' : '留空则不修改密码'" style="flex: 1"></el-input>
+            <!-- 点击生成随机密码的按钮 -->
+            <el-button type="primary" @click="generatePassword">生成随机密码</el-button>
+          </div>
         </el-form-item>
         <el-form-item v-if="editId == 0" label="确认密码" prop="password_confirm">
           <el-input type="password" show-password v-model="form.password_confirm"></el-input>
@@ -275,5 +279,34 @@ admin.getSelect().then((res) => {
 
 // const instance = getCurrentInstance()
 // const $api = instance.proxy.$api
+
+// 生成随机密码,密码长度是30位，包含数字、小写字母、大写字母
+const generatePassword = () => {
+  const length = 30
+  const numbers = '0123456789'
+  const lowercase = 'abcdefghijklmnopqrstuvwxyz'
+  const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  const allChars = numbers + lowercase + uppercase
+
+  // 确保至少包含一个数字、一个小写字母和一个大写字母
+  let password = ''
+  password += numbers[Math.floor(Math.random() * numbers.length)]
+  password += lowercase[Math.floor(Math.random() * lowercase.length)]
+  password += uppercase[Math.floor(Math.random() * uppercase.length)]
+
+  // 填充剩余长度
+  for (let i = 3; i < length; i++) {
+    password += allChars[Math.floor(Math.random() * allChars.length)]
+  }
+
+  // 打乱密码顺序
+  password = password
+    .split('')
+    .sort(() => Math.random() - 0.5)
+    .join('')
+
+  form.password = password
+  form.password_confirm = password
+}
 </script>
 <style lang="scss" scoped></style>

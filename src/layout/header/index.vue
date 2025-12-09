@@ -16,9 +16,8 @@
     <BreadCrumbVue v-show="!$store.state.isMobile"></BreadCrumbVue>
   </div>
   <div class="header-right">
-    <el-dropdown style="margin-left: 25px;" :max-height="400" v-permission="148">
-      <el-badge :value="$store.state.noteList ? $store.state.noteList.length : 0" :max="99"
-        class="item" style="margin-right: 20px;">
+    <el-dropdown style="margin-left: 25px" :max-height="400" v-permission="148">
+      <el-badge :value="$store.state.noteList ? $store.state.noteList.length : 0" :max="99" class="item" style="margin-right: 20px">
         <el-icon>
           <Bell />
         </el-icon>
@@ -28,15 +27,14 @@
           <el-dropdown-item v-for="item in $store.state.noteList" :key="item.id">
             <div class="note_item">
               <div class="title">
-                <el-tag type="danger" style="color: #fb6a3a" v-if="item.is_audit === 1">待跟进订单
-                </el-tag>
+                <el-tag type="danger" style="color: #fb6a3a" v-if="item.is_audit === 1">待跟进订单 </el-tag>
                 <el-tag type="warning" v-else-if="item.is_audit === 2">待审核订单</el-tag>
                 <el-tag type="warning" v-else-if="item.is_audit === 3">审核失败订单</el-tag>
               </div>
               <div class="info" @click="handleNote(item.id)">
                 {{ item.order_time }}
                 {{ item.name }}
-                {{ item.province_name + item.city_name }} <span style="color:#f56c6c">[立即处理]</span>
+                {{ item.province_name + item.city_name }} <span style="color: #f56c6c">[立即处理]</span>
               </div>
               <div></div>
             </div>
@@ -61,7 +59,7 @@
       </template>
     </el-dropdown>
     <el-tooltip effect="dark" content="全屏" placement="bottom" v-if="!$store.state.isMobile">
-      <el-icon @click="switchFull" style="margin-right:8px;">
+      <el-icon @click="switchFull" style="margin-right: 8px">
         <copy-document v-if="full" />
         <full-screen v-else />
       </el-icon>
@@ -83,25 +81,25 @@
     </el-dropdown>
   </div>
   <FormDrawer ref="formDrawerRef" title="修改密码" :close-on-click-modal="false" @submit="onSubmit">
-    <el-form ref="formRef" :rules="rules" :model="form" label-width="80px"
-      :label-position="$store.state.isMobile ? 'top' : 'right'" style="padding:0 15px;">
+    <el-form ref="formRef" :rules="rules" :model="form" label-width="80px" :label-position="$store.state.isMobile ? 'top' : 'right'" style="padding: 0 15px">
       <el-form-item prop="oldpassword" label="旧密码">
         <el-input v-model="form.oldpassword" placeholder="请输入旧密码"></el-input>
       </el-form-item>
       <el-form-item prop="password" label="新密码">
-        <el-input type="password" v-model="form.password" placeholder="请输入密码" show-password>
-        </el-input>
+        <div style="width: 100%; display: flex; gap: 10px">
+          <el-input type="password" v-model="form.password" placeholder="请输入密码" show-password></el-input>
+          <!-- 点击生成随机密码的按钮 -->
+          <el-button type="primary" @click="generatePassword">生成随机密码</el-button>
+        </div>
       </el-form-item>
       <el-form-item prop="repassword" label="确认密码">
-        <el-input type="password" v-model="form.repassword" placeholder="请输入确认密码" show-password>
-        </el-input>
+        <el-input type="password" v-model="form.repassword" placeholder="请输入确认密码" show-password> </el-input>
       </el-form-item>
     </el-form>
   </FormDrawer>
   <follow ref="followHeaderRef" />
   <!-- 公司信息编辑 -->
   <FormStore></FormStore>
-
 </template>
 
 <script setup>
@@ -158,6 +156,35 @@ const handleNote = (id) => {
   } else {
     followHeaderRef.value.openFollowDrawer(id)
   }
+}
+
+// 生成随机密码,密码长度是30位，包含数字、小写字母、大写字母
+const generatePassword = () => {
+  const length = 30
+  const numbers = '0123456789'
+  const lowercase = 'abcdefghijklmnopqrstuvwxyz'
+  const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  const allChars = numbers + lowercase + uppercase
+
+  // 确保至少包含一个数字、一个小写字母和一个大写字母
+  let password = ''
+  password += numbers[Math.floor(Math.random() * numbers.length)]
+  password += lowercase[Math.floor(Math.random() * lowercase.length)]
+  password += uppercase[Math.floor(Math.random() * uppercase.length)]
+
+  // 填充剩余长度
+  for (let i = 3; i < length; i++) {
+    password += allChars[Math.floor(Math.random() * allChars.length)]
+  }
+
+  // 打乱密码顺序
+  password = password
+    .split('')
+    .sort(() => Math.random() - 0.5)
+    .join('')
+
+  form.password = password
+  form.repassword = password
 }
 
 // websocket消息实时提醒 https://www.freesion.com/article/6784910552/
