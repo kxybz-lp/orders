@@ -38,6 +38,8 @@
         <el-table-column prop="branch_name" label="所属公司" min-width="160"> </el-table-column>
         <el-table-column prop="ip" label="最后登录IP" min-width="140"> </el-table-column>
         <el-table-column prop="last_login_time" sortable label="最后登录时间" min-width="140"> </el-table-column>
+        <el-table-column prop="create_time" sortable label="创建时间" min-width="140"> </el-table-column>
+        <el-table-column prop="add_user_name" sortable label="创建人" min-width="140"> </el-table-column>
         <el-table-column label="状态" v-permission="32">
           <template #default="scope">
             <el-switch
