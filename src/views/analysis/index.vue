@@ -759,6 +759,7 @@ const getSummaries = (param) => {
     size: 0,
   }
 
+  let num = 0
   // 先计算数值型列的总和
   data.forEach((item) => {
     if (item.platform_name != '合计') {
@@ -766,6 +767,9 @@ const getSummaries = (param) => {
       summaryData.arrange_number += item.arrange_number || 0
       summaryData.docking_number += item.docking_number || 0
       summaryData.size += parseInt(item.size) || 0
+      if (item.docking_number > 0) {
+        num++
+      }
     }
   })
 
@@ -774,7 +778,7 @@ const getSummaries = (param) => {
   // 计算阶段完成率（基于汇总值计算）
   const docking_per = summaryData.arrange_number > 0 ? summaryData.docking_number / summaryData.arrange_number : 0
   // 计算平均签单面积
-  const size_avg = data.length > 0 ? summaryData.size / data.length : 0
+  const size_avg = num > 0 ? summaryData.size / num : 0
 
   columns.forEach((column, index) => {
     if (index === 0) {

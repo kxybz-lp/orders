@@ -87,13 +87,13 @@
       </el-form-item>
       <el-form-item prop="password" label="新密码">
         <div style="width: 100%; display: flex; gap: 10px">
-          <el-input type="password" v-model="form.password" placeholder="请输入密码" show-password></el-input>
+          <el-input :type="upasswordVisible ? 'text' : 'password'" v-model="form.password" placeholder="请输入密码" @click="upasswordVisible = !upasswordVisible"></el-input>
           <!-- 点击生成随机密码的按钮 -->
           <el-button type="primary" @click="generatePassword">生成随机密码</el-button>
         </div>
       </el-form-item>
       <el-form-item prop="repassword" label="确认密码">
-        <el-input type="password" v-model="form.repassword" placeholder="请输入确认密码" show-password> </el-input>
+        <el-input :type="uconfirmPasswordVisible ? 'text' : 'password'" v-model="form.repassword" placeholder="请输入确认密码" @click="uconfirmPasswordVisible = !uconfirmPasswordVisible"> </el-input>
       </el-form-item>
     </el-form>
   </FormDrawer>
@@ -120,6 +120,10 @@ const router = useRouter()
 const full = ref(false)
 
 const noteList = ref([])
+
+// 控制密码可见性
+const upasswordVisible = ref(false)
+const uconfirmPasswordVisible = ref(false)
 
 const { formDrawerRef, formRef, form, rules, password, onSubmit } = useRepassword()
 const { logout } = useLogout()
@@ -185,6 +189,9 @@ const generatePassword = () => {
 
   form.password = password
   form.repassword = password
+
+  upasswordVisible.value = true
+  uconfirmPasswordVisible.value = true
 }
 
 // websocket消息实时提醒 https://www.freesion.com/article/6784910552/

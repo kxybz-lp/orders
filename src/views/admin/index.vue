@@ -39,7 +39,7 @@
         <el-table-column prop="ip" label="最后登录IP" min-width="140"> </el-table-column>
         <el-table-column prop="last_login_time" sortable label="最后登录时间" min-width="140"> </el-table-column>
         <el-table-column prop="create_time" sortable label="创建时间" min-width="140"> </el-table-column>
-        <el-table-column prop="add_user_name" sortable label="创建人" min-width="140"> </el-table-column>
+        <el-table-column prop="add_user_name" sortable label="创建人" min-width="100"> </el-table-column>
         <el-table-column label="状态" v-permission="32">
           <template #default="scope">
             <el-switch
@@ -82,14 +82,21 @@
           <el-input minlength="2" maxlength="20" show-word-limit v-model="form.name" :disabled="editId != 0"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
+          <!-- show-password会导致:type失效 -->
           <div style="width: 100%; display: flex; gap: 10px">
-            <el-input type="password" show-password v-model="form.password" :placeholder="editId == 0 ? '' : '留空则不修改密码'" style="flex: 1"></el-input>
+            <el-input
+              :type="passwordVisible ? 'text' : 'password'"
+              v-model="form.password"
+              :placeholder="editId == 0 ? '' : '留空则不修改密码'"
+              style="flex: 1"
+              @click="passwordVisible = !passwordVisible"
+            ></el-input>
             <!-- 点击生成随机密码的按钮 -->
             <el-button type="primary" @click="generatePassword">生成随机密码</el-button>
           </div>
         </el-form-item>
         <el-form-item v-if="editId == 0" label="确认密码" prop="password_confirm">
-          <el-input type="password" show-password v-model="form.password_confirm"></el-input>
+          <el-input :type="confirmPasswordVisible ? 'text' : 'password'" v-model="form.password_confirm" @click="confirmPasswordVisible = !confirmPasswordVisible"></el-input>
         </el-form-item>
         <el-form-item label="角色" prop="role_id">
           <el-select v-model="form.role_id" placeholder="选择角色">
@@ -125,6 +132,9 @@
         </el-form-item> -->
         <el-form-item label="状态">
           <el-switch v-model="form.status" :active-value="1" :inactive-value="0" />
+        </el-form-item>
+        <el-form-item label="解除锁定" v-if="editId != 0">
+          <el-switch v-model="form.lock" :active-value="1" :inactive-value="0" />
         </el-form-item>
       </el-form>
     </FormDialog>
@@ -199,6 +209,7 @@ const { dialogTitle, formDialogRef, formRef, rules, form, editId, handleAdd, han
     ],
     openid: '',
     status: 1,
+    lock: 0,
   },
   rules: {
     name: [
@@ -213,7 +224,7 @@ const { dialogTitle, formDialogRef, formRef, rules, form, editId, handleAdd, han
         validator: validatePass,
         trigger: 'blur',
       },
-      { min: 6, max: 20, message: '密码长度6至20位之间', trigger: 'blur' },
+      { min: 6, max: 30, message: '密码长度6至30位之间', trigger: 'blur' },
     ],
     password_confirm: [
       {
@@ -254,6 +265,10 @@ const props = {
   multiple: true,
   checkStrictly: false,
 }
+
+// 控制密码可见性
+const passwordVisible = ref(false)
+const confirmPasswordVisible = ref(false)
 
 // 渠道切换
 const channelChange = (val) => {
@@ -309,6 +324,10 @@ const generatePassword = () => {
 
   form.password = password
   form.password_confirm = password
+
+  // 生成密码后直接显示明文
+  passwordVisible.value = true
+  confirmPasswordVisible.value = true
 }
 </script>
 <style lang="scss" scoped></style>
