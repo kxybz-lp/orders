@@ -798,10 +798,10 @@ const getSummaries = (param) => {
         sums[index] = summaryData.docking_number
         break
       case 'arrange_per':
-        sums[index] = `${(arrange_per * 100).toFixed(1)}%`
+        sums[index] = `${(arrange_per * 100).toFixed(0)}%`
         break
       case 'docking_per':
-        sums[index] = `${(docking_per * 100).toFixed(1)}%`
+        sums[index] = `${(docking_per * 100).toFixed(0)}%`
         break
       case 'size':
         sums[index] = size_avg.toFixed(0)
