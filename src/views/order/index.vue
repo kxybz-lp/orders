@@ -488,9 +488,10 @@
         </el-form>
       </transition>
       <ListHeader
-        :rule="{ create: 79, move: 84, export: 81, import: 82, download: 82 }"
+        :rule="{ create: 79, move: 84, export: 81, import: 82, download: 82, delete: 87 }"
         action="https://api.xydec.com.cn/order/order/import"
         @move="handMove"
+        @delete="handleMultiDelete"
         @export="exportExcel"
         @import="importExcel"
         @download="download"
@@ -859,6 +860,7 @@ const {
   handleSizeChange,
   sortChange,
   handleDelete,
+  handleMultiDelete,
   handleSelectionChange,
   multipleTableRef,
   multiSelectionIds,

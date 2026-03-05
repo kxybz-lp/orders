@@ -28,6 +28,10 @@ const exports = {
   export(params) {
     return post(`/order/export/export`, params)
   },
+  // 导出订单
+  exportOrder(params) {
+    return post('/order/export/exportOrderData', params)
+  },
   // 删除
   delete(id) {
     id = !Array.isArray(id) ? [id] : id

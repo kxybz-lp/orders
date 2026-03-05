@@ -93,6 +93,11 @@ const order = {
   del(id) {
     return post('/order/order/del', { id })
   },
+  // 数据硬删除
+  deleteAll(ids) {
+    ids = !Array.isArray(ids) ? [ids] : ids
+    return post('/order/order/batchDelete', { id: ids })
+  },
 }
 
 export default order
