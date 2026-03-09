@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-card class="admin-card" shadow="hover" style="margin-bottom: 15px">
+    <el-card class="admin-card" shadow="hover" style="margin-bottom: 15px" v-permission="81">
       <div class="title">订单导出</div>
       <el-form class="search-more" :model="searchParams" ref="searchMoreRef" label-width="68px" :label-position="$store.state.isMobile ? 'top' : 'left'">
         <template v-if="$store.state.adminInfo.branch_id == 1">
@@ -883,7 +883,7 @@ const searchParams = reactive({
   is_audit: null,
   create_time: '',
   add_user: '',
-  columns: ['order_time', 'mobile', 'area', 'address', 'arrange_time', 'receive_company'],
+  columns: ['order_time', 'channel_id', 'source_id', 'mobile', 'area', 'address', 'arrange_time', 'receive_company', 'deal_time', 'status_id'],
 })
 const getSelectData = () => {
   order.getSelect().then((res) => {
@@ -1134,7 +1134,7 @@ const resetSearchForm = () => {
   searchParams.type_id = null
   searchParams.layout_id = null
   searchParams.export_remark = ''
-  searchParams.columns = ['order_time', 'mobile', 'area', 'address', 'arrange_time', 'receive_company']
+  searchParams.columns = ['order_time', 'channel_id', 'source_id', 'mobile', 'area', 'address', 'arrange_time', 'receive_company', 'deal_time', 'status_id']
 }
 
 const exportData = () => {

@@ -291,7 +291,7 @@
               </el-option-group>
             </el-select>
           </el-form-item>
-          <el-form-item v-if="(params.tab === 'area' || params.tab === 'deal') && $store.state.adminInfo.branch_id === '1'" label="所在省">
+          <el-form-item v-if="(params.tab === 'area' || params.tab === 'platform' || params.tab === 'deal') && $store.state.adminInfo.branch_id === '1'" label="所在省">
             <el-select
               v-model="params.province_id"
               filterable
@@ -306,7 +306,7 @@
               <el-option :value="item.id" :label="item.areaname" v-for="item in province" :key="item.id"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item v-if="(params.tab === 'area' || params.tab === 'deal') && $store.state.adminInfo.branch_id === '1'" label="所在市">
+          <el-form-item v-if="(params.tab === 'area' || params.tab === 'platform' || params.tab === 'deal') && $store.state.adminInfo.branch_id === '1'" label="所在市">
             <el-select
               v-model="params.city_id"
               placeholder="选择或搜索市"

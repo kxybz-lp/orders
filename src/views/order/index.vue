@@ -488,11 +488,10 @@
         </el-form>
       </transition>
       <ListHeader
-        :rule="{ create: 79, move: 84, export: 81, import: 82, download: 82, delete: 87 }"
+        :rule="{ create: 79, move: 84, import: 82, download: 82, delete: 87 }"
         action="https://api.xydec.com.cn/order/order/import"
         @move="handMove"
         @delete="handleMultiDelete"
-        @export="exportExcel"
         @import="importExcel"
         @download="download"
       >
@@ -1011,7 +1010,7 @@ const columnDrop = () => {
             }
           })
 
-          localStorage.setItem('order_columns', JSON.stringify(columns.value))
+          localStorage.setItem('order_columns_' + store.state.adminInfo.id, JSON.stringify(columns.value))
         }
       },
       // onUpdate: function (evt) {
@@ -1022,11 +1021,13 @@ const columnDrop = () => {
   }
 }
 
-const fliterChange = (val, index) => {}
+const fliterChange = (val, index) => {
+  localStorage.setItem('order_columns_' + store.state.adminInfo.id, JSON.stringify(columns.value))
+}
 onMounted(() => {
   // oldList.value = JSON.parse(JSON.stringify(columns.value)).filter((item) => item.show && !item.hide) //数据深拷贝
-  if (localStorage.getItem('order_columns')) {
-    columns.value = JSON.parse(localStorage.getItem('order_columns'))
+  if (localStorage.getItem('order_columns_' + store.state.adminInfo.id)) {
+    columns.value = JSON.parse(localStorage.getItem('order_columns_' + store.state.adminInfo.id))
   } else {
     if (store.state.adminInfo.branch_id == 1) {
       columns.value = [
