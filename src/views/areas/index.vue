@@ -1,17 +1,17 @@
 <template>
   <div class="app-container">
     <el-card class="menu-card" shadow="hover">
-      <ListHeader :rule="{ create: 274 }" @add="handleAdd" />
+      <ListHeader :rule="{ create: 201 }" @add="handleAdd" />
       <el-tree :data="dataList" :props="{ children: 'children', label: 'areaname' }" v-loading="loading" node-key="id" :default-expanded-keys="defaultExpandedKeys">
         <template #default="{ data }">
           <div class="custom-tree-left">
             <span :data-id="data.id">{{ data.areaname }}</span>
           </div>
           <div class="custom-tree-right">
-            <el-switch v-permission="276" :modelValue="data.status" :active-value="1" :inactive-value="0" @change="handleSwitch($event, data)" />
-            <el-button v-permission="275" text type="primary" size="small" @click.stop="handleEdit(data)">修改</el-button>
-            <el-button v-permission="274" text type="primary" size="small" @click.stop="addChild(data.id)">增加</el-button>
-            <el-button v-permission="278" text type="primary" size="small" @click.stop="handleDelete(data.id)">删除</el-button>
+            <el-switch v-permission="203" :modelValue="data.status" :active-value="1" :inactive-value="0" @change="handleSwitch($event, data)" />
+            <el-button v-permission="202" text type="primary" size="small" @click.stop="handleEdit(data)">修改</el-button>
+            <el-button v-permission="201" text type="primary" size="small" @click.stop="addChild(data.id)">增加</el-button>
+            <el-button v-permission="205" text type="primary" size="small" @click.stop="handleDelete(data.id)">删除</el-button>
             <!-- <el-popconfirm title="是否要删除该记录？" confirmButtonText="确认" cancelButtonText="取消" @confirm="handleDelete(data.id)">
                 <template #reference>
                   <el-button text type="primary" size="small">删除</el-button>

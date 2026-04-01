@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-card class="admin-card" shadow="hover">
-      <ListHeader :rule="{ create: 267, sort: 270 }" @add="handleAdd" @sort="handleSort" />
+      <ListHeader :rule="{ create: 194, sort: 197 }" @add="handleAdd" @sort="handleSort" />
       <el-table :data="dataList" stripe style="width: 100%" :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }" v-loading="loading">
         <el-table-column type="selection" prop="id" width="55"> </el-table-column>
         <el-table-column prop="name" label="区域名称" min-width="180"> </el-table-column>
@@ -19,8 +19,8 @@
         </el-table-column>
         <el-table-column label="操作" width="200">
           <template #default="scope">
-            <el-button v-permission="268" size="small" type="primary" @click="handleEdit(scope.row)"> 编辑 </el-button>
-            <el-button v-permission="271" size="small" type="danger" @click="handleDelete(scope.row.id)"> 删除 </el-button>
+            <el-button v-permission="195" size="small" type="primary" @click="handleEdit(scope.row)"> 编辑 </el-button>
+            <el-button v-permission="198" size="small" type="danger" @click="handleDelete(scope.row.id)"> 删除 </el-button>
           </template>
         </el-table-column>
       </el-table>
