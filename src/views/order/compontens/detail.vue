@@ -103,7 +103,7 @@
               <el-descriptions-item label="反馈交定时间:">{{ parseTime(detail.deal_time) }} </el-descriptions-item>
               <el-descriptions-item label="定金金额:">{{ detail.order_money }}</el-descriptions-item>
               <el-descriptions-item label="签约时间:">{{ parseTime(detail.signing_time) }} </el-descriptions-item>
-              <el-descriptions-item label="合同金额：">{{ detail.contract_money }}</el-descriptions-item>
+              <el-descriptions-item label="签单产值:">{{ detail.contract_money }}</el-descriptions-item>
               <el-descriptions-item label="开工时间：">{{ parseTime(detail.start_time) }} </el-descriptions-item>
               <el-descriptions-item label="完工时间：">{{ parseTime(detail.end_time) }} </el-descriptions-item>
               <el-descriptions-item label="施工经理：">{{ detail.construction_manager }} </el-descriptions-item>

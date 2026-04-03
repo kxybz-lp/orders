@@ -205,8 +205,8 @@
                 clearable
               />
             </el-form-item>
-            <el-form-item label="合同金额" prop="contract_money">
-              <el-input v-model="form.contract_money" type="number" placeholder="请输入合同金额" />
+            <el-form-item label="签单产值" prop="contract_money">
+              <el-input v-model="form.contract_money" type="number" placeholder="请输入签单产值" />
             </el-form-item>
             <el-form-item label="开工时间" prop="start_time">
               <el-date-picker
