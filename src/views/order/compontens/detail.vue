@@ -101,7 +101,7 @@
               <el-descriptions-item label="订单状态：">{{ detail.status_name }}</el-descriptions-item>
               <el-descriptions-item label="死单原因：" v-if="detail.status_id == 8"> {{ detail.reason_name }} </el-descriptions-item>
               <el-descriptions-item label="反馈交定时间:">{{ parseTime(detail.deal_time) }} </el-descriptions-item>
-              <el-descriptions-item label="定金金额:">{{ detail.order_money }}</el-descriptions-item>
+              <el-descriptions-item label="交定金额:">{{ detail.order_money }}</el-descriptions-item>
               <el-descriptions-item label="签约时间:">{{ parseTime(detail.signing_time) }} </el-descriptions-item>
               <el-descriptions-item label="签单产值:">{{ detail.contract_money }}</el-descriptions-item>
               <el-descriptions-item label="开工时间：">{{ parseTime(detail.start_time) }} </el-descriptions-item>

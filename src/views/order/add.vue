@@ -179,8 +179,8 @@
                 clearable
               />
             </el-form-item>
-            <el-form-item label="定金金额" prop="order_money">
-              <el-input v-model="form.order_money" placeholder="请输入定金金额" />
+            <el-form-item label="交定金额" prop="order_money">
+              <el-input v-model="form.order_money" placeholder="请输入交定金额" />
             </el-form-item>
             <el-form-item label="签约时间" prop="signing_time">
               <el-date-picker

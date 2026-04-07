@@ -97,7 +97,7 @@
             clearable
           />
         </el-form-item>
-        <el-form-item label="定金金额">
+        <el-form-item label="交定金额">
           <el-input v-model="form.order_money" type="number" :readonly="has_money" />
         </el-form-item>
         <el-form-item label="签约时间">
@@ -312,7 +312,7 @@ const submit = () => {
   // }
   if (form.status_id == 3 || form.status_id == 4 || form.status_id == 5 || form.status_id == 6) {
     if (form.order_money == 0) {
-      toast('请填写订单金额', 'error')
+      toast('请填写交定金额', 'error')
       return false
     }
     if (!form.size) {
