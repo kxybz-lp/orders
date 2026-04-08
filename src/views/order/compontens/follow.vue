@@ -98,7 +98,7 @@
           />
         </el-form-item>
         <el-form-item label="交定金额">
-          <el-input v-model="form.order_money" type="number" :readonly="has_money" />
+          <el-input v-model="form.order_money" type="number" placeholder="请输入交定金额，单位：元" :readonly="has_money" />
         </el-form-item>
         <el-form-item label="签约时间">
           <el-date-picker
@@ -114,7 +114,7 @@
           />
         </el-form-item>
         <el-form-item label="签单产值">
-          <el-input v-model="form.contract_money" type="number" />
+          <el-input v-model="form.contract_money" placeholder="请输入签单产值，单位：元" type="number" />
         </el-form-item>
         <el-form-item label="开工时间">
           <el-date-picker
@@ -140,12 +140,12 @@
             clearable
           />
         </el-form-item>
-        <el-form-item label="施工经理">
+        <!-- <el-form-item label="施工经理">
           <el-input v-model="form.construction_manager" />
         </el-form-item>
         <el-form-item label="质检">
           <el-input v-model="form.quality_man" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
     </el-scrollbar>
     <template #footer>
@@ -315,8 +315,22 @@ const submit = () => {
       toast('请填写交定金额', 'error')
       return false
     }
+    if (form.order_money < 100) {
+      toast('交定金额不能小于100元', 'error')
+      return false
+    }
     if (!form.size) {
       toast('请填写面积', 'error')
+      return false
+    }
+  }
+  if (form.status_id == 4 || form.status_id == 5 || form.status_id == 6) {
+    if (form.contract_money == 0) {
+      toast('请填写签单产值', 'error')
+      return false
+    }
+    if (form.contract_money < 1000) {
+      toast('签单产值不能小于1000元', 'error')
       return false
     }
   }

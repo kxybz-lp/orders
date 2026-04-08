@@ -51,7 +51,7 @@
                 <el-tag type="success" v-else-if="detail.is_making === 2">已交房</el-tag>
               </el-descriptions-item>
               <el-descriptions-item label="装修需求：">{{ detail.demand }} </el-descriptions-item>
-              <el-descriptions-item label="其他：">{{ detail.other }} </el-descriptions-item>
+              <el-descriptions-item label="备注：">{{ detail.other }} </el-descriptions-item>
               <el-descriptions-item v-if="$store.state.adminInfo.branch_id === '1'" label="推广渠道："> {{ detail.channel_name }} </el-descriptions-item>
               <el-descriptions-item v-if="$store.state.adminInfo.branch_id === '1'" label="客户来源："> {{ detail.source_name }} </el-descriptions-item>
               <el-descriptions-item v-if="$store.state.adminInfo.branch_id === '1'" label="无效标签："> {{ detail.invalid_tag }} </el-descriptions-item>
@@ -106,8 +106,8 @@
               <el-descriptions-item label="签单产值:">{{ detail.contract_money }}</el-descriptions-item>
               <el-descriptions-item label="开工时间：">{{ parseTime(detail.start_time) }} </el-descriptions-item>
               <el-descriptions-item label="完工时间：">{{ parseTime(detail.end_time) }} </el-descriptions-item>
-              <el-descriptions-item label="施工经理：">{{ detail.construction_manager }} </el-descriptions-item>
-              <el-descriptions-item label="质检：">{{ detail.quality_man }}</el-descriptions-item>
+              <!-- <el-descriptions-item label="施工经理：">{{ detail.construction_manager }} </el-descriptions-item>
+              <el-descriptions-item label="质检：">{{ detail.quality_man }}</el-descriptions-item> -->
             </el-descriptions>
           </el-tab-pane>
           <el-tab-pane v-if="$store.state.adminInfo.branch_id === '1'" label="回访信息" name="detail_visit">

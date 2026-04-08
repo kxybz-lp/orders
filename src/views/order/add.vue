@@ -68,8 +68,8 @@
             <el-form-item label="装修需求" prop="demand">
               <el-input v-model="form.demand" placeholder="请输入装修需求" minlength="2" maxlength="100" show-word-limit />
             </el-form-item>
-            <el-form-item label="其他" prop="other">
-              <el-input v-model="form.other" placeholder="请输入其他" minlength="2" maxlength="100" show-word-limit />
+            <el-form-item label="备注" prop="other">
+              <el-input v-model="form.other" placeholder="请输入备注" minlength="2" maxlength="100" show-word-limit />
             </el-form-item>
             <el-form-item label="无效标签" prop="invalid_tag">
               <el-select v-model="form.invalid_tag" placeholder="请选择标签" @change="invalidTagChange">
@@ -180,7 +180,7 @@
               />
             </el-form-item>
             <el-form-item label="交定金额" prop="order_money">
-              <el-input v-model="form.order_money" placeholder="请输入交定金额" />
+              <el-input v-model="form.order_money" placeholder="请输入交定金额，单位：元" />
             </el-form-item>
             <el-form-item label="签约时间" prop="signing_time">
               <el-date-picker
@@ -196,7 +196,7 @@
               />
             </el-form-item>
             <el-form-item label="签单产值" prop="contract_money">
-              <el-input v-model="form.contract_money" placeholder="请输入签单产值" />
+              <el-input v-model="form.contract_money" placeholder="请输入签单产值，单位：元" />
             </el-form-item>
             <el-form-item label="开工时间" prop="start_time">
               <el-date-picker
@@ -222,12 +222,12 @@
                 clearable
               />
             </el-form-item>
-            <el-form-item label="施工经理" prop="construction_manager">
+            <!-- <el-form-item label="施工经理" prop="construction_manager">
               <el-input v-model="form.construction_manager" placeholder="请输入施工经理" />
             </el-form-item>
             <el-form-item label="质检员" prop="quality_man">
               <el-input v-model="form.quality_man" placeholder="请输入质检员" />
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="">
               <el-button type="info" size="default" @click="changeTab('arrange')">上一步</el-button>
               <el-button type="warning" size="default" @click="changeTab('visit')">下一步</el-button>
