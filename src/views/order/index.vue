@@ -300,6 +300,11 @@
                   </el-select>
                 </el-form-item>
               </el-col>
+              <el-col :md="6" :offset="0">
+                <el-form-item label="订单ID">
+                  <el-input v-model="params.id" placeholder="输入订单ID" clearable @clear="getData(1)"></el-input>
+                </el-form-item>
+              </el-col>
             </el-row>
           </template>
           <template v-else>
@@ -870,6 +875,7 @@ const {
   params: {
     page: 1,
     pageSize: 15,
+    id: '',
     name: '',
     mobile: '',
     region_id: '',
