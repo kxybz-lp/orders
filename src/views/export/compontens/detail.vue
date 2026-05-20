@@ -13,8 +13,8 @@
             <el-tag size="small" type="success" v-if="detail.export_status == 2">审核通过</el-tag>
             <el-tag size="small" type="danger" v-if="detail.export_status == 3">审核未通过</el-tag>
           </el-descriptions-item>
-          <el-descriptions-item label="用户名：">{{ detail.export_admin_name }} </el-descriptions-item>
-          <el-descriptions-item label="公司：">{{ detail.export_branch_name }} </el-descriptions-item>
+          <el-descriptions-item label="操作人：">{{ detail.export_admin_name }} </el-descriptions-item>
+          <el-descriptions-item label="所属公司：">{{ detail.export_branch_name }} </el-descriptions-item>
           <el-descriptions-item label="导出时间：">{{ detail.create_time }} </el-descriptions-item>
           <el-descriptions-item label="导出订单数：">{{ detail.export_total_num }} </el-descriptions-item>
           <el-descriptions-item label="导出原因：">{{ detail.export_remark }} </el-descriptions-item>
@@ -39,9 +39,9 @@
             </el-descriptions>
           </el-descriptions-item>
           <el-descriptions-item label="公司对接人：">{{ detail.docking_man }} </el-descriptions-item>
-          <el-descriptions-item label="公司对接人电话：">{{ detail.docking_phone }} </el-descriptions-item>
+          <el-descriptions-item label="对接人电话：">{{ detail.docking_phone }} </el-descriptions-item>
           <el-descriptions-item label="公司负责人：">{{ detail.respon_man }} </el-descriptions-item>
-          <el-descriptions-item label="公司负责人电话：">{{ detail.respon_phone }} </el-descriptions-item>
+          <el-descriptions-item label="负责人电话：">{{ detail.respon_phone }} </el-descriptions-item>
           <el-descriptions-item label="审核时间：">{{ detail.examine_time }} </el-descriptions-item>
           <el-descriptions-item label="审核人：">{{ detail.examine_admin_name }} </el-descriptions-item>
           <el-descriptions-item label="下载次数：">{{ detail.export_num }} </el-descriptions-item>
