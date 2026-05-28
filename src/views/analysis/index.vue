@@ -6,6 +6,77 @@
           <el-tab-pane :label="item.name" :name="item.key" v-for="item in tabbars" :key="item.key"> </el-tab-pane>
         </el-tabs>
         <el-form :model="params" ref="formRef" label-width="70px" :class="$store.state.isMobile ? 'el-form-m' : 'el-form-p'" :label-position="$store.state.isMobile ? 'top' : 'left'">
+          <!-- 统计类型下拉 -->
+          <el-form-item label="统计类型" v-if="params.tab === 'mom'">
+            <el-select v-model="params.statType" placeholder="选择统计维度" @change="handleStatTypeChange">
+              <el-option-group label="环比统计">
+                <el-option label="周环比" value="week_ring" />
+                <el-option label="月环比" value="month_ring" />
+                <el-option label="季度环比" value="quarter_ring" />
+                <el-option label="年环比" value="year_ring" />
+              </el-option-group>
+              <el-option-group label="同比统计">
+                <el-option label="周同比" value="week_same" />
+                <el-option label="月同比" value="month_same" />
+                <el-option label="季度同比" value="quarter_same" />
+                <el-option label="年同比" value="year_same" />
+              </el-option-group>
+              <el-option-group label="自定义对比">
+                <el-option label="自定义区间对比" value="custom_range" />
+              </el-option-group>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="统计时间" class="time-picker-item" v-if="params.tab === 'mom'">
+            <!-- 周选择器 -->
+            <el-date-picker v-if="timePickerType === 'week'" v-model="params.select_time" type="week" placeholder="选择周" format="YYYY-[第] w [周]" value-format="YYYY-MM-DD" style="width: 100%" />
+            <!-- 月份选择器 -->
+            <el-date-picker v-else-if="timePickerType === 'month'" v-model="params.select_time" type="month" placeholder="选择月份" value-format="YYYY-MM" style="width: 100%" />
+            <!-- 自定义季度选择器（替代原生quarter，兼容旧版） -->
+            <div v-else-if="timePickerType === 'custom_quarter'" style="display: flex; gap: 8px">
+              <el-select v-model="customQuarter.year" placeholder="选择年份" style="width: 100px">
+                <el-option v-for="year in yearOptions" :key="year" :label="`${year}年`" :value="year" />
+              </el-select>
+              <el-select v-model="customQuarter.quarter" placeholder="选择季度" style="width: 80px">
+                <el-option label="Q1" value="1" />
+                <el-option label="Q2" value="2" />
+                <el-option label="Q3" value="3" />
+                <el-option label="Q4" value="4" />
+              </el-select>
+            </div>
+            <!-- 年份选择器 -->
+            <el-date-picker v-else-if="timePickerType === 'year'" v-model="params.select_time" type="year" placeholder="选择年份" value-format="YYYY" style="width: 100%" />
+            <!-- 自定义日期范围 -->
+            <div style="width: 100%" v-else-if="timePickerType === 'daterange'">
+              <template v-if="!$store.state.isMobile">
+                <el-date-picker
+                  v-model="params.select_time"
+                  type="daterange"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  value-format="YYYY-MM-DD"
+                  style="width: 100%"
+                />
+              </template>
+              <template v-else>
+                <el-date-picker
+                  style="width: 100%; margin-bottom: 10px"
+                  v-model="params.select_time_start"
+                  type="date"
+                  placeholder="开始日期"
+                  format="YYYY-MM-DD"
+                  value-format="YYYY-MM-DD"
+                  :editable="false"
+                  clearable
+                />
+                <el-date-picker style="width: 100%" v-model="params.select_time_end" type="date" placeholder="结束日期" format="YYYY-MM-DD" value-format="YYYY-MM-DD" :editable="false" clearable />
+              </template>
+            </div>
+          </el-form-item>
+          <!-- 对比规则提示 -->
+          <el-form-item label="对比说明" v-if="params.tab === 'mom'">
+            <span class="tip-text">{{ compareTip }}</span>
+          </el-form-item>
           <el-form-item v-if="params.tab === 'platform' || params.tab === 'channel' || params.tab === 'source'" label="时间">
             <el-button-group v-show="!$store.state.isMobile">
               <el-button :type="params.scope === 'allMix' ? 'primary' : ''" @click="setScope('allMix')"> 全部 </el-button>
@@ -278,7 +349,7 @@
               <el-option :value="item.id" :label="item.name" v-for="item in platformList" :key="item.id"> </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item v-if="params.tab === 'channel' || params.tab === 'source'" label="渠道">
+          <el-form-item v-if="params.tab === 'channel' || params.tab === 'source' || params.tab === 'mom'" label="渠道">
             <el-select v-model="params.channel_id" placeholder="选择或搜索渠道" clearable multiple :collapse-tags="$store.state.isMobile" :max-collapse-tags="3" collapse-tags-tooltip>
               <el-option label="全选" :value="0" @click="selectAllChannel"></el-option>
               <el-option :value="item.id" :label="item.name" v-for="item in channel" :key="item.id"> </el-option>
@@ -339,7 +410,7 @@
               <el-option :value="item.id" :label="item.name" v-for="item in regionList" :key="item.id"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item v-if="params.tab === 'deal'" label="接单公司">
+          <el-form-item v-if="params.tab === 'deal' || params.tab === 'mom'" label="接单公司">
             <el-select v-model="params.receive_company" placeholder="选择或搜索公司" clearable multiple collapse-tags :max-collapse-tags="3" collapse-tags-tooltip filterable @change="branchChange">
               <el-option label="全选" :value="0" @click="selectAllBranch"></el-option>
               <el-option :value="item.id" :label="item.name" v-for="item in branch" :key="item.id"> </el-option>
@@ -389,14 +460,53 @@
             </el-tag>
           </el-col>
         </el-row>
+        <!-- 报表数据 -->
+        <div class="card-grid" v-if="params.tab === 'mom' && dataMomList.length > 0 && !$store.state.isMobile">
+          <el-card v-for="item in statCards" :key="item.label" class="stat-card" shadow="hover">
+            <div class="card-top">
+              <span class="card-label">{{ item.label }}</span>
+              <span class="card-unit" v-if="item.unit">{{ item.unit }}</span>
+            </div>
+            <div class="card-middle">
+              <span class="current-value">{{ item.current }}</span>
+              <span class="compare-value">对比：{{ item.compare }}</span>
+            </div>
+            <div class="card-bottom">
+              <el-tag :type="item.rate > 0 ? 'success' : 'danger'" size="small"> {{ item.rate > 0 ? '↑' : '↓' }} {{ Math.abs(item.rate) }}% </el-tag>
+              <span class="rate-text">{{ getCompareText }}增长率</span>
+            </div>
+          </el-card>
+        </div>
+        <el-row :gutter="20" class="chart-row" v-show="params.tab === 'mom' && dataMomList.length > 0 && !$store.state.isMobile">
+          <el-col :span="12">
+            <el-card shadow="hover" class="chart-card">
+              <div class="chart-title">订单数量对比图</div>
+              <div ref="quantityChartRef" class="chart-box"></div>
+            </el-card>
+          </el-col>
+          <el-col :span="12">
+            <el-card shadow="hover" class="chart-card">
+              <div class="chart-title">订单率值对比图</div>
+              <div ref="rateChartRef" class="chart-box"></div>
+            </el-card>
+          </el-col>
+        </el-row>
         <el-row
           :gutter="20"
-          v-if="dataPlatformList.length > 0 || dataChannelList.length > 0 || dataSourceList.length > 0 || dataAreaList.length > 0 || dataDealList.length > 0 || dataStateList.length > 0"
+          v-if="
+            dataPlatformList.length > 0 ||
+            dataChannelList.length > 0 ||
+            dataSourceList.length > 0 ||
+            dataAreaList.length > 0 ||
+            dataDealList.length > 0 ||
+            dataStateList.length > 0 ||
+            dataMomList.length > 0
+          "
         >
           <el-col :span="24" :offset="0" style="text-align: right; margin-bottom: 15px">
             <el-button
               v-permission="129"
-              v-if="params.tab == 'platform' || params.tab == 'channel' || params.tab == 'source' || params.tab == 'area' || params.tab == 'deal'"
+              v-if="params.tab == 'platform' || params.tab == 'channel' || params.tab == 'source' || params.tab == 'area' || params.tab == 'deal' || params.tab == 'mom'"
               type="primary"
               @click="searchAdd"
               :loading="loading"
@@ -431,8 +541,8 @@
                     <el-table-column label="公司" prop="branch_name"></el-table-column>
                     <el-table-column sortable label="派单数" prop="arrange_number"></el-table-column>
                     <el-table-column sortable label="签单数" prop="docking_number"></el-table-column>
-                    <el-table-column prop="per" sortable label="签单率">
-                      <template #default="scope"> {{ scope.row.per }}% </template>
+                    <el-table-column prop="docking_per" sortable label="签单率">
+                      <template #default="scope"> {{ scope.row.docking_per }}% </template>
                     </el-table-column>
                   </el-table>
                 </div>
@@ -548,8 +658,8 @@
             <el-table-column prop="branch_name" label="公司" min-width="120" />
             <el-table-column prop="arrange_number" :sortable="$store.state.adminInfo.branch_id == 1 ? 'arrange_number' : false" label="派单数" min-width="100" />
             <el-table-column prop="docking_number" :sortable="$store.state.adminInfo.branch_id == 1 ? 'docking_number' : false" label="签单数" min-width="100" />
-            <el-table-column prop="per" :sortable="$store.state.adminInfo.branch_id == 1 ? 'per' : false" label="签单率" min-width="100">
-              <template #default="scope"> {{ scope.row.per }}% </template>
+            <el-table-column prop="docking_per" :sortable="$store.state.adminInfo.branch_id == 1 ? 'docking_per' : false" label="签单率" min-width="100">
+              <template #default="scope"> {{ scope.row.docking_per }}% </template>
             </el-table-column>
             <el-table-column
               v-if="$store.state.adminInfo.branch_id == 1"
@@ -613,13 +723,50 @@
             <el-table-column prop="docking_number" min-width="100" label="签单数" />
             <el-table-column prop="docking_per" min-width="100" label="签单率" />
           </el-table>
+          <!-- 同/环比报表 -->
+          <el-table id="momTable" v-if="dataMomList.length > 0" :data="dataMomList" border stripe :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }">
+            <el-table-column prop="name" label="统计维度" min-width="130" />
+            <el-table-column prop="current_order" v-if="params.receive_company.length == 0" sortable label="本期下单数" min-width="130" />
+            <el-table-column prop="compare_order" v-if="params.receive_company.length == 0" sortable label="对比期下单数" min-width="140" />
+            <el-table-column prop="rate_order" v-if="params.receive_company.length == 0" sortable label="下单数增长率" min-width="140">
+              <template #default="scope"> {{ scope.row.rate_order }}% </template>
+            </el-table-column>
+            <el-table-column prop="current_arrange" sortable label="本期派单数" min-width="130" />
+            <el-table-column prop="compare_arrange" sortable label="对比期派单数" min-width="140" />
+            <el-table-column prop="rate_arrange" sortable label="派单数增长率" min-width="140">
+              <template #default="scope"> {{ scope.row.rate_arrange }}% </template>
+            </el-table-column>
+            <el-table-column prop="current_arrange_per" v-if="params.receive_company.length == 0" min-width="120" sortable label="本期派单率">
+              <template #default="scope"> {{ scope.row.current_arrange_per }}% </template>
+            </el-table-column>
+            <el-table-column prop="compare_arrange_per" v-if="params.receive_company.length == 0" min-width="140" sortable label="对比期派单率">
+              <template #default="scope"> {{ scope.row.compare_arrange_per }}% </template>
+            </el-table-column>
+            <el-table-column prop="rate_arrange_per" v-if="params.receive_company.length == 0" sortable label="派单率增长率" min-width="140">
+              <template #default="scope"> {{ scope.row.rate_arrange_per }}% </template>
+            </el-table-column>
+            <el-table-column sortable prop="current_docking" min-width="130" label="本期签单数" />
+            <el-table-column sortable prop="compare_docking" min-width="140" label="对比期签单数" />
+            <el-table-column prop="rate_docking" sortable label="签单数增长率" min-width="140">
+              <template #default="scope"> {{ scope.row.rate_docking }}% </template>
+            </el-table-column>
+            <el-table-column prop="current_docking_per" min-width="130" sortable label="本期签单率">
+              <template #default="scope"> {{ scope.row.current_docking_per }}% </template>
+            </el-table-column>
+            <el-table-column prop="compare_docking_per" min-width="140" sortable label="对比期签单率">
+              <template #default="scope"> {{ scope.row.compare_docking_per }}% </template>
+            </el-table-column>
+            <el-table-column prop="rate_docking_per" sortable label="签单率增长率" min-width="140">
+              <template #default="scope"> {{ scope.row.rate_docking_per }}% </template>
+            </el-table-column>
+          </el-table>
         </div>
       </el-card>
     </div>
   </div>
 </template>
 <script setup>
-import { reactive, ref, computed, watch } from 'vue'
+import { reactive, ref, computed, watch, onUnmounted } from 'vue'
 import moment from 'moment'
 import order from '@/api/order'
 import { closeElLoading, createUniqueString, elLoading, showModal, showPrompt, toast, time_init } from '@/utils/utils'
@@ -627,6 +774,7 @@ import search from '@/api/search'
 import * as FileSaver from 'file-saver'
 import * as XLSX from 'xlsx'
 import { useStore } from 'vuex'
+import * as ECharts from 'echarts'
 
 const store = useStore()
 
@@ -647,8 +795,26 @@ const yearStartDay = moment().startOf('year').format('YYYY-MM-DD')
 
 const loading = ref(false)
 const formRef = ref(null)
+
+// 统计类型对应控件映射，季度改为自定义类型
+const statTypeMap = {
+  week_ring: { picker: 'week', tip: '与上一周数据对比' },
+  month_ring: { picker: 'month', tip: '与上一月数据对比' },
+  quarter_ring: { picker: 'custom_quarter', tip: '与上一季度数据对比' },
+  year_ring: { picker: 'year', tip: '与上一年数据对比' },
+  week_same: { picker: 'week', tip: '与去年同周数据对比' },
+  month_same: { picker: 'month', tip: '与去年同月数据对比' },
+  quarter_same: { picker: 'custom_quarter', tip: '与去年同季度数据对比' },
+  year_same: { picker: 'year', tip: '与去年全年数据对比' },
+  custom_range: { picker: 'daterange', tip: '自选时段与等长往期对比' },
+}
+
 const params = reactive({
   tab: 'platform',
+  statType: '',
+  select_time: '',
+  select_time_start: '',
+  select_time_end: '',
   order_time: '',
   order_time_start: '',
   order_time_end: '',
@@ -742,6 +908,10 @@ if (store.state.adminInfo.role_id == 22 || store.state.adminInfo.role_id == 23) 
       name: '报表',
     },
     {
+      key: 'mom',
+      name: '同/环比',
+    },
+    {
       key: 'other',
       name: '常用查询',
     },
@@ -814,6 +984,149 @@ const getSummaries = (param) => {
 
   return sums
 }
+
+const statCards = ref([
+  { label: '下单数', unit: '单', current: 0, compare: 0, rate: 0 },
+  { label: '派单数', unit: '单', current: 0, compare: 0, rate: 0 },
+  { label: '派单率', unit: '%', current: 0, compare: 0, rate: 0 },
+  { label: '签单数', unit: '单', current: 0, compare: 0, rate: 0 },
+  { label: '签单率', unit: '%', current: 0, compare: 0, rate: 0 },
+])
+
+// 动态时间控件类型
+const timePickerType = ref('')
+// 对比提示文字
+const compareTip = ref('请选择统计类型')
+// 自定义季度选择变量
+const customQuarter = reactive({
+  year: new Date().getFullYear(), // 默认当前年份
+  quarter: 1, // 默认Q1
+})
+// 年份选项（近10年，可自行扩展）
+const yearOptions = computed(() => {
+  const currentYear = new Date().getFullYear()
+  return Array.from({ length: 10 }, (_, i) => currentYear - i)
+})
+// 计算属性：获取对比类型文字
+const getCompareText = computed(() => {
+  if (!params.statType) return ''
+  if (params.statType.includes('ring')) return '环比'
+  if (params.statType.includes('same')) return '同比'
+  return '自定义'
+})
+// 监听自定义季度变化，同步到select_time
+watch([() => customQuarter.year, () => customQuarter.quarter], () => {
+  if (timePickerType.value === 'custom_quarter') {
+    params.select_time = `${customQuarter.year}-Q${customQuarter.quarter}`
+  }
+})
+const quantityChartRef = ref(null)
+const rateChartRef = ref(null)
+let quantityChart = null
+let rateChart = null
+// 统计类型改变时，更新时间选择器
+const handleStatTypeChange = () => {
+  const curType = params.statType
+  if (curType && statTypeMap[curType]) {
+    timePickerType.value = statTypeMap[curType].picker
+    compareTip.value = statTypeMap[curType].tip
+    params.select_time = ''
+    params.select_time_start = ''
+    params.select_time_end = ''
+    // 如果是季度类型，初始化select_time
+    if (timePickerType.value === 'custom_quarter') {
+      params.select_time = `${customQuarter.year}-Q${customQuarter.quarter}`
+    } else {
+      params.select_time = ''
+    }
+  } else {
+    timePickerType.value = ''
+    compareTip.value = '请选择统计类型'
+    params.select_time = ''
+  }
+}
+
+// 初始化ECharts图表
+const initCharts = () => {
+  quantityChart = ECharts.init(quantityChartRef.value)
+  rateChart = ECharts.init(rateChartRef.value)
+}
+// 修正图表数据笔误
+const updateCharts = (cards) => {
+  const typeText = getCompareText.value
+  let quantityOption = {}
+  let rateOption = {}
+  if (params.receive_company.length > 0) {
+    quantityOption = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow',
+        },
+      },
+      legend: { data: ['本期', '对比期'] },
+      xAxis: { type: 'category', data: ['派单数', '签单数'] },
+      yAxis: { type: 'value' },
+      series: [
+        { name: '本期', type: 'bar', data: [cards[0].current, cards[1].current] },
+        { name: '对比期', type: 'bar', data: [cards[0].compare, cards[1].compare] },
+      ],
+    }
+    rateOption = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow',
+        },
+      },
+      legend: { data: ['本期', '对比期'] },
+      xAxis: { type: 'category', data: ['签单率'] },
+      yAxis: { type: 'value', axisLabel: { formatter: '{value}%' } },
+      series: [
+        { name: '本期', type: 'line', smooth: true, data: [cards[2].current] },
+        { name: '对比期', type: 'line', smooth: true, data: [cards[2].compare] },
+      ],
+    }
+  } else {
+    quantityOption = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow',
+        },
+      },
+      legend: { data: ['本期', '对比期'] },
+      xAxis: { type: 'category', data: ['下单数', '派单数', '签单数'] },
+      yAxis: { type: 'value' },
+      series: [
+        { name: '本期', type: 'bar', data: [cards[0].current, cards[1].current, cards[3].current] },
+        { name: '对比期', type: 'bar', data: [cards[0].compare, cards[1].compare, cards[3].compare] },
+      ],
+    }
+    rateOption = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow',
+        },
+      },
+      legend: { data: ['本期', '对比期'] },
+      xAxis: { type: 'category', data: ['派单率', '签单率'] },
+      yAxis: { type: 'value', axisLabel: { formatter: '{value}%' } },
+      series: [
+        { name: '本期', type: 'line', smooth: true, data: [cards[2].current, cards[4].current] },
+        { name: '对比期', type: 'line', smooth: true, data: [cards[2].compare, cards[4].compare] },
+      ],
+    }
+  }
+  quantityChart.setOption(quantityOption)
+  rateChart.setOption(rateOption)
+}
+// 销毁图表
+onUnmounted(() => {
+  quantityChart?.dispose()
+  rateChart?.dispose()
+})
 
 // 渠道全选
 const selectAllChannel = (e) => {
@@ -903,6 +1216,7 @@ const dataAreaList = ref([])
 const dataDealList = ref([])
 const dataStateList = ref([])
 const dataSearchList = ref([])
+const dataMomList = ref([])
 // const columns = ref([
 //   { key: 'branch_name', title: '公司', dataKey: 'branch_name', width: 150 },
 //   { key: 'arrange_number', title: '派单数', dataKey: 'arrange_number', width: 150 },
@@ -1022,6 +1336,16 @@ const objectSpanMethod = ({ rowIndex, columnIndex }) => {
 
 // tabs切换
 const handleTabChange = (val) => {
+  params.statType = ''
+  params.select_time = ''
+  params.select_time_start = ''
+  params.select_time_end = ''
+  timePickerType.value = ''
+  compareTip.value = '请选择统计类型'
+  customQuarter.year = new Date().getFullYear()
+  customQuarter.quarter = 1
+  quantityChart?.dispose()
+  rateChart?.dispose()
   params.order_time = ''
   params.order_time_start = ''
   params.order_time_end = ''
@@ -1057,6 +1381,7 @@ const handleTabChange = (val) => {
   dataAreaList.value = []
   dataDealList.value = []
   dataStateList.value = []
+  dataMomList.value = []
   pos.value = 0
   tagId.value = 0
   dealPage.page = 1
@@ -1329,9 +1654,73 @@ const handleSearch = (item) => {
 }
 // 生成报表
 const onSubmit = () => {
+  quantityChart?.dispose()
+  rateChart?.dispose()
   if (params.tab === 'source' && !params.channel_id) {
     toast('请选择渠道', 'error')
     return
+  }
+  if (params.tab === 'mom' && !params.statType) {
+    toast('请选择统计类型', 'error')
+    return
+  }
+  if (params.tab === 'mom') {
+    if (!params.select_time && !params.select_time_start && !params.select_time_end) {
+      toast('请选择时间', 'error')
+      return
+    }
+  }
+  if (params.tab === 'mom' && params.select_time_start && !params.select_time_end) {
+    params.select_time_end = moment().format('YYYY-MM-DD')
+  }
+  if (params.tab === 'mom' && !params.select_time_start && params.select_time_end) {
+    params.select_time_start = '1900-01-01'
+  }
+  if (params.statType && params.select_time) {
+    switch (params.statType) {
+      case 'week_ring':
+        params.select_time_start = params.select_time
+        params.select_time_end = moment(params.select_time).add(6, 'd').format('YYYY-MM-DD')
+        break
+      case 'month_ring':
+        params.select_time_start = moment(params.select_time).startOf('month').format('YYYY-MM-DD')
+        params.select_time_end = moment(params.select_time).endOf('month').format('YYYY-MM-DD')
+        break
+      case 'quarter_ring':
+        params.select_time_start = moment([customQuarter.year, (customQuarter.quarter - 1) * 3, 1]).format('YYYY-MM-DD')
+        params.select_time_end = moment([customQuarter.year, (customQuarter.quarter - 1) * 3 + 2, 1])
+          .endOf('month')
+          .format('YYYY-MM-DD')
+        break
+      case 'year_ring':
+        params.select_time_start = moment(params.select_time).startOf('year').format('YYYY-MM-DD')
+        params.select_time_end = moment(params.select_time).endOf('year').format('YYYY-MM-DD')
+        break
+      case 'week_same':
+        params.select_time_start = params.select_time
+        params.select_time_end = moment(params.select_time).add(6, 'd').format('YYYY-MM-DD')
+        break
+      case 'month_same':
+        params.select_time_start = moment(params.select_time).startOf('month').format('YYYY-MM-DD')
+        params.select_time_end = moment(params.select_time).endOf('month').format('YYYY-MM-DD')
+        break
+      case 'quarter_same':
+        params.select_time_start = moment([customQuarter.year, (customQuarter.quarter - 1) * 3, 1]).format('YYYY-MM-DD')
+        params.select_time_end = moment([customQuarter.year, (customQuarter.quarter - 1) * 3 + 2, 1])
+          .endOf('month')
+          .format('YYYY-MM-DD')
+        break
+      case 'year_same':
+        params.select_time_start = moment(params.select_time).startOf('year').format('YYYY-MM-DD')
+        params.select_time_end = moment(params.select_time).endOf('year').format('YYYY-MM-DD')
+        break
+      case 'custom_range':
+        params.select_time_start = params.select_time[0]
+        params.select_time_end = params.select_time[1]
+        break
+      default:
+        break
+    }
   }
   if (params.tab === 'state') {
     //if (params['year_time_end']) params['year_time_end'] = params['year_time_end'] + '-12-31'
@@ -1364,6 +1753,8 @@ const exports = (filename) => {
       dom = document.querySelector('#dealTable')
     } else if (dataStateList.value.length > 0) {
       dom = document.querySelector('#stateTable')
+    } else if (dataMomList.value.length > 0) {
+      dom = document.querySelector('#momTable')
     }
     var wb = XLSX.utils.table_to_book(dom)
     /* 获取二进制字符串作为输出 */
@@ -1653,6 +2044,15 @@ const getData = (param) => {
         } else if (param.tab === 'state') {
           res.result.map((item) => (item.showDetail = false))
           dataStateList.value = res.result.filter((item) => item.order_number > 0 || item.arrange_number > 0 || item.docking_number > 0)
+        } else if (param.tab === 'mom') {
+          dataMomList.value = res.result.data
+          statCards.value = res.result.cards
+          if (!store.state.isMobile) {
+            setTimeout(() => {
+              initCharts()
+              updateCharts(statCards.value)
+            }, 100)
+          }
         }
       } else {
         let msg = res.message || '数据请求失败'
@@ -1666,6 +2066,16 @@ const getData = (param) => {
 
 // 重置
 const onReset = () => {
+  params.statType = ''
+  params.select_time = ''
+  params.select_time_start = ''
+  params.select_time_end = ''
+  timePickerType.value = ''
+  compareTip.value = '请选择统计类型'
+  customQuarter.year = new Date().getFullYear()
+  customQuarter.quarter = 1
+  quantityChart?.dispose()
+  rateChart?.dispose()
   params.order_time = ''
   params.order_time_start = ''
   params.order_time_end = ''
@@ -1701,6 +2111,7 @@ const onReset = () => {
   dataAreaList.value = []
   dataDealList.value = []
   dataStateList.value = []
+  dataMomList.value = []
   pos.value = 0
   spanArr.value = []
   dealPage.page = 1
@@ -1885,5 +2296,68 @@ getSelectData()
 }
 .app-container::-webkit-scrollbar-thumb:hover {
   background-color: #000;
+}
+.time-picker-item :deep(.el-input__wrapper) {
+  width: 100%;
+}
+.tip-text {
+  color: #67c23a;
+  font-size: 13px;
+}
+.card-grid {
+  // display: grid;
+  // grid-template-columns: repeat(5, 1fr);
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 20px;
+  .el-card {
+    flex: 1;
+  }
+}
+.stat-card {
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  .card-middle {
+    .current-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #1f2937;
+      margin-right: 10px;
+    }
+    .compare-value {
+      font-size: 12px;
+      color: #999;
+    }
+  }
+  .card-bottom {
+    margin-top: 10px;
+    .rate-text {
+      margin-left: 8px;
+      font-size: 12px;
+      color: #666;
+    }
+  }
+}
+.chart-row {
+  margin-bottom: 20px;
+}
+.chart-card {
+  height: 400px;
+  .chart-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+  }
+  .chart-box {
+    width: 100%;
+    height: 340px;
+  }
 }
 </style>
