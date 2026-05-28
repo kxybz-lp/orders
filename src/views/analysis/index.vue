@@ -1065,11 +1065,26 @@ const updateCharts = (cards) => {
         },
       },
       legend: { data: ['本期', '对比期'] },
+      grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
       xAxis: { type: 'category', data: ['派单数', '签单数'] },
       yAxis: { type: 'value' },
       series: [
-        { name: '本期', type: 'bar', data: [cards[0].current, cards[1].current] },
-        { name: '对比期', type: 'bar', data: [cards[0].compare, cards[1].compare] },
+        {
+          name: '本期',
+          type: 'bar',
+          data: [cards[0].current, cards[1].current],
+          itemStyle: {
+            color: '#004c59',
+          },
+        },
+        {
+          name: '对比期',
+          type: 'bar',
+          data: [cards[0].compare, cards[1].compare],
+          itemStyle: {
+            color: '#017b8f',
+          },
+        },
       ],
     }
     rateOption = {
@@ -1079,12 +1094,30 @@ const updateCharts = (cards) => {
           type: 'shadow',
         },
       },
-      legend: { data: ['本期', '对比期'] },
-      xAxis: { type: 'category', data: ['签单率'] },
-      yAxis: { type: 'value', axisLabel: { formatter: '{value}%' } },
+      legend: {
+        data: ['派单率', '签单率'],
+        top: 0,
+      },
+      grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+      xAxis: {
+        type: 'category',
+        data: ['本期', '对比期'],
+        axisLabel: { interval: 0 },
+      },
+      yAxis: {
+        type: 'value',
+        axisLabel: { formatter: '{value} %' },
+      },
       series: [
-        { name: '本期', type: 'line', smooth: true, data: [cards[2].current] },
-        { name: '对比期', type: 'line', smooth: true, data: [cards[2].compare] },
+        {
+          name: '签单率',
+          type: 'line',
+          smooth: true,
+          data: [cards[2].current, cards[2].compare],
+          itemStyle: {
+            color: '#017b8f',
+          },
+        },
       ],
     }
   } else {
@@ -1096,11 +1129,26 @@ const updateCharts = (cards) => {
         },
       },
       legend: { data: ['本期', '对比期'] },
+      grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
       xAxis: { type: 'category', data: ['下单数', '派单数', '签单数'] },
       yAxis: { type: 'value' },
       series: [
-        { name: '本期', type: 'bar', data: [cards[0].current, cards[1].current, cards[3].current] },
-        { name: '对比期', type: 'bar', data: [cards[0].compare, cards[1].compare, cards[3].compare] },
+        {
+          name: '本期',
+          type: 'bar',
+          data: [cards[0].current, cards[1].current, cards[3].current],
+          itemStyle: {
+            color: '#004c59',
+          },
+        },
+        {
+          name: '对比期',
+          type: 'bar',
+          data: [cards[0].compare, cards[1].compare, cards[3].compare],
+          itemStyle: {
+            color: '#017b8f',
+          },
+        },
       ],
     }
     rateOption = {
@@ -1110,12 +1158,39 @@ const updateCharts = (cards) => {
           type: 'shadow',
         },
       },
-      legend: { data: ['本期', '对比期'] },
-      xAxis: { type: 'category', data: ['派单率', '签单率'] },
-      yAxis: { type: 'value', axisLabel: { formatter: '{value}%' } },
+      legend: {
+        data: ['派单率', '签单率'],
+        top: 0,
+      },
+      grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+      xAxis: {
+        type: 'category',
+        data: ['本期', '对比期'],
+        axisLabel: { interval: 0 },
+      },
+      yAxis: {
+        type: 'value',
+        axisLabel: { formatter: '{value} %' },
+      },
       series: [
-        { name: '本期', type: 'line', smooth: true, data: [cards[2].current, cards[4].current] },
-        { name: '对比期', type: 'line', smooth: true, data: [cards[2].compare, cards[4].compare] },
+        {
+          name: '派单率',
+          type: 'line',
+          smooth: true,
+          data: [cards[2].current, cards[2].compare],
+          itemStyle: {
+            color: '#004c59',
+          },
+        },
+        {
+          name: '签单率',
+          type: 'line',
+          smooth: true,
+          data: [cards[4].current, cards[4].compare],
+          itemStyle: {
+            color: '#017b8f',
+          },
+        },
       ],
     }
   }
