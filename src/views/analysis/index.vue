@@ -432,7 +432,7 @@
               <el-option :value="item.key" :label="item.value" v-for="item in statusList" :key="item.id"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item v-if="params.tab === 'deal' && $store.state.adminInfo.branch_id === '1'" label="渠道类型">
+          <el-form-item v-if="(params.tab === 'deal' || params.tab === 'mom') && $store.state.adminInfo.branch_id === '1'" label="渠道类型">
             <el-select
               v-model="params.channel_status"
               filterable
@@ -472,7 +472,7 @@
               <span class="compare-value">对比：{{ item.compare }}</span>
             </div>
             <div class="card-bottom">
-              <el-tag :type="item.rate > 0 ? 'success' : 'danger'" size="small"> {{ item.rate > 0 ? '↑' : '↓' }} {{ Math.abs(item.rate) }}% </el-tag>
+              <el-tag :type="item.rate > 0 ? 'danger' : 'success'" size="small"> {{ item.rate > 0 ? '↑' : '↓' }} {{ Math.abs(item.rate) }}% </el-tag>
               <span class="rate-text">{{ getCompareText }}增长率</span>
             </div>
           </el-card>
@@ -727,36 +727,36 @@
           <el-table id="momTable" v-if="dataMomList.length > 0" :data="dataMomList" border stripe :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }">
             <el-table-column prop="name" label="统计维度" min-width="130" />
             <el-table-column prop="current_order" v-if="params.receive_company.length == 0" sortable label="本期下单数" min-width="130" />
-            <el-table-column prop="compare_order" v-if="params.receive_company.length == 0" sortable label="对比期下单数" min-width="140" />
-            <el-table-column prop="rate_order" v-if="params.receive_company.length == 0" sortable label="下单数增长率" min-width="140">
+            <el-table-column prop="compare_order" v-if="params.receive_company.length == 0" sortable label="上期下单数" min-width="140" />
+            <el-table-column prop="rate_order" v-if="params.receive_company.length == 0" sortable label="下单增减率" min-width="140">
               <template #default="scope"> {{ scope.row.rate_order }}% </template>
             </el-table-column>
             <el-table-column prop="current_arrange" sortable label="本期派单数" min-width="130" />
-            <el-table-column prop="compare_arrange" sortable label="对比期派单数" min-width="140" />
-            <el-table-column prop="rate_arrange" sortable label="派单数增长率" min-width="140">
+            <el-table-column prop="compare_arrange" sortable label="上期派单数" min-width="140" />
+            <el-table-column prop="rate_arrange" sortable label="派单增减率" min-width="140">
               <template #default="scope"> {{ scope.row.rate_arrange }}% </template>
             </el-table-column>
             <el-table-column prop="current_arrange_per" v-if="params.receive_company.length == 0" min-width="120" sortable label="本期派单率">
               <template #default="scope"> {{ scope.row.current_arrange_per }}% </template>
             </el-table-column>
-            <el-table-column prop="compare_arrange_per" v-if="params.receive_company.length == 0" min-width="140" sortable label="对比期派单率">
+            <el-table-column prop="compare_arrange_per" v-if="params.receive_company.length == 0" min-width="140" sortable label="上期派单率">
               <template #default="scope"> {{ scope.row.compare_arrange_per }}% </template>
             </el-table-column>
-            <el-table-column prop="rate_arrange_per" v-if="params.receive_company.length == 0" sortable label="派单率增长率" min-width="140">
+            <el-table-column prop="rate_arrange_per" v-if="params.receive_company.length == 0" sortable label="派单率增减率" min-width="140">
               <template #default="scope"> {{ scope.row.rate_arrange_per }}% </template>
             </el-table-column>
             <el-table-column sortable prop="current_docking" min-width="130" label="本期签单数" />
-            <el-table-column sortable prop="compare_docking" min-width="140" label="对比期签单数" />
-            <el-table-column prop="rate_docking" sortable label="签单数增长率" min-width="140">
+            <el-table-column sortable prop="compare_docking" min-width="140" label="上期签单数" />
+            <el-table-column prop="rate_docking" sortable label="签单增减率" min-width="140">
               <template #default="scope"> {{ scope.row.rate_docking }}% </template>
             </el-table-column>
             <el-table-column prop="current_docking_per" min-width="130" sortable label="本期签单率">
               <template #default="scope"> {{ scope.row.current_docking_per }}% </template>
             </el-table-column>
-            <el-table-column prop="compare_docking_per" min-width="140" sortable label="对比期签单率">
+            <el-table-column prop="compare_docking_per" min-width="140" sortable label="上期签单率">
               <template #default="scope"> {{ scope.row.compare_docking_per }}% </template>
             </el-table-column>
-            <el-table-column prop="rate_docking_per" sortable label="签单率增长率" min-width="140">
+            <el-table-column prop="rate_docking_per" sortable label="签单率增减率" min-width="140">
               <template #default="scope"> {{ scope.row.rate_docking_per }}% </template>
             </el-table-column>
           </el-table>
@@ -1064,7 +1064,7 @@ const updateCharts = (cards) => {
           type: 'shadow',
         },
       },
-      legend: { data: ['本期', '对比期'] },
+      legend: { data: ['本期', '上期'] },
       grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
       xAxis: { type: 'category', data: ['派单数', '签单数'] },
       yAxis: { type: 'value' },
@@ -1078,7 +1078,7 @@ const updateCharts = (cards) => {
           },
         },
         {
-          name: '对比期',
+          name: '上期',
           type: 'bar',
           data: [cards[0].compare, cards[1].compare],
           itemStyle: {
@@ -1101,7 +1101,7 @@ const updateCharts = (cards) => {
       grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
       xAxis: {
         type: 'category',
-        data: ['本期', '对比期'],
+        data: ['本期', '上期'],
         axisLabel: { interval: 0 },
       },
       yAxis: {
@@ -1128,7 +1128,7 @@ const updateCharts = (cards) => {
           type: 'shadow',
         },
       },
-      legend: { data: ['本期', '对比期'] },
+      legend: { data: ['本期', '上期'] },
       grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
       xAxis: { type: 'category', data: ['下单数', '派单数', '签单数'] },
       yAxis: { type: 'value' },
@@ -1142,7 +1142,7 @@ const updateCharts = (cards) => {
           },
         },
         {
-          name: '对比期',
+          name: '上期',
           type: 'bar',
           data: [cards[0].compare, cards[1].compare, cards[3].compare],
           itemStyle: {
@@ -1165,7 +1165,7 @@ const updateCharts = (cards) => {
       grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
       xAxis: {
         type: 'category',
-        data: ['本期', '对比期'],
+        data: ['本期', '上期'],
         axisLabel: { interval: 0 },
       },
       yAxis: {
@@ -1237,15 +1237,21 @@ const statusChange = (val) => {
   dealPage.page = 1
 }
 const channelStatusChange = (val) => {
-  params.receive_company = ''
+  //params.receive_company = ''
   params.branch_status = ''
   dataDealList.value = []
+  dataMomList.value = []
+  params.channel_id = ''
+  statCards.value = []
   dealPage.page = 1
 }
 const branchChange = (val) => {
   params.branch_status = ''
   params.channel_status = ''
   dataDealList.value = []
+  dataMomList.value = []
+  params.channel_id = ''
+  statCards.value = []
   dealPage.page = 1
 }
 // 一级区域全选
