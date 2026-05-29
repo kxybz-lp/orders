@@ -1082,7 +1082,7 @@ const updateCharts = (cards) => {
           type: 'bar',
           data: [cards[0].compare, cards[1].compare],
           itemStyle: {
-            color: '#017b8f',
+            color: '#f56c6c',
           },
         },
       ],
@@ -1115,7 +1115,7 @@ const updateCharts = (cards) => {
           smooth: true,
           data: [cards[2].current, cards[2].compare],
           itemStyle: {
-            color: '#017b8f',
+            color: '#f56c6c',
           },
         },
       ],
@@ -1146,7 +1146,7 @@ const updateCharts = (cards) => {
           type: 'bar',
           data: [cards[0].compare, cards[1].compare, cards[3].compare],
           itemStyle: {
-            color: '#017b8f',
+            color: '#f56c6c',
           },
         },
       ],
@@ -1188,7 +1188,7 @@ const updateCharts = (cards) => {
           smooth: true,
           data: [cards[4].current, cards[4].compare],
           itemStyle: {
-            color: '#017b8f',
+            color: '#f56c6c',
           },
         },
       ],
