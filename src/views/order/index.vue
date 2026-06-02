@@ -267,7 +267,15 @@
                 <el-form-item label="房屋面积">
                   <el-select v-model="params.size" placeholder="选择面积" clearable @clear="getData(1)">
                     <el-option :value="item.value" :label="item.key" v-for="item in sizeList" :key="item.id"></el-option>
+                    <!-- 自定义区间选项 -->
+                    <el-option value="custom" label="自定义区间"></el-option>
                   </el-select>
+                  <!-- 选中自定义区间后显示输入框 -->
+                  <div v-if="params.size === 'custom'" style="margin-top: 10px; display: flex; gap: 10px">
+                    <el-input v-model.number="customSize.min" placeholder="最小值" type="number" @blur="validateCustomSize" />
+                    <span>-</span>
+                    <el-input v-model.number="customSize.max" placeholder="最大值" type="number" @blur="validateCustomSize" />
+                  </div>
                 </el-form-item>
               </el-col>
               <el-col :md="6" :offset="0">
@@ -910,6 +918,8 @@ const {
     source_id: null,
     status_id: null,
     size: null,
+    sizeMin: '',
+    sizeMax: '',
     receive_man: null,
     layout_id: null,
     type_id: null,
@@ -1418,6 +1428,47 @@ const sizeList = [
     value: '1000-1000000',
   },
 ]
+// 自定义面积区间
+const customSize = reactive({
+  min: '',
+  max: '',
+})
+
+watch(
+  () => params.size,
+  (val) => {
+    // 清空自定义输入
+    customSize.min = ''
+    customSize.max = ''
+    params.sizeMin = ''
+    params.sizeMax = ''
+
+    if (!val || val === 'custom') return
+
+    // 解析固定区间
+    const [min, max] = val.split('-')
+    params.sizeMin = min
+    params.sizeMax = max
+  },
+  { deep: true }
+)
+
+const validateCustomSize = () => {
+  const { min, max } = customSize
+  if (min && max && Number(max) <= Number(min)) {
+    ElMessage.warning('最大值必须大于最小值！')
+    customSize.max = ''
+    return false
+  }
+  // 校验通过，赋值给查询参数
+  if (min && max) {
+    params.sizeMin = min
+    params.sizeMax = max
+  } else {
+    params.sizeMin = ''
+    params.sizeMax = ''
+  }
+}
 // 自定义产值区间
 const customMoney = reactive({
   min: '',
@@ -1624,6 +1675,10 @@ const resetFrom = () => {
   customMoney.max = ''
   params.moneyMin = ''
   params.moneyMax = ''
+  customSize.min = ''
+  customSize.max = ''
+  params.sizeMin = ''
+  params.sizeMax = ''
   params.name = ''
   params.mobile = ''
   params.receive_company = null

@@ -274,7 +274,15 @@
               <el-form-item label="房屋面积">
                 <el-select v-model="searchParams.size" placeholder="选择面积" clearable @clear="getData(1)">
                   <el-option :value="item.value" :label="item.key" v-for="item in sizeList" :key="item.id"></el-option>
+                  <!-- 自定义区间选项 -->
+                  <el-option value="custom" label="自定义区间"></el-option>
                 </el-select>
+                <!-- 选中自定义区间后显示输入框 -->
+                <div v-if="searchParams.size === 'custom'" style="margin-top: 10px; display: flex; gap: 10px">
+                  <el-input v-model.number="customSize.min" placeholder="最小值" type="number" @blur="validateCustomSize" />
+                  <span>-</span>
+                  <el-input v-model.number="customSize.max" placeholder="最大值" type="number" @blur="validateCustomSize" />
+                </div>
               </el-form-item>
             </el-col>
             <el-col :md="6" :offset="0">
@@ -890,6 +898,8 @@ const searchParams = reactive({
   source_id: null,
   status_id: null,
   size: null,
+  sizeMin: '',
+  sizeMax: '',
   receive_man: null,
   layout_id: null,
   type_id: null,
@@ -999,6 +1009,49 @@ const sizeList = [
     value: '1000-1000000',
   },
 ]
+// 自定义面积区间
+const customSize = reactive({
+  min: '',
+  max: '',
+})
+// 校验自定义面积区间（最大值必须大于最小值）
+const validateCustomSize = () => {
+  const { min, max } = customSize
+  if (min && max && Number(max) <= Number(min)) {
+    ElMessage.warning('最大值必须大于最小值！')
+    customSize.max = ''
+    return false
+  }
+
+  // 校验通过，赋值给查询参数
+  if (min && max) {
+    searchParams.sizeMin = min
+    searchParams.sizeMax = max
+  } else {
+    searchParams.sizeMin = ''
+    searchParams.sizeMax = ''
+  }
+}
+
+watch(
+  () => searchParams.size,
+  (val) => {
+    // 清空自定义输入
+    customSize.min = ''
+    customSize.max = ''
+    searchParams.sizeMin = ''
+    searchParams.sizeMax = ''
+
+    if (!val || val === 'custom') return
+
+    // 解析固定区间
+    const [min, max] = val.split('-')
+    searchParams.sizeMin = min
+    searchParams.sizeMax = max
+  },
+  { deep: true }
+)
+
 // 自定义产值区间
 const customMoney = reactive({
   min: '',
@@ -1233,6 +1286,10 @@ const resetSearchForm = () => {
   searchParams.is_audit = null
   searchParams.is_visit = null
   searchParams.size = null
+  searchParams.sizeMin = ''
+  searchParams.sizeMax = ''
+  customSize.min = ''
+  customSize.max = ''
   searchParams.receive_man = null
   searchParams.type_id = null
   searchParams.layout_id = null
