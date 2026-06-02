@@ -305,6 +305,22 @@
                   <el-input v-model="params.id" placeholder="输入订单ID" clearable @clear="getData(1)"></el-input>
                 </el-form-item>
               </el-col>
+              <el-col :md="6" :offset="0">
+                <el-form-item label="签单产值">
+                  <el-select v-model="params.contract_money" placeholder="选择签单产值" clearable @clear="getData(1)">
+                    <el-option :value="item.value" :label="item.key" v-for="item in moneyList" :key="item.id"></el-option>
+                    <!-- 自定义区间选项 -->
+                    <el-option value="custom" label="自定义区间"></el-option>
+                  </el-select>
+
+                  <!-- 选中自定义区间后显示输入框 -->
+                  <div v-if="params.contract_money === 'custom'" style="margin-top: 10px; display: flex; gap: 10px">
+                    <el-input v-model.number="customMoney.min" placeholder="最小值" type="number" @blur="validateCustomMoney" />
+                    <span>-</span>
+                    <el-input v-model.number="customMoney.max" placeholder="最大值" type="number" @blur="validateCustomMoney" />
+                  </div>
+                </el-form-item>
+              </el-col>
             </el-row>
           </template>
           <template v-else>
@@ -879,6 +895,9 @@ const {
     name: '',
     mobile: '',
     region_id: '',
+    contract_money: '',
+    moneyMin: '',
+    moneyMax: '',
     arrange_type: '',
     channel_status: '',
     receive_company: null,
@@ -1372,7 +1391,7 @@ const visit = [
     name: '已回访',
   },
 ]
-// 回访
+// 面积
 const sizeList = [
   {
     key: '80以下',
@@ -1399,6 +1418,77 @@ const sizeList = [
     value: '1000-1000000',
   },
 ]
+// 自定义产值区间
+const customMoney = reactive({
+  min: '',
+  max: '',
+})
+// 签单产值
+const moneyList = [
+  {
+    key: '10万以下',
+    value: '1-99999',
+  },
+  {
+    key: '10-30万',
+    value: '100000-300000',
+  },
+  {
+    key: '30-50万',
+    value: '300000-500000',
+  },
+  {
+    key: '50-100万',
+    value: '500000-1000000',
+  },
+  {
+    key: '100-500万',
+    value: '1000000-5000000',
+  },
+  {
+    key: '500万以上',
+    value: '5000000-100000000',
+  },
+]
+
+// 监听下拉选择，自动解析固定区间
+watch(
+  () => params.contract_money,
+  (val) => {
+    // 清空自定义输入
+    customMoney.min = ''
+    customMoney.max = ''
+    params.moneyMin = ''
+    params.moneyMax = ''
+
+    if (!val || val === 'custom') return
+
+    // 解析固定区间 10000-20000
+    const [min, max] = val.split('-')
+    params.moneyMin = min
+    params.moneyMax = max
+  },
+  { deep: true }
+)
+
+// 校验自定义区间（最大值必须大于最小值）
+const validateCustomMoney = () => {
+  const { min, max } = customMoney
+  if (min && max && Number(max) <= Number(min)) {
+    ElMessage.warning('最大值必须大于最小值！')
+    customMoney.max = ''
+    return false
+  }
+
+  // 校验通过，赋值给查询参数
+  if (min && max) {
+    params.moneyMin = min
+    params.moneyMax = max
+  } else {
+    params.moneyMin = ''
+    params.moneyMax = ''
+  }
+}
 
 const channelList = ref([])
 const channel = ref([])
@@ -1528,6 +1618,12 @@ const resetFrom = () => {
   // searchMoreRef.value.resetFields()
   params.page = 1
   params.pageSize = 15
+  params.contract_money = ''
+  params.id = ''
+  customMoney.min = ''
+  customMoney.max = ''
+  params.moneyMin = ''
+  params.moneyMax = ''
   params.name = ''
   params.mobile = ''
   params.receive_company = null
