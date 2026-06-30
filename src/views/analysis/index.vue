@@ -559,6 +559,8 @@
               <template #default="scope"> {{ scope.row.docking_per }}% </template>
             </el-table-column>
             <el-table-column min-width="120" prop="size" label="平均签单面积" />
+            <el-table-column prop="sum_order_money" :sortable="$store.state.adminInfo.branch_id == 1 ? 'sum_order_money' : false" label="总交定金额" min-width="100" />
+            <el-table-column prop="sum_contract_money" :sortable="$store.state.adminInfo.branch_id == 1 ? 'sum_contract_money' : false" label="总签单产值" min-width="100" />
           </el-table>
           <!-- 渠道报表 -->
           <el-table id="channelTable" v-if="dataChannelList.length > 0" :data="dataChannelList" border stripe :header-cell-style="{ color: '#2c3e50', backgroundColor: '#f2f2f2' }">
@@ -573,6 +575,8 @@
               <template #default="scope"> {{ scope.row.docking_per }}% </template>
             </el-table-column>
             <el-table-column prop="size" min-width="120" label="平均签单面积" />
+            <el-table-column prop="sum_order_money" :sortable="$store.state.adminInfo.branch_id == 1 ? 'sum_order_money' : false" label="总交定金额" min-width="100" />
+            <el-table-column prop="sum_contract_money" :sortable="$store.state.adminInfo.branch_id == 1 ? 'sum_contract_money' : false" label="总签单产值" min-width="100" />
           </el-table>
           <!-- 来源报表 -->
           <el-table
@@ -661,18 +665,20 @@
             <el-table-column prop="docking_per" :sortable="$store.state.adminInfo.branch_id == 1 ? 'docking_per' : false" label="签单率" min-width="100">
               <template #default="scope"> {{ scope.row.docking_per }}% </template>
             </el-table-column>
-            <el-table-column
+            <!-- <el-table-column
               v-if="$store.state.adminInfo.branch_id == 1"
               prop="avg_arrange_duration"
               :sortable="$store.state.adminInfo.branch_id == 1 ? 'avg_arrange_duration' : false"
               label="平均派单时长(小时)"
               min-width="100"
-            />
+            /> -->
             <el-table-column prop="feedback_per" :sortable="$store.state.adminInfo.branch_id == 1 ? 'feedback_per' : false" label="反馈率" min-width="100">
               <template #default="scope"> {{ scope.row.feedback_per }}% </template>
             </el-table-column>
-            <el-table-column prop="avg_response_minutes" :sortable="$store.state.adminInfo.branch_id == 1 ? 'avg_response_minutes' : false" label="首次反馈时效(小时)" min-width="100" />
+            <!-- <el-table-column prop="avg_response_minutes" :sortable="$store.state.adminInfo.branch_id == 1 ? 'avg_response_minutes' : false" label="首次反馈时效(小时)" min-width="100" /> -->
             <el-table-column prop="avg_follow_count" :sortable="$store.state.adminInfo.branch_id == 1 ? 'avg_follow_count' : false" label="平均反馈次数" min-width="100" />
+            <el-table-column prop="sum_order_money" :sortable="$store.state.adminInfo.branch_id == 1 ? 'sum_order_money' : false" label="总交定金额" min-width="100" />
+            <el-table-column prop="sum_contract_money" :sortable="$store.state.adminInfo.branch_id == 1 ? 'sum_contract_money' : false" label="总签单产值" min-width="100" />
           </el-table>
           <!-- 虚拟表格 -->
           <!-- <div style="height: 400px">
@@ -926,6 +932,8 @@ const getSummaries = (param) => {
     order_number: 0,
     arrange_number: 0,
     docking_number: 0,
+    sum_order_money: 0,
+    sum_contract_money: 0,
     size: 0,
   }
 
@@ -936,6 +944,8 @@ const getSummaries = (param) => {
       summaryData.order_number += item.order_number || 0
       summaryData.arrange_number += item.arrange_number || 0
       summaryData.docking_number += item.docking_number || 0
+      summaryData.sum_order_money += parseInt(item.sum_order_money) || 0
+      summaryData.sum_contract_money += parseInt(item.sum_contract_money) || 0
       summaryData.size += parseInt(item.size) || 0
       if (item.docking_number > 0) {
         num++
@@ -975,6 +985,12 @@ const getSummaries = (param) => {
         break
       case 'size':
         sums[index] = size_avg.toFixed(0)
+        break
+      case 'sum_order_money':
+        sums[index] = summaryData.sum_order_money
+        break
+      case 'sum_contract_money':
+        sums[index] = summaryData.sum_contract_money
         break
       default:
         sums[index] = '—'
