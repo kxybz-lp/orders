@@ -137,8 +137,13 @@
       <el-col :md="24" :lg="14" :offset="0" v-permission="138" v-show="!$store.state.isMobile">
         <el-card shadow="hover">
           <template #header>
-            <div>
+            <div class="pie-header">
               <span>渠道统计</span>
+              <div class="pie-type">
+                <span :class="pieType == 'order' ? 'current_pie_type' : ''" @click="setPieType('order')">订单数</span>
+                <span :class="pieType == 'arrange' ? 'current_pie_type' : ''" @click="setPieType('arrange')">派单数</span>
+                <span :class="pieType == 'sign' ? 'current_pie_type' : ''" @click="setPieType('sign')">签单数</span>
+              </div>
             </div>
           </template>
           <div ref="chatPie" id="pie"></div>
@@ -234,6 +239,7 @@ const store = ref(null)
 const chatBar = ref(null)
 const chatPie = ref(null)
 const threeDay = ref(null)
+const pieType = ref('order')
 const params = reactive({
   type: 'order',
   scope: 'week',
@@ -298,6 +304,10 @@ const setType = (val) => {
       break
   }
   getBarData()
+}
+const setPieType = (val) => {
+  pieType.value = val
+  getPieData()
 }
 const setScope = (val) => {
   switch (val) {
@@ -432,9 +442,13 @@ const getPieData = () => {
       },
     ],
   }
-  chartBar.showLoading()
+  chartPie.showLoading()
+  const pieParams = {
+    ...params,
+    type: pieType.value,
+  }
   home
-    .getPieData(params)
+    .getPieData(pieParams)
     .then((res) => {
       option.series[0].data = res.result
       chartPie.setOption(option)
@@ -610,6 +624,23 @@ const dialogFollowVisible = ref(false)
         text-overflow: ellipsis;
       }
     }
+  }
+}
+.pie-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .pie-type {
+    cursor: pointer;
+    span {
+      padding-right: 15px;
+    }
+    span:last-child {
+      padding-right: 0;
+    }
+  }
+  .current_pie_type {
+    color: var(--color);
   }
 }
 #pie,

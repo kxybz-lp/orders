@@ -14,8 +14,8 @@ const home = {
     return post('/order/index/ercharts_bar', params)
   },
   // 饼状图数据
-  getPieData() {
-    return post('/order/index/ercharts_pie')
+  getPieData(params) {
+    return post('/order/index/ercharts_pie', params)
   },
   //公告数据
   getNotice() {
